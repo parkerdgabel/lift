@@ -70,7 +70,7 @@ jobs:
           pip install -e ".[dev,mcp]"
 
       - name: Run tests with coverage
-        run: pytest --cov=lift --cov-report=xml --cov-report=term
+        run: pytest --cov=lift --cov-report=xml --cov-report=term -n auto
 
       - name: Upload coverage to Codecov
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'

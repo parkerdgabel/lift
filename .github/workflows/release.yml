@@ -35,7 +35,7 @@ jobs:
           pip install -e ".[dev,mcp]"
 
       - name: Run tests
-        run: pytest --tb=short -q
+        run: pytest --tb=short -q -n auto
 
       - name: Build package
         run: |
