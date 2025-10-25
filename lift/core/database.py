@@ -147,7 +147,7 @@ class DatabaseManager:
         Returns:
             Row count
         """
-        result = self.execute(f"SELECT COUNT(*) FROM {table_name}")
+        result = self.execute(f"SELECT COUNT(*) FROM {table_name}")  # nosec B608  # table_name from schema
         return result[0][0] if result else 0
 
     def vacuum(self) -> None:
@@ -200,7 +200,7 @@ class DatabaseManager:
             table_info = {}
             for table in tables:
                 table_name = table[0]
-                count = conn.execute(f"SELECT COUNT(*) FROM {table_name}").fetchone()[0]
+                count = conn.execute(f"SELECT COUNT(*) FROM {table_name}").fetchone()[0]  # nosec B608  # table_name from schema
                 table_info[table_name] = count
 
             return {

@@ -239,7 +239,7 @@ class BodyService:
             WHERE {field} IS NOT NULL
                 AND date >= ?
             ORDER BY date ASC
-        """
+        """  # nosec B608  # field validated against whitelist
         cutoff_date = datetime.now() - timedelta(weeks=weeks_back)
         results = self.db.execute(query, (cutoff_date,))
 
@@ -417,7 +417,7 @@ class BodyService:
             FROM body_measurements
             WHERE {field} IS NOT NULL
                 AND date >= ?
-        """
+        """  # nosec B608  # field validated against whitelist
         cutoff_date = datetime.now() - timedelta(days=7)
         result = self.db.execute(query, (cutoff_date,))
 

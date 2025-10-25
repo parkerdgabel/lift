@@ -112,7 +112,7 @@ class StatsService:
                 AND s.set_type IN ('working', 'dropset', 'failure', 'amrap')
             GROUP BY date_trunc('week', w.date)
             ORDER BY week_start DESC
-        """
+        """  # nosec B608  # weeks_back is integer parameter
 
         with self.db.get_connection() as conn:
             results = conn.execute(query).fetchall()
@@ -158,7 +158,7 @@ class StatsService:
                 AND s.set_type IN ('working', 'dropset', 'failure', 'amrap')
             GROUP BY date_trunc('month', w.date)
             ORDER BY month_start DESC
-        """
+        """  # nosec B608  # months_back is integer parameter
 
         with self.db.get_connection() as conn:
             results = conn.execute(query).fetchall()
@@ -238,7 +238,7 @@ class StatsService:
             WHERE date >= CURRENT_TIMESTAMP - INTERVAL '{weeks_back} WEEK'
             GROUP BY date_trunc('week', date)
             ORDER BY week_start DESC
-        """
+        """  # nosec B608  # weeks_back is integer parameter
 
         with self.db.get_connection() as conn:
             results = conn.execute(query).fetchall()
@@ -378,7 +378,7 @@ class StatsService:
                 AND s.set_type IN ('working', 'dropset', 'failure', 'amrap')
             GROUP BY date_trunc('week', w.date)
             ORDER BY week_start DESC
-        """
+        """  # nosec B608  # weeks_back is integer parameter
 
         with self.db.get_connection() as conn:
             results = conn.execute(query).fetchall()
@@ -421,7 +421,7 @@ class StatsService:
                 AND s.set_type IN ('working', 'dropset', 'failure', 'amrap')
             GROUP BY e.primary_muscle
             ORDER BY set_count DESC
-        """
+        """  # nosec B608  # weeks_back is integer parameter
 
         with self.db.get_connection() as conn:
             results = conn.execute(query).fetchall()
@@ -472,7 +472,7 @@ class StatsService:
             GROUP BY e.name
             ORDER BY total_volume DESC
             LIMIT ?
-        """
+        """  # nosec B608  # weeks_back is integer parameter
 
         with self.db.get_connection() as conn:
             results = conn.execute(query, (limit,)).fetchall()

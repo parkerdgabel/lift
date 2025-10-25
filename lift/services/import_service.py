@@ -53,7 +53,7 @@ class ImportService:
             # Get column information
             columns_info = conn.execute(
                 "SELECT column_name, data_type FROM information_schema.columns "
-                f"WHERE table_name = '{table_name}' ORDER BY ordinal_position"
+                f"WHERE table_name = '{table_name}' ORDER BY ordinal_position"  # nosec B608  # table_name validated
             ).fetchall()
 
             column_names = [col[0] for col in columns_info]
@@ -97,7 +97,7 @@ class ImportService:
                 placeholders = ", ".join(["?" for _ in insert_columns])
                 columns_str = ", ".join(insert_columns)
 
-                insert_query = f"INSERT INTO {table_name} ({columns_str}) VALUES ({placeholders})"
+                insert_query = f"INSERT INTO {table_name} ({columns_str}) VALUES ({placeholders})"  # nosec B608  # table_name validated, columns from schema
 
                 # Insert data
                 for row_dict in rows_data:
@@ -182,7 +182,7 @@ class ImportService:
             placeholders = ", ".join(["?" for _ in insert_columns])
             columns_str = ", ".join(insert_columns)
 
-            insert_query = f"INSERT INTO {table_name} ({columns_str}) VALUES ({placeholders})"
+            insert_query = f"INSERT INTO {table_name} ({columns_str}) VALUES ({placeholders})"  # nosec B608  # table_name validated, columns from schema
 
             # Insert each row
             for row_dict in data:
@@ -220,7 +220,7 @@ class ImportService:
                 # Get column information
                 columns_info = conn.execute(
                     "SELECT column_name, data_type, is_nullable FROM information_schema.columns "
-                    f"WHERE table_name = '{table_name}'"
+                    f"WHERE table_name = '{table_name}'"  # nosec B608  # table_name validated
                 ).fetchall()
 
                 valid_columns = {

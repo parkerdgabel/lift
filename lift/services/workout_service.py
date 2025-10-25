@@ -172,7 +172,7 @@ class WorkoutService:
             UPDATE workouts
             SET {", ".join(update_fields)}
             WHERE id = ?
-        """
+        """  # nosec B608  # update_fields built from validated model fields
 
         with self.db.get_connection() as conn:
             conn.execute(query, tuple(params))

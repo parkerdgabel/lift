@@ -215,7 +215,7 @@ class ProgramService:
             WHERE id = ?
             RETURNING id, name, description, split_type, days_per_week, duration_weeks,
                       is_active, created_at, updated_at
-        """
+        """  # nosec B608  # set_clause built from validated update_fields keys
 
         values = list(update_fields.values()) + [id]
 

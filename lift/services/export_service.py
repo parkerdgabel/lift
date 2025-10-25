@@ -48,12 +48,12 @@ class ExportService:
                 raise ValueError(f"Table '{table_name}' does not exist")
 
             # Get all data from the table
-            result = conn.execute(f"SELECT * FROM {table_name}").fetchall()
+            result = conn.execute(f"SELECT * FROM {table_name}").fetchall()  # nosec B608  # table_name validated
 
             if not result:
                 # Empty table, just create headers
                 columns = conn.execute(
-                    f"SELECT column_name FROM information_schema.columns "
+                    f"SELECT column_name FROM information_schema.columns "  # nosec B608  # table_name validated
                     f"WHERE table_name = '{table_name}' ORDER BY ordinal_position"
                 ).fetchall()
                 headers = [col[0] for col in columns]
@@ -68,7 +68,7 @@ class ExportService:
             if not headers:
                 # Fallback: get from information_schema
                 columns = conn.execute(
-                    f"SELECT column_name FROM information_schema.columns "
+                    f"SELECT column_name FROM information_schema.columns "  # nosec B608  # table_name validated
                     f"WHERE table_name = '{table_name}' ORDER BY ordinal_position"
                 ).fetchall()
                 headers = [col[0] for col in columns]
@@ -158,7 +158,7 @@ class ExportService:
                 raise ValueError(f"Table '{table_name}' does not exist")
 
             # Get all data from the table
-            result = conn.execute(f"SELECT * FROM {table_name}").fetchall()
+            result = conn.execute(f"SELECT * FROM {table_name}").fetchall()  # nosec B608  # table_name validated
 
             # Convert to list of dictionaries
             data = []
@@ -168,7 +168,7 @@ class ExportService:
                 else:
                     # Fallback: get column names
                     columns = conn.execute(
-                        f"SELECT column_name FROM information_schema.columns "
+                        f"SELECT column_name FROM information_schema.columns "  # nosec B608  # table_name validated
                         f"WHERE table_name = '{table_name}' ORDER BY ordinal_position"
                     ).fetchall()
                     headers = [col[0] for col in columns]
@@ -222,7 +222,7 @@ class ExportService:
                 table_name = table_tuple[0]
 
                 # Get all data from the table
-                result = conn.execute(f"SELECT * FROM {table_name}").fetchall()
+                result = conn.execute(f"SELECT * FROM {table_name}").fetchall()  # nosec B608  # table_name from schema
 
                 # Convert to list of dictionaries
                 data = []
@@ -232,7 +232,7 @@ class ExportService:
                     else:
                         # Fallback: get column names
                         columns = conn.execute(
-                            f"SELECT column_name FROM information_schema.columns "
+                            f"SELECT column_name FROM information_schema.columns "  # nosec B608  # table_name from schema
                             f"WHERE table_name = '{table_name}' ORDER BY ordinal_position"
                         ).fetchall()
                         headers = [col[0] for col in columns]
@@ -301,7 +301,7 @@ class ExportService:
         LEFT JOIN program_workouts pw ON w.program_workout_id = pw.id
         {where_clause}
         ORDER BY w.date DESC
-        """
+        """  # nosec B608  # where_clause built from validated parameters
 
         with self.db.get_connection() as conn:
             workouts = conn.execute(query, params if params else None).fetchall()

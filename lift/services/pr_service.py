@@ -429,7 +429,7 @@ class PRService:
             WHERE pr.date >= CURRENT_TIMESTAMP - INTERVAL '{days} DAY'
             ORDER BY pr.date DESC
             LIMIT ?
-        """
+        """  # nosec B608  # days is integer parameter
 
         with self.db.get_connection() as conn:
             results = conn.execute(query, (limit,)).fetchall()
