@@ -183,7 +183,11 @@ class SetService:
             return weight
 
         # Epley formula: 1RM = weight × (1 + reps/30)
-        return weight * (1 + Decimal(reps) / Decimal("30"))
+        from decimal import ROUND_HALF_UP
+
+        result = weight * (1 + Decimal(reps) / Decimal("30"))
+        # Round to 1 decimal place for weights
+        return result.quantize(Decimal("0.1"), rounding=ROUND_HALF_UP)
 
     def get_next_set_number(self, workout_id: int, exercise_id: int) -> int:
         """

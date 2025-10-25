@@ -20,9 +20,9 @@ class TestWeightConversions:
 
     def test_lbs_to_kg(self) -> None:
         """Test pounds to kilograms conversion."""
-        # Standard conversion
+        # Standard conversion (185.2 * 0.45359237 = 84.005... rounds to 84.01)
         result = lbs_to_kg(Decimal("185.2"))
-        assert result == Decimal("84.00")
+        assert result == Decimal("84.01")
 
         # Edge cases
         assert lbs_to_kg(Decimal("0")) == Decimal("0.00")
@@ -107,7 +107,7 @@ class TestConvertWeight:
     def test_convert_lbs_to_kg(self) -> None:
         """Test converting lbs to kg."""
         result = convert_weight(Decimal("185.2"), WeightUnit.LBS, WeightUnit.KG)
-        assert result == Decimal("84.00")
+        assert result == Decimal("84.01")
 
     def test_convert_kg_to_lbs(self) -> None:
         """Test converting kg to lbs."""

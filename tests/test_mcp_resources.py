@@ -37,6 +37,26 @@ def exercise_service(db_with_seed_exercises):
 @pytest.fixture()
 def sample_workout_with_sets(workout_service, set_service, exercise_service):
     """Create a sample workout with sets for testing."""
+    # Create bench press exercise manually
+    from lift.core.models import (
+        CategoryType,
+        EquipmentType,
+        ExerciseCreate,
+        MovementType,
+        MuscleGroup,
+    )
+
+    bench_press = exercise_service.create(
+        ExerciseCreate(
+            name="Bench Press (Barbell)",
+            category=CategoryType.PUSH,
+            primary_muscle=MuscleGroup.CHEST,
+            secondary_muscles=[MuscleGroup.TRICEPS, MuscleGroup.SHOULDERS],
+            equipment=EquipmentType.BARBELL,
+            movement_type=MovementType.COMPOUND,
+        )
+    )
+
     # Create workout
     workout_create = WorkoutCreate(
         name="Test Workout",
@@ -44,9 +64,6 @@ def sample_workout_with_sets(workout_service, set_service, exercise_service):
         bodyweight_unit=WeightUnit.LBS,
     )
     workout = workout_service.create_workout(workout_create)
-
-    # Get bench press exercise
-    bench_press = exercise_service.get_by_name("Bench Press (Barbell)")
 
     # Add sets
     for _ in range(3):
@@ -195,7 +212,7 @@ class TestStatsResourceHandler:
         resources = handler.list_resources()
 
         assert len(resources) > 0
-        assert any("stats/summary" in r.uri for r in resources)
+        assert any("stats/summary" in str(r.uri) for r in resources)
 
     def test_get_weekly_stats(self, db, sample_workout_with_sets):
         """Test getting weekly statistics."""

@@ -457,11 +457,11 @@ class PRService:
         Returns:
             True if deleted, False if not found
         """
-        query = "DELETE FROM personal_records WHERE id = ?"
+        query = "DELETE FROM personal_records WHERE id = ? RETURNING id"
 
         with self.db.get_connection() as conn:
-            cursor = conn.execute(query, (pr_id,))
-            return cursor.rowcount > 0
+            result = conn.execute(query, (pr_id,)).fetchone()
+            return result is not None
 
     def get_pr_history(self, exercise_id: int, record_type: RecordType) -> list[PersonalRecord]:
         """

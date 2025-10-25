@@ -125,7 +125,7 @@ class ExerciseResourceHandler(ResourceHandler):
         """Get complete exercise library."""
         exercises = self.exercise_service.get_all()
         return {
-            "total_exercises": len(exercises),
+            "count": len(exercises),
             "exercises": [
                 {
                     "id": ex.id,

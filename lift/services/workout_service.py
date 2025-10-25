@@ -165,15 +165,19 @@ class WorkoutService:
             return existing
 
         params.append(id)
+        # Note: DuckDB has issues with RETURNING clause when foreign keys reference the row
+        # Use separate UPDATE and SELECT instead
         query = f"""
             UPDATE workouts
             SET {", ".join(update_fields)}
             WHERE id = ?
-            RETURNING *
         """
 
         with self.db.get_connection() as conn:
-            result = conn.execute(query, tuple(params)).fetchone()
+            conn.execute(query, tuple(params))
+
+            # Fetch the updated workout
+            result = conn.execute("SELECT * FROM workouts WHERE id = ?", (id,)).fetchone()
 
             if not result:
                 raise ValueError(f"Workout {id} not found")
