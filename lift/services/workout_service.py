@@ -190,11 +190,12 @@ class WorkoutService:
         Returns:
             True if deleted, False if not found
         """
-        query = "DELETE FROM workouts WHERE id = ?"
-
         with self.db.get_connection() as conn:
-            result = conn.execute(query, (id,))
-            # DuckDB returns the number of affected rows
+            # Delete related records first (DuckDB doesn't support CASCADE)
+            conn.execute("DELETE FROM personal_records WHERE workout_id = ?", (id,))
+            conn.execute("DELETE FROM sets WHERE workout_id = ?", (id,))
+            # Now delete the workout
+            conn.execute("DELETE FROM workouts WHERE id = ?", (id,))
             return True
 
     def finish_workout(self, id: int, duration_minutes: int) -> Workout:

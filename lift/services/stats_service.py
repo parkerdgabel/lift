@@ -98,7 +98,7 @@ class StatsService:
             - avg_rpe: Average RPE for week
             - avg_duration: Average duration
         """
-        query = """
+        query = f"""
             SELECT
                 date_trunc('week', w.date) as week_start,
                 COUNT(DISTINCT w.id) as workouts,
@@ -108,14 +108,14 @@ class StatsService:
                 COALESCE(AVG(w.duration_minutes), 0) as avg_duration
             FROM workouts w
             LEFT JOIN sets s ON w.id = s.workout_id
-            WHERE w.date >= CURRENT_TIMESTAMP - INTERVAL ? WEEK
+            WHERE w.date >= CURRENT_TIMESTAMP - INTERVAL '{weeks_back} WEEK'
                 AND s.set_type IN ('working', 'dropset', 'failure', 'amrap')
             GROUP BY date_trunc('week', w.date)
             ORDER BY week_start DESC
         """
 
         with self.db.get_connection() as conn:
-            results = conn.execute(query, (f"{weeks_back} weeks",)).fetchall()
+            results = conn.execute(query).fetchall()
 
         summaries = []
         for row in results:
@@ -144,7 +144,7 @@ class StatsService:
         Returns:
             List of monthly summaries
         """
-        query = """
+        query = f"""
             SELECT
                 date_trunc('month', w.date) as month_start,
                 COUNT(DISTINCT w.id) as workouts,
@@ -154,14 +154,14 @@ class StatsService:
                 COALESCE(AVG(w.duration_minutes), 0) as avg_duration
             FROM workouts w
             LEFT JOIN sets s ON w.id = s.workout_id
-            WHERE w.date >= CURRENT_TIMESTAMP - INTERVAL ? MONTH
+            WHERE w.date >= CURRENT_TIMESTAMP - INTERVAL '{months_back} MONTH'
                 AND s.set_type IN ('working', 'dropset', 'failure', 'amrap')
             GROUP BY date_trunc('month', w.date)
             ORDER BY month_start DESC
         """
 
         with self.db.get_connection() as conn:
-            results = conn.execute(query, (f"{months_back} months",)).fetchall()
+            results = conn.execute(query).fetchall()
 
         summaries = []
         for row in results:
@@ -228,20 +228,20 @@ class StatsService:
         Returns:
             List of dictionaries with week_start and workout_count
         """
-        query = """
+        query = f"""
             SELECT
                 date_trunc('week', date) as week_start,
                 COUNT(*) as workout_count,
                 SUM(duration_minutes) as total_minutes,
                 AVG(duration_minutes) as avg_duration
             FROM workouts
-            WHERE date >= CURRENT_TIMESTAMP - INTERVAL ? WEEK
+            WHERE date >= CURRENT_TIMESTAMP - INTERVAL '{weeks_back} WEEK'
             GROUP BY date_trunc('week', date)
             ORDER BY week_start DESC
         """
 
         with self.db.get_connection() as conn:
-            results = conn.execute(query, (f"{weeks_back} weeks",)).fetchall()
+            results = conn.execute(query).fetchall()
 
         return [
             {
@@ -367,21 +367,21 @@ class StatsService:
             - avg_volume_per_workout: Average volume per workout
             - workout_count: Number of workouts
         """
-        query = """
+        query = f"""
             SELECT
                 date_trunc('week', w.date) as week_start,
                 COALESCE(SUM(s.weight * s.reps), 0) as total_volume,
                 COUNT(DISTINCT w.id) as workout_count
             FROM workouts w
             LEFT JOIN sets s ON w.id = s.workout_id
-            WHERE w.date >= CURRENT_TIMESTAMP - INTERVAL ? WEEK
+            WHERE w.date >= CURRENT_TIMESTAMP - INTERVAL '{weeks_back} WEEK'
                 AND s.set_type IN ('working', 'dropset', 'failure', 'amrap')
             GROUP BY date_trunc('week', w.date)
             ORDER BY week_start DESC
         """
 
         with self.db.get_connection() as conn:
-            results = conn.execute(query, (f"{weeks_back} weeks",)).fetchall()
+            results = conn.execute(query).fetchall()
 
         trends = []
         for row in results:
@@ -410,21 +410,21 @@ class StatsService:
         Returns:
             Dictionary mapping muscle group to set count
         """
-        query = """
+        query = f"""
             SELECT
                 e.primary_muscle,
                 COUNT(s.id) as set_count
             FROM sets s
             JOIN exercises e ON s.exercise_id = e.id
             JOIN workouts w ON s.workout_id = w.id
-            WHERE w.date >= CURRENT_TIMESTAMP - INTERVAL ? WEEK
+            WHERE w.date >= CURRENT_TIMESTAMP - INTERVAL '{weeks_back} WEEK'
                 AND s.set_type IN ('working', 'dropset', 'failure', 'amrap')
             GROUP BY e.primary_muscle
             ORDER BY set_count DESC
         """
 
         with self.db.get_connection() as conn:
-            results = conn.execute(query, (f"{weeks_back} weeks",)).fetchall()
+            results = conn.execute(query).fetchall()
 
         return {row[0]: row[1] for row in results}
 
@@ -458,7 +458,7 @@ class StatsService:
         Returns:
             List of exercises with volume data
         """
-        query = """
+        query = f"""
             SELECT
                 e.name,
                 COALESCE(SUM(s.weight * s.reps), 0) as total_volume,
@@ -467,7 +467,7 @@ class StatsService:
             FROM sets s
             JOIN exercises e ON s.exercise_id = e.id
             JOIN workouts w ON s.workout_id = w.id
-            WHERE w.date >= CURRENT_TIMESTAMP - INTERVAL ? WEEK
+            WHERE w.date >= CURRENT_TIMESTAMP - INTERVAL '{weeks_back} WEEK'
                 AND s.set_type IN ('working', 'dropset', 'failure', 'amrap')
             GROUP BY e.name
             ORDER BY total_volume DESC
@@ -475,7 +475,7 @@ class StatsService:
         """
 
         with self.db.get_connection() as conn:
-            results = conn.execute(query, (f"{weeks_back} weeks", limit)).fetchall()
+            results = conn.execute(query, (limit,)).fetchall()
 
         return [
             {

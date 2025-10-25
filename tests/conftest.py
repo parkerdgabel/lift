@@ -134,6 +134,14 @@ def exercise_data() -> list[dict]:
 
 
 @pytest.fixture()
+def db_with_seed_exercises(db: DatabaseManager) -> DatabaseManager:
+    """Database with all seed exercises loaded. Use sparingly as it's slow."""
+    exercise_service = ExerciseService(db)
+    exercise_service.load_seed_exercises()
+    return db
+
+
+@pytest.fixture()
 def loaded_exercises(db: DatabaseManager, exercise_data: list[dict]) -> dict[str, int]:
     """Database with exercises pre-loaded. Returns dict of exercise_name -> exercise_id."""
     exercise_service = ExerciseService(db)

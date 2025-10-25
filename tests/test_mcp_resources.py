@@ -17,21 +17,21 @@ from lift.services.workout_service import WorkoutService
 
 
 @pytest.fixture()
-def workout_service(db):
+def workout_service(db_with_seed_exercises):
     """Create workout service instance."""
-    return WorkoutService(db)
+    return WorkoutService(db_with_seed_exercises)
 
 
 @pytest.fixture()
-def set_service(db):
+def set_service(db_with_seed_exercises):
     """Create set service instance."""
-    return SetService(db)
+    return SetService(db_with_seed_exercises)
 
 
 @pytest.fixture()
-def exercise_service(db):
+def exercise_service(db_with_seed_exercises):
     """Create exercise service instance."""
-    return ExerciseService(db)
+    return ExerciseService(db_with_seed_exercises)
 
 
 @pytest.fixture()
@@ -75,9 +75,9 @@ class TestWorkoutResourceHandler:
         assert not handler.can_handle("lift://exercises/library")
         assert not handler.can_handle("lift://stats/summary")
 
-    def test_list_resources(self, db):
+    def test_list_resources(self, db_with_seed_exercises):
         """Test listing workout resources."""
-        handler = WorkoutResourceHandler(db)
+        handler = WorkoutResourceHandler(db_with_seed_exercises)
         resources = handler.list_resources()
 
         assert len(resources) > 0
@@ -143,17 +143,17 @@ class TestExerciseResourceHandler:
         assert not handler.can_handle("lift://workouts/recent")
         assert not handler.can_handle("lift://stats/summary")
 
-    def test_list_resources(self, db):
+    def test_list_resources(self, db_with_seed_exercises):
         """Test listing exercise resources."""
-        handler = ExerciseResourceHandler(db)
+        handler = ExerciseResourceHandler(db_with_seed_exercises)
         resources = handler.list_resources()
 
         assert len(resources) > 0
         assert any(r.uri == "lift://exercises/library" for r in resources)
 
-    def test_get_exercise_library(self, db):
+    def test_get_exercise_library(self, db_with_seed_exercises):
         """Test getting complete exercise library."""
-        handler = ExerciseResourceHandler(db)
+        handler = ExerciseResourceHandler(db_with_seed_exercises)
         result = handler.get_resource("lift://exercises/library")
 
         assert "exercises" in result
@@ -189,9 +189,9 @@ class TestStatsResourceHandler:
         assert not handler.can_handle("lift://workouts/recent")
         assert not handler.can_handle("lift://exercises/library")
 
-    def test_list_resources(self, db):
+    def test_list_resources(self, db_with_seed_exercises):
         """Test listing stats resources."""
-        handler = StatsResourceHandler(db)
+        handler = StatsResourceHandler(db_with_seed_exercises)
         resources = handler.list_resources()
 
         assert len(resources) > 0

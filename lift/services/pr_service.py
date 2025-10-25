@@ -415,7 +415,7 @@ class PRService:
         Returns:
             List of recent PRs with exercise info
         """
-        query = """
+        query = f"""
             SELECT
                 e.name as exercise_name,
                 pr.record_type,
@@ -426,13 +426,13 @@ class PRService:
                 pr.weight_unit
             FROM personal_records pr
             JOIN exercises e ON pr.exercise_id = e.id
-            WHERE pr.date >= CURRENT_TIMESTAMP - INTERVAL ? DAY
+            WHERE pr.date >= CURRENT_TIMESTAMP - INTERVAL '{days} DAY'
             ORDER BY pr.date DESC
             LIMIT ?
         """
 
         with self.db.get_connection() as conn:
-            results = conn.execute(query, (f"{days} days", limit)).fetchall()
+            results = conn.execute(query, (limit,)).fetchall()
 
         return [
             {

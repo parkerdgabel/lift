@@ -59,9 +59,9 @@ class TestSearchExercisesTool:
         assert "equipment" in schema["properties"]
         assert "limit" in schema["properties"]
 
-    def test_search_by_query(self, db):
+    def test_search_by_query(self, db_with_seed_exercises):
         """Test searching exercises by query."""
-        tool = SearchExercisesTool(db)
+        tool = SearchExercisesTool(db_with_seed_exercises)
         result = tool.execute({"query": "bench"})
 
         assert result["success"] is True
@@ -74,9 +74,9 @@ class TestSearchExercisesTool:
         assert "name" in exercise
         assert "bench" in exercise["name"].lower()
 
-    def test_search_by_muscle(self, db):
+    def test_search_by_muscle(self, db_with_seed_exercises):
         """Test searching exercises by muscle."""
-        tool = SearchExercisesTool(db)
+        tool = SearchExercisesTool(db_with_seed_exercises)
         result = tool.execute({"muscle": "Chest"})
 
         assert result["success"] is True
@@ -86,9 +86,9 @@ class TestSearchExercisesTool:
         for exercise in result["data"]["exercises"]:
             assert exercise["primary_muscle"] == "Chest"
 
-    def test_search_by_category(self, db):
+    def test_search_by_category(self, db_with_seed_exercises):
         """Test searching exercises by category."""
-        tool = SearchExercisesTool(db)
+        tool = SearchExercisesTool(db_with_seed_exercises)
         result = tool.execute({"category": "Push"})
 
         assert result["success"] is True
@@ -97,9 +97,9 @@ class TestSearchExercisesTool:
         for exercise in result["data"]["exercises"]:
             assert exercise["category"] == "Push"
 
-    def test_search_by_equipment(self, db):
+    def test_search_by_equipment(self, db_with_seed_exercises):
         """Test searching exercises by equipment."""
-        tool = SearchExercisesTool(db)
+        tool = SearchExercisesTool(db_with_seed_exercises)
         result = tool.execute({"equipment": "Barbell"})
 
         assert result["success"] is True
@@ -148,9 +148,9 @@ class TestGetExerciseInfoTool:
         assert "properties" in schema
         assert "exercise_name" in schema["properties"]
 
-    def test_get_existing_exercise(self, db):
+    def test_get_existing_exercise(self, db_with_seed_exercises):
         """Test getting info for existing exercise."""
-        tool = GetExerciseInfoTool(db)
+        tool = GetExerciseInfoTool(db_with_seed_exercises)
         result = tool.execute({"exercise_name": "Bench Press (Barbell)"})
 
         assert result["success"] is True
