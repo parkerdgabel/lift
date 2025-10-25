@@ -1,0 +1,3 @@
+lift/data/exercises.json usr/share/lift/data/
+lift/data/programs.json usr/share/lift/data/
+lift/core/schema.sql usr/share/lift/core/

@@ -1,0 +1,12 @@
+lift (0.1.0-1) unstable; urgency=medium
+
+  * Initial release
+  * Complete exercise library with 137 pre-loaded exercises
+  * Interactive workout tracking system
+  * Training program management
+  * Analytics and statistics with PR detection
+  * Body measurement tracking
+  * Data import/export capabilities
+  * Cross-platform support
+
+ -- Parker Gabel <parkerdgabel@gmail.com>  Sun, 26 Jan 2025 12:00:00 -0000

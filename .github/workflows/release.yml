@@ -9,9 +9,11 @@ permissions:
   contents: write
 
 jobs:
-  build:
-    name: Build & Test
+  build-python:
+    name: Build Python Package
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.extract_version.outputs.version }}
     steps:
       - uses: actions/checkout@v4
 
@@ -20,55 +22,166 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Extract version
+        id: extract_version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
 
       - name: Run tests
-        run: pytest
+        run: pytest --tb=short -q
 
       - name: Build package
         run: |
           pip install build
           python -m build
 
-      - name: Upload build artifacts
+      - name: Calculate checksums
+        id: checksums
+        run: |
+          cd dist
+          TARBALL=$(ls *.tar.gz)
+          WHEEL=$(ls *.whl)
+          TARBALL_SHA256=$(sha256sum $TARBALL | awk '{print $1}')
+          WHEEL_SHA256=$(sha256sum $WHEEL | awk '{print $1}')
+          echo "tarball=$TARBALL" >> $GITHUB_OUTPUT
+          echo "tarball_sha256=$TARBALL_SHA256" >> $GITHUB_OUTPUT
+          echo "wheel=$WHEEL" >> $GITHUB_OUTPUT
+          echo "wheel_sha256=$WHEEL_SHA256" >> $GITHUB_OUTPUT
+
+      - name: Upload Python artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: dist
+          name: python-dist
           path: dist/
 
-  release:
-    name: Create GitHub Release
-    needs: build
+      - name: Save checksums
+        run: |
+          echo "${{ steps.checksums.outputs.tarball_sha256 }}" > tarball.sha256
+          echo "${{ steps.checksums.outputs.wheel_sha256 }}" > wheel.sha256
+
+      - name: Upload checksums
+        uses: actions/upload-artifact@v4
+        with:
+          name: checksums
+          path: |
+            tarball.sha256
+            wheel.sha256
+
+  build-homebrew:
+    name: Build Homebrew Formula
+    needs: build-python
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download checksums
+        uses: actions/download-artifact@v4
+        with:
+          name: checksums
+
+      - name: Create Homebrew formula
+        run: |
+          VERSION=${{ needs.build-python.outputs.version }}
+          TARBALL_SHA256=$(cat tarball.sha256)
+
+          cat > lift.rb <<EOF
+          class Lift < Formula
+            include Language::Python::Virtualenv
+
+            desc "Bodybuilding workout tracker CLI"
+            homepage "https://github.com/parkerdgabel/lift"
+            url "https://github.com/parkerdgabel/lift/archive/refs/tags/v${VERSION}.tar.gz"
+            sha256 "${TARBALL_SHA256}"
+            license "MIT"
+
+            depends_on "python@3.11"
+
+            def install
+              virtualenv_install_with_resources
+            end
+
+            test do
+              system "#{bin}/lift", "version"
+            end
+          end
+          EOF
+
+      - name: Upload Homebrew formula
+        uses: actions/upload-artifact@v4
+        with:
+          name: homebrew-formula
+          path: lift.rb
+
+  build-debian:
+    name: Build Debian Package
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: dist/
-
-      - name: Extract release notes
-        id: extract_notes
+      - name: Install build dependencies
         run: |
-          VERSION=${GITHUB_REF#refs/tags/v}
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          sudo apt-get update
+          sudo apt-get install -y debhelper dh-python python3-all python3-setuptools python3-pip devscripts
+
+      - name: Build Debian package
+        run: |
+          # Build the package
+          dpkg-buildpackage -us -uc -b
+
+          # Move .deb to dist directory
+          mkdir -p dist-deb
+          mv ../*.deb dist-deb/ || true
+          mv ../*.buildinfo dist-deb/ || true
+          mv ../*.changes dist-deb/ || true
+
+      - name: Upload Debian artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: debian-package
+          path: dist-deb/
+
+  release:
+    name: Create GitHub Release
+    needs: [build-python, build-homebrew, build-debian]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Organize release assets
+        run: |
+          mkdir -p release-assets
+          cp python-dist/* release-assets/ || true
+          cp debian-package/*.deb release-assets/ || true
+          cp homebrew-formula/lift.rb release-assets/ || true
+
+      - name: Extract changelog for this version
+        id: changelog
+        run: |
+          VERSION=${{ needs.build-python.outputs.version }}
+          # Extract the section for this version from CHANGELOG.md
+          awk "/## \[${VERSION}\]/,/## \[/" CHANGELOG.md | sed '$d' > release-notes.md
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          files: dist/*
-          generate_release_notes: true
+          files: release-assets/*
+          body_path: release-notes.md
           draft: false
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  publish:
+  publish-pypi:
     name: Publish to PyPI
     needs: release
     runs-on: ubuntu-latest
@@ -78,11 +191,37 @@ jobs:
     permissions:
       id-token: write
     steps:
-      - name: Download build artifacts
+      - name: Download Python artifacts
         uses: actions/download-artifact@v4
         with:
-          name: dist
+          name: python-dist
           path: dist/
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
+
+  update-homebrew-tap:
+    name: Update Homebrew Tap (Optional)
+    needs: [release, build-homebrew]
+    runs-on: ubuntu-latest
+    if: false  # Enable this when you create a homebrew-lift tap repository
+    steps:
+      - name: Checkout tap repository
+        uses: actions/checkout@v4
+        with:
+          repository: parkerdgabel/homebrew-lift
+          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+
+      - name: Download Homebrew formula
+        uses: actions/download-artifact@v4
+        with:
+          name: homebrew-formula
+
+      - name: Update formula in tap
+        run: |
+          cp lift.rb Formula/lift.rb
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add Formula/lift.rb
+          git commit -m "Update lift to v${{ needs.build-python.outputs.version }}"
+          git push

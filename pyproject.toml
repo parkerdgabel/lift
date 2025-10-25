@@ -2,10 +2,29 @@
 name = "lift"
 version = "0.1.0"
 description = "A robust feature-complete CLI for tracking weightlifting sessions with a focus on bodybuilding"
-authors = [{name = "Parker Gabel"}]
+authors = [{name = "Parker Gabel", email = "parkerdgabel@gmail.com"}]
 requires-python = ">=3.11"
 readme = "README.md"
 license = {text = "MIT"}
+keywords = ["fitness", "bodybuilding", "workout", "tracking", "weightlifting", "gym", "CLI"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Utilities",
+    "Typing :: Typed",
+]
+
+[project.urls]
+Homepage = "https://github.com/parkerdgabel/lift"
+Repository = "https://github.com/parkerdgabel/lift"
+Issues = "https://github.com/parkerdgabel/lift/issues"
+Changelog = "https://github.com/parkerdgabel/lift/blob/main/CHANGELOG.md"
 
 dependencies = [
     "typer[all]>=0.12.0",
@@ -32,6 +51,14 @@ lift = "lift.main:app"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["lift"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"lift/data/exercises.json" = "lift/data/exercises.json"
+"lift/data/programs.json" = "lift/data/programs.json"
+"lift/core/schema.sql" = "lift/core/schema.sql"
 
 [tool.ruff]
 line-length = 100

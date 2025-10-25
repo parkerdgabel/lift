@@ -1,0 +1,36 @@
+Source: lift
+Section: utils
+Priority: optional
+Maintainer: Parker Gabel <parkerdgabel@gmail.com>
+Build-Depends: debhelper-compat (= 13),
+               dh-python,
+               python3-all,
+               python3-setuptools,
+               python3-pip,
+               python3-hatchling
+Standards-Version: 4.6.0
+Homepage: https://github.com/parkerdgabel/lift
+Vcs-Browser: https://github.com/parkerdgabel/lift
+Vcs-Git: https://github.com/parkerdgabel/lift.git
+
+Package: lift
+Architecture: all
+Depends: ${python3:Depends},
+         ${misc:Depends},
+         python3 (>= 3.11),
+         python3-typer (>= 0.12.0),
+         python3-rich (>= 13.7.0),
+         python3-pydantic (>= 2.8.0),
+         python3-dateutil (>= 2.9.0)
+Description: Bodybuilding workout tracker CLI
+ LIFT is a robust, feature-complete command-line interface for tracking
+ weightlifting sessions with a focus on bodybuilding and progressive overload.
+ .
+ Features include:
+  * 137 pre-loaded exercises covering all major muscle groups
+  * Interactive workout sessions with real-time set logging
+  * Training program management with pre-loaded sample programs
+  * Comprehensive analytics and PR detection
+  * Body tracking and measurement history
+  * Data export/import capabilities
+  * Terminal-based charts and visualizations

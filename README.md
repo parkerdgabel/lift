@@ -61,13 +61,41 @@ A robust, feature-complete command-line interface for tracking weightlifting ses
 
 ### Requirements
 - Python 3.11 or higher
-- pip
+
+### Install from PyPI (Recommended)
+
+```bash
+pip install lift
+```
+
+### Install with Homebrew (macOS/Linux)
+
+```bash
+# Download the formula
+curl -O https://github.com/parkerdgabel/lift/releases/latest/download/lift.rb
+
+# Install
+brew install ./lift.rb
+```
+
+### Install on Debian/Ubuntu
+
+```bash
+# Download the .deb package
+wget https://github.com/parkerdgabel/lift/releases/latest/download/lift_0.1.0-1_all.deb
+
+# Install
+sudo dpkg -i lift_0.1.0-1_all.deb
+
+# Install dependencies if needed
+sudo apt-get install -f
+```
 
 ### Install from source
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/lift.git
+git clone https://github.com/parkerdgabel/lift.git
 cd lift
 
 # Install with pip
