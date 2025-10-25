@@ -1,0 +1,855 @@
+{
+  "programs": [
+    {
+      "name": "PPL 6-Day",
+      "description": "Push/Pull/Legs split repeated twice per week. Great for building muscle with high frequency training.",
+      "split_type": "PPL",
+      "days_per_week": 6,
+      "duration_weeks": 12,
+      "workouts": [
+        {
+          "name": "Push A (Chest Focus)",
+          "day_number": 1,
+          "description": "Heavy chest work with shoulder and tricep accessories",
+          "estimated_duration_minutes": 75,
+          "exercises": [
+            {
+              "exercise_name": "Barbell Bench Press",
+              "order_number": 1,
+              "target_sets": 4,
+              "target_reps_min": 6,
+              "target_reps_max": 8,
+              "target_rpe": 8.5,
+              "rest_seconds": 180
+            },
+            {
+              "exercise_name": "Incline Dumbbell Press",
+              "order_number": 2,
+              "target_sets": 3,
+              "target_reps_min": 8,
+              "target_reps_max": 10,
+              "target_rpe": 8.0,
+              "rest_seconds": 120
+            },
+            {
+              "exercise_name": "Cable Fly",
+              "order_number": 3,
+              "target_sets": 3,
+              "target_reps_min": 12,
+              "target_reps_max": 15,
+              "target_rpe": 8.0,
+              "rest_seconds": 90
+            },
+            {
+              "exercise_name": "Overhead Press",
+              "order_number": 4,
+              "target_sets": 4,
+              "target_reps_min": 8,
+              "target_reps_max": 10,
+              "target_rpe": 8.5,
+              "rest_seconds": 120
+            },
+            {
+              "exercise_name": "Lateral Raise",
+              "order_number": 5,
+              "target_sets": 3,
+              "target_reps_min": 12,
+              "target_reps_max": 15,
+              "target_rpe": 8.0,
+              "rest_seconds": 60
+            },
+            {
+              "exercise_name": "Tricep Pushdown",
+              "order_number": 6,
+              "target_sets": 3,
+              "target_reps_min": 12,
+              "target_reps_max": 15,
+              "target_rpe": 8.0,
+              "rest_seconds": 60
+            }
+          ]
+        },
+        {
+          "name": "Pull A (Back Focus)",
+          "day_number": 2,
+          "description": "Heavy back work with bicep accessories",
+          "estimated_duration_minutes": 75,
+          "exercises": [
+            {
+              "exercise_name": "Deadlift",
+              "order_number": 1,
+              "target_sets": 4,
+              "target_reps_min": 5,
+              "target_reps_max": 6,
+              "target_rpe": 8.5,
+              "rest_seconds": 240
+            },
+            {
+              "exercise_name": "Pull-Up",
+              "order_number": 2,
+              "target_sets": 4,
+              "target_reps_min": 8,
+              "target_reps_max": 10,
+              "target_rpe": 8.0,
+              "rest_seconds": 120
+            },
+            {
+              "exercise_name": "Barbell Row",
+              "order_number": 3,
+              "target_sets": 3,
+              "target_reps_min": 8,
+              "target_reps_max": 10,
+              "target_rpe": 8.0,
+              "rest_seconds": 120
+            },
+            {
+              "exercise_name": "Seated Cable Row",
+              "order_number": 4,
+              "target_sets": 3,
+              "target_reps_min": 10,
+              "target_reps_max": 12,
+              "target_rpe": 8.0,
+              "rest_seconds": 90
+            },
+            {
+              "exercise_name": "Face Pull",
+              "order_number": 5,
+              "target_sets": 3,
+              "target_reps_min": 15,
+              "target_reps_max": 20,
+              "target_rpe": 7.5,
+              "rest_seconds": 60
+            },
+            {
+              "exercise_name": "Barbell Curl",
+              "order_number": 6,
+              "target_sets": 3,
+              "target_reps_min": 10,
+              "target_reps_max": 12,
+              "target_rpe": 8.0,
+              "rest_seconds": 60
+            },
+            {
+              "exercise_name": "Hammer Curl",
+              "order_number": 7,
+              "target_sets": 3,
+              "target_reps_min": 12,
+              "target_reps_max": 15,
+              "target_rpe": 8.0,
+              "rest_seconds": 60
+            }
+          ]
+        },
+        {
+          "name": "Legs A (Quad Focus)",
+          "day_number": 3,
+          "description": "Heavy squats with quad-focused accessories",
+          "estimated_duration_minutes": 80,
+          "exercises": [
+            {
+              "exercise_name": "Barbell Squat",
+              "order_number": 1,
+              "target_sets": 4,
+              "target_reps_min": 6,
+              "target_reps_max": 8,
+              "target_rpe": 8.5,
+              "rest_seconds": 240
+            },
+            {
+              "exercise_name": "Front Squat",
+              "order_number": 2,
+              "target_sets": 3,
+              "target_reps_min": 8,
+              "target_reps_max": 10,
+              "target_rpe": 8.0,
+              "rest_seconds": 180
+            },
+            {
+              "exercise_name": "Leg Press",
+              "order_number": 3,
+              "target_sets": 3,
+              "target_reps_min": 10,
+              "target_reps_max": 12,
+              "target_rpe": 8.0,
+              "rest_seconds": 120
+            },
+            {
+              "exercise_name": "Leg Extension",
+              "order_number": 4,
+              "target_sets": 3,
+              "target_reps_min": 12,
+              "target_reps_max": 15,
+              "target_rpe": 8.0,
+              "rest_seconds": 60
+            },
+            {
+              "exercise_name": "Lying Leg Curl",
+              "order_number": 5,
+              "target_sets": 3,
+              "target_reps_min": 12,
+              "target_reps_max": 15,
+              "target_rpe": 8.0,
+              "rest_seconds": 60
+            },
+            {
+              "exercise_name": "Standing Calf Raise",
+              "order_number": 6,
+              "target_sets": 4,
+              "target_reps_min": 15,
+              "target_reps_max": 20,
+              "target_rpe": 8.0,
+              "rest_seconds": 60
+            }
+          ]
+        },
+        {
+          "name": "Push B (Shoulder Focus)",
+          "day_number": 4,
+          "description": "Heavy shoulders with chest and tricep accessories",
+          "estimated_duration_minutes": 75,
+          "exercises": [
+            {
+              "exercise_name": "Overhead Press",
+              "order_number": 1,
+              "target_sets": 4,
+              "target_reps_min": 6,
+              "target_reps_max": 8,
+              "target_rpe": 8.5,
+              "rest_seconds": 180
+            },
+            {
+              "exercise_name": "Incline Barbell Press",
+              "order_number": 2,
+              "target_sets": 4,
+              "target_reps_min": 8,
+              "target_reps_max": 10,
+              "target_rpe": 8.0,
+              "rest_seconds": 120
+            },
+            {
+              "exercise_name": "Dumbbell Fly",
+              "order_number": 3,
+              "target_sets": 3,
+              "target_reps_min": 10,
+              "target_reps_max": 12,
+              "target_rpe": 8.0,
+              "rest_seconds": 90
+            },
+            {
+              "exercise_name": "Lateral Raise",
+              "order_number": 4,
+              "target_sets": 4,
+              "target_reps_min": 12,
+              "target_reps_max": 15,
+              "target_rpe": 8.0,
+              "rest_seconds": 60
+            },
+            {
+              "exercise_name": "Face Pull",
+              "order_number": 5,
+              "target_sets": 3,
+              "target_reps_min": 15,
+              "target_reps_max": 20,
+              "target_rpe": 7.5,
+              "rest_seconds": 60
+            },
+            {
+              "exercise_name": "Overhead Tricep Extension",
+              "order_number": 6,
+              "target_sets": 3,
+              "target_reps_min": 12,
+              "target_reps_max": 15,
+              "target_rpe": 8.0,
+              "rest_seconds": 60
+            }
+          ]
+        },
+        {
+          "name": "Pull B (Vertical Pull Focus)",
+          "day_number": 5,
+          "description": "Focus on vertical pulling with back width",
+          "estimated_duration_minutes": 75,
+          "exercises": [
+            {
+              "exercise_name": "Pull-Up",
+              "order_number": 1,
+              "target_sets": 4,
+              "target_reps_min": 6,
+              "target_reps_max": 8,
+              "target_rpe": 8.5,
+              "rest_seconds": 180
+            },
+            {
+              "exercise_name": "Lat Pulldown",
+              "order_number": 2,
+              "target_sets": 3,
+              "target_reps_min": 10,
+              "target_reps_max": 12,
+              "target_rpe": 8.0,
+              "rest_seconds": 90
+            },
+            {
+              "exercise_name": "Dumbbell Row",
+              "order_number": 3,
+              "target_sets": 4,
+              "target_reps_min": 8,
+              "target_reps_max": 10,
+              "target_rpe": 8.0,
+              "rest_seconds": 90
+            },
+            {
+              "exercise_name": "Chest Supported Row",
+              "order_number": 4,
+              "target_sets": 3,
+              "target_reps_min": 10,
+              "target_reps_max": 12,
+              "target_rpe": 8.0,
+              "rest_seconds": 90
+            },
+            {
+              "exercise_name": "Shrug",
+              "order_number": 5,
+              "target_sets": 3,
+              "target_reps_min": 12,
+              "target_reps_max": 15,
+              "target_rpe": 8.0,
+              "rest_seconds": 60
+            },
+            {
+              "exercise_name": "Preacher Curl",
+              "order_number": 6,
+              "target_sets": 3,
+              "target_reps_min": 10,
+              "target_reps_max": 12,
+              "target_rpe": 8.0,
+              "rest_seconds": 60
+            }
+          ]
+        },
+        {
+          "name": "Legs B (Hamstring Focus)",
+          "day_number": 6,
+          "description": "Heavy deadlifts with hamstring accessories",
+          "estimated_duration_minutes": 80,
+          "exercises": [
+            {
+              "exercise_name": "Romanian Deadlift",
+              "order_number": 1,
+              "target_sets": 4,
+              "target_reps_min": 8,
+              "target_reps_max": 10,
+              "target_rpe": 8.5,
+              "rest_seconds": 180
+            },
+            {
+              "exercise_name": "Leg Press",
+              "order_number": 2,
+              "target_sets": 3,
+              "target_reps_min": 12,
+              "target_reps_max": 15,
+              "target_rpe": 8.0,
+              "rest_seconds": 120
+            },
+            {
+              "exercise_name": "Walking Lunge",
+              "order_number": 3,
+              "target_sets": 3,
+              "target_reps_min": 10,
+              "target_reps_max": 12,
+              "target_rpe": 8.0,
+              "rest_seconds": 90
+            },
+            {
+              "exercise_name": "Lying Leg Curl",
+              "order_number": 4,
+              "target_sets": 4,
+              "target_reps_min": 10,
+              "target_reps_max": 12,
+              "target_rpe": 8.0,
+              "rest_seconds": 60
+            },
+            {
+              "exercise_name": "Leg Extension",
+              "order_number": 5,
+              "target_sets": 3,
+              "target_reps_min": 15,
+              "target_reps_max": 20,
+              "target_rpe": 8.0,
+              "rest_seconds": 60
+            },
+            {
+              "exercise_name": "Seated Calf Raise",
+              "order_number": 6,
+              "target_sets": 4,
+              "target_reps_min": 15,
+              "target_reps_max": 20,
+              "target_rpe": 8.0,
+              "rest_seconds": 60
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Upper Lower 4-Day",
+      "description": "Classic upper/lower split. Perfect balance of frequency and recovery for intermediate lifters.",
+      "split_type": "Upper/Lower",
+      "days_per_week": 4,
+      "duration_weeks": 12,
+      "workouts": [
+        {
+          "name": "Upper A (Heavy)",
+          "day_number": 1,
+          "description": "Heavy compound movements for upper body",
+          "estimated_duration_minutes": 75,
+          "exercises": [
+            {
+              "exercise_name": "Barbell Bench Press",
+              "order_number": 1,
+              "target_sets": 4,
+              "target_reps_min": 5,
+              "target_reps_max": 6,
+              "target_rpe": 9.0,
+              "rest_seconds": 240
+            },
+            {
+              "exercise_name": "Barbell Row",
+              "order_number": 2,
+              "target_sets": 4,
+              "target_reps_min": 5,
+              "target_reps_max": 6,
+              "target_rpe": 9.0,
+              "rest_seconds": 240
+            },
+            {
+              "exercise_name": "Overhead Press",
+              "order_number": 3,
+              "target_sets": 3,
+              "target_reps_min": 6,
+              "target_reps_max": 8,
+              "target_rpe": 8.5,
+              "rest_seconds": 180
+            },
+            {
+              "exercise_name": "Pull-Up",
+              "order_number": 4,
+              "target_sets": 3,
+              "target_reps_min": 6,
+              "target_reps_max": 8,
+              "target_rpe": 8.5,
+              "rest_seconds": 120
+            },
+            {
+              "exercise_name": "Barbell Curl",
+              "order_number": 5,
+              "target_sets": 3,
+              "target_reps_min": 8,
+              "target_reps_max": 10,
+              "target_rpe": 8.0,
+              "rest_seconds": 60
+            },
+            {
+              "exercise_name": "Tricep Pushdown",
+              "order_number": 6,
+              "target_sets": 3,
+              "target_reps_min": 8,
+              "target_reps_max": 10,
+              "target_rpe": 8.0,
+              "rest_seconds": 60
+            }
+          ]
+        },
+        {
+          "name": "Lower A (Heavy)",
+          "day_number": 2,
+          "description": "Heavy compound movements for lower body",
+          "estimated_duration_minutes": 80,
+          "exercises": [
+            {
+              "exercise_name": "Barbell Squat",
+              "order_number": 1,
+              "target_sets": 4,
+              "target_reps_min": 5,
+              "target_reps_max": 6,
+              "target_rpe": 9.0,
+              "rest_seconds": 300
+            },
+            {
+              "exercise_name": "Romanian Deadlift",
+              "order_number": 2,
+              "target_sets": 3,
+              "target_reps_min": 8,
+              "target_reps_max": 10,
+              "target_rpe": 8.5,
+              "rest_seconds": 180
+            },
+            {
+              "exercise_name": "Leg Press",
+              "order_number": 3,
+              "target_sets": 3,
+              "target_reps_min": 10,
+              "target_reps_max": 12,
+              "target_rpe": 8.0,
+              "rest_seconds": 120
+            },
+            {
+              "exercise_name": "Lying Leg Curl",
+              "order_number": 4,
+              "target_sets": 3,
+              "target_reps_min": 10,
+              "target_reps_max": 12,
+              "target_rpe": 8.0,
+              "rest_seconds": 90
+            },
+            {
+              "exercise_name": "Standing Calf Raise",
+              "order_number": 5,
+              "target_sets": 4,
+              "target_reps_min": 12,
+              "target_reps_max": 15,
+              "target_rpe": 8.0,
+              "rest_seconds": 60
+            }
+          ]
+        },
+        {
+          "name": "Upper B (Hypertrophy)",
+          "day_number": 4,
+          "description": "Higher volume work for upper body",
+          "estimated_duration_minutes": 80,
+          "exercises": [
+            {
+              "exercise_name": "Incline Dumbbell Press",
+              "order_number": 1,
+              "target_sets": 4,
+              "target_reps_min": 8,
+              "target_reps_max": 10,
+              "target_rpe": 8.5,
+              "rest_seconds": 120
+            },
+            {
+              "exercise_name": "Lat Pulldown",
+              "order_number": 2,
+              "target_sets": 4,
+              "target_reps_min": 10,
+              "target_reps_max": 12,
+              "target_rpe": 8.0,
+              "rest_seconds": 90
+            },
+            {
+              "exercise_name": "Dumbbell Shoulder Press",
+              "order_number": 3,
+              "target_sets": 3,
+              "target_reps_min": 10,
+              "target_reps_max": 12,
+              "target_rpe": 8.0,
+              "rest_seconds": 90
+            },
+            {
+              "exercise_name": "Cable Row",
+              "order_number": 4,
+              "target_sets": 3,
+              "target_reps_min": 12,
+              "target_reps_max": 15,
+              "target_rpe": 8.0,
+              "rest_seconds": 90
+            },
+            {
+              "exercise_name": "Lateral Raise",
+              "order_number": 5,
+              "target_sets": 3,
+              "target_reps_min": 15,
+              "target_reps_max": 20,
+              "target_rpe": 8.0,
+              "rest_seconds": 60
+            },
+            {
+              "exercise_name": "Face Pull",
+              "order_number": 6,
+              "target_sets": 3,
+              "target_reps_min": 15,
+              "target_reps_max": 20,
+              "target_rpe": 7.5,
+              "rest_seconds": 60
+            },
+            {
+              "exercise_name": "Cable Curl",
+              "order_number": 7,
+              "target_sets": 3,
+              "target_reps_min": 12,
+              "target_reps_max": 15,
+              "target_rpe": 8.0,
+              "rest_seconds": 60
+            },
+            {
+              "exercise_name": "Overhead Tricep Extension",
+              "order_number": 8,
+              "target_sets": 3,
+              "target_reps_min": 12,
+              "target_reps_max": 15,
+              "target_rpe": 8.0,
+              "rest_seconds": 60
+            }
+          ]
+        },
+        {
+          "name": "Lower B (Hypertrophy)",
+          "day_number": 5,
+          "description": "Higher volume work for lower body",
+          "estimated_duration_minutes": 75,
+          "exercises": [
+            {
+              "exercise_name": "Front Squat",
+              "order_number": 1,
+              "target_sets": 4,
+              "target_reps_min": 8,
+              "target_reps_max": 10,
+              "target_rpe": 8.5,
+              "rest_seconds": 180
+            },
+            {
+              "exercise_name": "Deadlift",
+              "order_number": 2,
+              "target_sets": 3,
+              "target_reps_min": 6,
+              "target_reps_max": 8,
+              "target_rpe": 8.5,
+              "rest_seconds": 240
+            },
+            {
+              "exercise_name": "Bulgarian Split Squat",
+              "order_number": 3,
+              "target_sets": 3,
+              "target_reps_min": 10,
+              "target_reps_max": 12,
+              "target_rpe": 8.0,
+              "rest_seconds": 90
+            },
+            {
+              "exercise_name": "Leg Extension",
+              "order_number": 4,
+              "target_sets": 3,
+              "target_reps_min": 12,
+              "target_reps_max": 15,
+              "target_rpe": 8.0,
+              "rest_seconds": 60
+            },
+            {
+              "exercise_name": "Lying Leg Curl",
+              "order_number": 5,
+              "target_sets": 3,
+              "target_reps_min": 12,
+              "target_reps_max": 15,
+              "target_rpe": 8.0,
+              "rest_seconds": 60
+            },
+            {
+              "exercise_name": "Seated Calf Raise",
+              "order_number": 6,
+              "target_sets": 4,
+              "target_reps_min": 15,
+              "target_reps_max": 20,
+              "target_rpe": 8.0,
+              "rest_seconds": 60
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Full Body 3-Day",
+      "description": "Full body training three times per week. Ideal for beginners or those with limited training time.",
+      "split_type": "Full Body",
+      "days_per_week": 3,
+      "duration_weeks": 12,
+      "workouts": [
+        {
+          "name": "Full Body A",
+          "day_number": 1,
+          "description": "Push dominant full body day",
+          "estimated_duration_minutes": 70,
+          "exercises": [
+            {
+              "exercise_name": "Barbell Squat",
+              "order_number": 1,
+              "target_sets": 4,
+              "target_reps_min": 6,
+              "target_reps_max": 8,
+              "target_rpe": 8.5,
+              "rest_seconds": 240
+            },
+            {
+              "exercise_name": "Barbell Bench Press",
+              "order_number": 2,
+              "target_sets": 4,
+              "target_reps_min": 6,
+              "target_reps_max": 8,
+              "target_rpe": 8.5,
+              "rest_seconds": 180
+            },
+            {
+              "exercise_name": "Barbell Row",
+              "order_number": 3,
+              "target_sets": 3,
+              "target_reps_min": 8,
+              "target_reps_max": 10,
+              "target_rpe": 8.0,
+              "rest_seconds": 120
+            },
+            {
+              "exercise_name": "Overhead Press",
+              "order_number": 4,
+              "target_sets": 3,
+              "target_reps_min": 8,
+              "target_reps_max": 10,
+              "target_rpe": 8.0,
+              "rest_seconds": 120
+            },
+            {
+              "exercise_name": "Lying Leg Curl",
+              "order_number": 5,
+              "target_sets": 3,
+              "target_reps_min": 10,
+              "target_reps_max": 12,
+              "target_rpe": 8.0,
+              "rest_seconds": 60
+            },
+            {
+              "exercise_name": "Barbell Curl",
+              "order_number": 6,
+              "target_sets": 2,
+              "target_reps_min": 10,
+              "target_reps_max": 12,
+              "target_rpe": 8.0,
+              "rest_seconds": 60
+            }
+          ]
+        },
+        {
+          "name": "Full Body B",
+          "day_number": 3,
+          "description": "Pull dominant full body day",
+          "estimated_duration_minutes": 70,
+          "exercises": [
+            {
+              "exercise_name": "Deadlift",
+              "order_number": 1,
+              "target_sets": 4,
+              "target_reps_min": 5,
+              "target_reps_max": 6,
+              "target_rpe": 8.5,
+              "rest_seconds": 300
+            },
+            {
+              "exercise_name": "Pull-Up",
+              "order_number": 2,
+              "target_sets": 4,
+              "target_reps_min": 6,
+              "target_reps_max": 8,
+              "target_rpe": 8.5,
+              "rest_seconds": 120
+            },
+            {
+              "exercise_name": "Incline Dumbbell Press",
+              "order_number": 3,
+              "target_sets": 3,
+              "target_reps_min": 8,
+              "target_reps_max": 10,
+              "target_rpe": 8.0,
+              "rest_seconds": 120
+            },
+            {
+              "exercise_name": "Leg Press",
+              "order_number": 4,
+              "target_sets": 3,
+              "target_reps_min": 10,
+              "target_reps_max": 12,
+              "target_rpe": 8.0,
+              "rest_seconds": 120
+            },
+            {
+              "exercise_name": "Lateral Raise",
+              "order_number": 5,
+              "target_sets": 3,
+              "target_reps_min": 12,
+              "target_reps_max": 15,
+              "target_rpe": 8.0,
+              "rest_seconds": 60
+            },
+            {
+              "exercise_name": "Tricep Pushdown",
+              "order_number": 6,
+              "target_sets": 2,
+              "target_reps_min": 12,
+              "target_reps_max": 15,
+              "target_rpe": 8.0,
+              "rest_seconds": 60
+            }
+          ]
+        },
+        {
+          "name": "Full Body C",
+          "day_number": 5,
+          "description": "Balanced full body day",
+          "estimated_duration_minutes": 70,
+          "exercises": [
+            {
+              "exercise_name": "Front Squat",
+              "order_number": 1,
+              "target_sets": 4,
+              "target_reps_min": 8,
+              "target_reps_max": 10,
+              "target_rpe": 8.5,
+              "rest_seconds": 180
+            },
+            {
+              "exercise_name": "Dumbbell Bench Press",
+              "order_number": 2,
+              "target_sets": 3,
+              "target_reps_min": 8,
+              "target_reps_max": 10,
+              "target_rpe": 8.0,
+              "rest_seconds": 120
+            },
+            {
+              "exercise_name": "Lat Pulldown",
+              "order_number": 3,
+              "target_sets": 3,
+              "target_reps_min": 10,
+              "target_reps_max": 12,
+              "target_rpe": 8.0,
+              "rest_seconds": 90
+            },
+            {
+              "exercise_name": "Romanian Deadlift",
+              "order_number": 4,
+              "target_sets": 3,
+              "target_reps_min": 8,
+              "target_reps_max": 10,
+              "target_rpe": 8.0,
+              "rest_seconds": 120
+            },
+            {
+              "exercise_name": "Face Pull",
+              "order_number": 5,
+              "target_sets": 3,
+              "target_reps_min": 15,
+              "target_reps_max": 20,
+              "target_rpe": 7.5,
+              "rest_seconds": 60
+            },
+            {
+              "exercise_name": "Standing Calf Raise",
+              "order_number": 6,
+              "target_sets": 3,
+              "target_reps_min": 15,
+              "target_reps_max": 20,
+              "target_rpe": 8.0,
+              "rest_seconds": 60
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
