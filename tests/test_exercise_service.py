@@ -17,7 +17,7 @@ from lift.core.models import (
 from lift.services.exercise_service import ExerciseService
 
 
-@pytest.fixture
+@pytest.fixture()
 def temp_db():
     """Create a temporary database for testing."""
     with tempfile.NamedTemporaryFile(suffix=".duckdb", delete=False) as f:
@@ -36,13 +36,13 @@ def temp_db():
     reset_db_instance()
 
 
-@pytest.fixture
+@pytest.fixture()
 def service(temp_db):
     """Create an ExerciseService with a test database."""
     return ExerciseService(temp_db)
 
 
-@pytest.fixture
+@pytest.fixture()
 def sample_exercise_data():
     """Sample exercise data for testing."""
     return ExerciseCreate(

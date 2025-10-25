@@ -1,8 +1,6 @@
 """Rich formatters for body measurement display."""
 
-from datetime import datetime
 from decimal import Decimal
-from typing import Any, Optional
 
 import plotext as plt
 from rich.panel import Panel
@@ -91,25 +89,17 @@ def format_measurement_detail(measurement: BodyMeasurement) -> Panel:
     # Upper body measurements
     upper_body = []
     if measurement.neck:
-        upper_body.append(
-            f"  Neck: {measurement.neck} {measurement.measurement_unit.value}"
-        )
+        upper_body.append(f"  Neck: {measurement.neck} {measurement.measurement_unit.value}")
     if measurement.shoulders:
         upper_body.append(
             f"  Shoulders: {measurement.shoulders} {measurement.measurement_unit.value}"
         )
     if measurement.chest:
-        upper_body.append(
-            f"  Chest: {measurement.chest} {measurement.measurement_unit.value}"
-        )
+        upper_body.append(f"  Chest: {measurement.chest} {measurement.measurement_unit.value}")
     if measurement.waist:
-        upper_body.append(
-            f"  Waist: {measurement.waist} {measurement.measurement_unit.value}"
-        )
+        upper_body.append(f"  Waist: {measurement.waist} {measurement.measurement_unit.value}")
     if measurement.hips:
-        upper_body.append(
-            f"  Hips: {measurement.hips} {measurement.measurement_unit.value}"
-        )
+        upper_body.append(f"  Hips: {measurement.hips} {measurement.measurement_unit.value}")
 
     if upper_body:
         lines.append("[bold]Torso Measurements:[/bold]")
@@ -119,13 +109,9 @@ def format_measurement_detail(measurement: BodyMeasurement) -> Panel:
     # Arms
     arms = []
     if measurement.bicep_left:
-        arms.append(
-            f"  Bicep (L): {measurement.bicep_left} {measurement.measurement_unit.value}"
-        )
+        arms.append(f"  Bicep (L): {measurement.bicep_left} {measurement.measurement_unit.value}")
     if measurement.bicep_right:
-        arms.append(
-            f"  Bicep (R): {measurement.bicep_right} {measurement.measurement_unit.value}"
-        )
+        arms.append(f"  Bicep (R): {measurement.bicep_right} {measurement.measurement_unit.value}")
     if measurement.forearm_left:
         arms.append(
             f"  Forearm (L): {measurement.forearm_left} {measurement.measurement_unit.value}"
@@ -143,21 +129,13 @@ def format_measurement_detail(measurement: BodyMeasurement) -> Panel:
     # Legs
     legs = []
     if measurement.thigh_left:
-        legs.append(
-            f"  Thigh (L): {measurement.thigh_left} {measurement.measurement_unit.value}"
-        )
+        legs.append(f"  Thigh (L): {measurement.thigh_left} {measurement.measurement_unit.value}")
     if measurement.thigh_right:
-        legs.append(
-            f"  Thigh (R): {measurement.thigh_right} {measurement.measurement_unit.value}"
-        )
+        legs.append(f"  Thigh (R): {measurement.thigh_right} {measurement.measurement_unit.value}")
     if measurement.calf_left:
-        legs.append(
-            f"  Calf (L): {measurement.calf_left} {measurement.measurement_unit.value}"
-        )
+        legs.append(f"  Calf (L): {measurement.calf_left} {measurement.measurement_unit.value}")
     if measurement.calf_right:
-        legs.append(
-            f"  Calf (R): {measurement.calf_right} {measurement.measurement_unit.value}"
-        )
+        legs.append(f"  Calf (R): {measurement.calf_right} {measurement.measurement_unit.value}")
 
     if legs:
         lines.append("[bold]Leg Measurements:[/bold]")
@@ -206,20 +184,18 @@ def format_progress_comparison(current: dict, previous: dict, differences: dict)
         if value > 0:
             color = "green" if not is_weight else "yellow"
             return f"[{color}]+{value:.2f}[/{color}]"
-        elif value < 0:
+        if value < 0:
             color = "red" if not is_weight else "green"
             return f"[{color}]{value:.2f}[/{color}]"
-        else:
-            return "[dim]0.00[/dim]"
+        return "[dim]0.00[/dim]"
 
     def format_percent(value: Decimal) -> str:
         """Format percent change with color."""
         if value > 0:
             return f"[yellow]+{value:.1f}%[/yellow]"
-        elif value < 0:
+        if value < 0:
             return f"[green]{value:.1f}%[/green]"
-        else:
-            return "[dim]0.0%[/dim]"
+        return "[dim]0.0%[/dim]"
 
     # Display order for measurements
     measurement_labels = {
@@ -245,9 +221,7 @@ def format_progress_comparison(current: dict, previous: dict, differences: dict)
             diff = differences[field]
             current_val = f"{diff['current']:.2f}"
             previous_val = f"{diff['previous']:.2f}"
-            change_val = format_change(
-                diff["change"], is_weight=(field == "weight")
-            )
+            change_val = format_change(diff["change"], is_weight=(field == "weight"))
             percent_val = format_percent(diff["percent"])
 
             table.add_row(label, current_val, previous_val, change_val, percent_val)
@@ -323,8 +297,8 @@ def format_measurement_chart(measurement_name: str, data: list[dict]) -> str:
 def format_weight_log_response(
     weight: Decimal,
     unit: str,
-    previous_weight: Optional[tuple[Decimal, str]] = None,
-    seven_day_avg: Optional[Decimal] = None,
+    previous_weight: tuple[Decimal, str] | None = None,
+    seven_day_avg: Decimal | None = None,
 ) -> Panel:
     """
     Format response for quick weight logging.
@@ -348,7 +322,9 @@ def format_weight_log_response(
         prev_val, prev_unit = previous_weight
         change = weight - prev_val
         if change > 0:
-            lines.append(f"  Previous: {prev_val} {prev_unit} ([yellow]+{change:.1f} {unit}[/yellow])")
+            lines.append(
+                f"  Previous: {prev_val} {prev_unit} ([yellow]+{change:.1f} {unit}[/yellow])"
+            )
         elif change < 0:
             lines.append(f"  Previous: {prev_val} {prev_unit} ([green]{change:.1f} {unit}[/green])")
         else:
@@ -397,19 +373,19 @@ def format_progress_summary(weeks_apart: float, differences: dict) -> str:
     # Interpret the combination
     if "weight up" in summaries and "body fat down" in summaries:
         return "Gaining lean mass! Weight up, body fat down."
-    elif "weight down" in summaries and "body fat up" in summaries:
+    if "weight down" in summaries and "body fat up" in summaries:
         return "Losing muscle mass. Weight down, body fat up."
-    elif "weight up" in summaries and "body fat up" in summaries:
+    if "weight up" in summaries and "body fat up" in summaries:
         return "Gaining weight with some fat. Consider adjusting diet."
-    elif "weight down" in summaries and "body fat down" in summaries:
+    if "weight down" in summaries and "body fat down" in summaries:
         return "Cutting successfully! Losing fat while preserving muscle."
-    elif "weight up" in summaries:
+    if "weight up" in summaries:
         return "Weight gaining phase."
-    elif "weight down" in summaries:
+    if "weight down" in summaries:
         return "Weight loss phase."
-    elif "body fat down" in summaries:
+    if "body fat down" in summaries:
         return "Body recomposition! Losing fat."
-    elif "body fat up" in summaries:
+    if "body fat up" in summaries:
         return "Body fat increasing."
 
     return f"Progress over {weeks_apart:.1f} weeks."

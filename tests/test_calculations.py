@@ -1,20 +1,19 @@
 """Tests for calculation utilities."""
 
-import pytest
 from decimal import Decimal
 
 from lift.utils.calculations import (
-    calculate_1rm_epley,
-    calculate_1rm_brzycki,
     calculate_1rm_average,
-    calculate_volume_load,
-    calculate_tonnage,
-    calculate_relative_intensity,
-    estimate_reps_at_weight,
-    rpe_to_rir,
-    rir_to_rpe,
+    calculate_1rm_brzycki,
+    calculate_1rm_epley,
     calculate_n_rm,
     calculate_percentage_of_1rm,
+    calculate_relative_intensity,
+    calculate_tonnage,
+    calculate_volume_load,
+    estimate_reps_at_weight,
+    rir_to_rpe,
+    rpe_to_rir,
 )
 
 

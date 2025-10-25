@@ -4,7 +4,6 @@ import csv
 import json
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Optional
 
 from lift.core.database import DatabaseManager
 
@@ -172,7 +171,7 @@ class ExportService:
                         f"WHERE table_name = '{table_name}' ORDER BY ordinal_position"
                     ).fetchall()
                     headers = [col[0] for col in columns]
-                    row_dict = dict(zip(headers, row))
+                    row_dict = dict(zip(headers, row, strict=False))
 
                 # Convert timestamps to ISO format
                 processed_dict = {}
@@ -234,7 +233,7 @@ class ExportService:
                             f"WHERE table_name = '{table_name}' ORDER BY ordinal_position"
                         ).fetchall()
                         headers = [col[0] for col in columns]
-                        row_dict = dict(zip(headers, row))
+                        row_dict = dict(zip(headers, row, strict=False))
 
                     # Convert timestamps to ISO format
                     processed_dict = {}
@@ -257,8 +256,8 @@ class ExportService:
 
     def export_workout_history(
         self,
-        start_date: Optional[datetime] = None,
-        end_date: Optional[datetime] = None,
+        start_date: datetime | None = None,
+        end_date: datetime | None = None,
         output_path: str = "workout_history.json",
     ) -> int:
         """

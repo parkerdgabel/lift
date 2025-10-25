@@ -6,7 +6,6 @@ Tests interactions between different feature slices.
 
 from datetime import datetime, timedelta
 from decimal import Decimal
-from typing import Generator
 
 import pytest
 
@@ -15,8 +14,8 @@ from lift.core.models import (
     CategoryType,
     EquipmentType,
     ExerciseCreate,
-    MuscleGroup,
     MovementType,
+    MuscleGroup,
     SetCreate,
     SetType,
     WeightUnit,
@@ -32,15 +31,15 @@ from lift.services.stats_service import StatsService
 from lift.services.workout_service import WorkoutService
 
 
-@pytest.fixture
-def db() -> Generator[DatabaseManager, None, None]:
+@pytest.fixture()
+def db() -> DatabaseManager:
     """Create a temporary in-memory database for testing."""
     db = DatabaseManager(":memory:")
     db.initialize_database()
-    yield db
+    return db
 
 
-@pytest.fixture
+@pytest.fixture()
 def loaded_db(db: DatabaseManager) -> DatabaseManager:
     """Database with exercises and config pre-loaded."""
     exercise_service = ExerciseService(db)
@@ -343,6 +342,7 @@ class TestWorkoutPRIntegration:
 
         # Should detect volume PR
         from lift.core.models import RecordType
+
         volume_prs = [pr for pr in prs2 if pr.record_type == RecordType.VOLUME]
         assert len(volume_prs) > 0
 
@@ -362,8 +362,8 @@ class TestProgramWorkoutIntegration:
         # Create program
         from lift.core.models import (
             ProgramCreate,
-            ProgramWorkoutCreate,
             ProgramExerciseCreate,
+            ProgramWorkoutCreate,
             SplitType,
         )
 
@@ -449,10 +449,11 @@ class TestExportImportIntegration:
 
     def test_export_and_verify_all_data(self, loaded_db: DatabaseManager) -> None:
         """Test that export captures data from all services."""
-        from lift.services.export_service import ExportService
-        import tempfile
         import json
+        import tempfile
         from pathlib import Path
+
+        from lift.services.export_service import ExportService
 
         # Create some data across services
         exercise_service = ExerciseService(loaded_db)
@@ -554,7 +555,7 @@ class TestMultiWeekProgression:
         progression = stats_service.get_exercise_progression(bench.id, limit=10)
 
         # Should have data from all 4 weeks
-        unique_weights = set([p["weight"] for p in progression])
+        unique_weights = {p["weight"] for p in progression}
         assert len(unique_weights) == 4
 
         # Weights should increase (progression is ordered DESC by date)

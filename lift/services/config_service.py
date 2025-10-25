@@ -1,10 +1,9 @@
 """Service for managing application configuration and settings."""
 
 from datetime import datetime
-from typing import Optional
 
 from lift.core.database import DatabaseManager
-from lift.core.models import MeasurementUnit, Setting, SettingCreate, WeightUnit
+from lift.core.models import MeasurementUnit, Setting, WeightUnit
 
 
 class ConfigService:
@@ -30,7 +29,7 @@ class ConfigService:
         """
         self.db = db
 
-    def get_setting(self, key: str) -> Optional[str]:
+    def get_setting(self, key: str) -> str | None:
         """
         Get a configuration setting value.
 
@@ -41,9 +40,7 @@ class ConfigService:
             Setting value or None if not found
         """
         with self.db.get_connection() as conn:
-            result = conn.execute(
-                "SELECT value FROM settings WHERE key = ?", (key,)
-            ).fetchone()
+            result = conn.execute("SELECT value FROM settings WHERE key = ?", (key,)).fetchone()
 
             if result:
                 return result[0]
@@ -51,9 +48,7 @@ class ConfigService:
             # Return default if exists
             return self.DEFAULT_SETTINGS.get(key)
 
-    def set_setting(
-        self, key: str, value: str, description: Optional[str] = None
-    ) -> Setting:
+    def set_setting(self, key: str, value: str, description: str | None = None) -> Setting:
         """
         Set a configuration setting value.
 
@@ -69,9 +64,7 @@ class ConfigService:
         """
         with self.db.get_connection() as conn:
             # Check if setting exists
-            existing = conn.execute(
-                "SELECT key FROM settings WHERE key = ?", (key,)
-            ).fetchone()
+            existing = conn.execute("SELECT key FROM settings WHERE key = ?", (key,)).fetchone()
 
             now = datetime.now()
 
@@ -115,9 +108,7 @@ class ConfigService:
             Dictionary mapping setting keys to values
         """
         with self.db.get_connection() as conn:
-            results = conn.execute(
-                "SELECT key, value FROM settings ORDER BY key"
-            ).fetchall()
+            results = conn.execute("SELECT key, value FROM settings ORDER BY key").fetchall()
 
             settings = {row[0]: row[1] for row in results}
 
@@ -164,9 +155,7 @@ class ConfigService:
         """
         with self.db.get_connection() as conn:
             # Check if setting exists
-            existing = conn.execute(
-                "SELECT key FROM settings WHERE key = ?", (key,)
-            ).fetchone()
+            existing = conn.execute("SELECT key FROM settings WHERE key = ?", (key,)).fetchone()
 
             if not existing:
                 return False

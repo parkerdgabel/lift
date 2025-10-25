@@ -1,16 +1,17 @@
 """Tests for workout service."""
 
-import pytest
 from datetime import datetime
 from decimal import Decimal
 
+import pytest
+
 from lift.core.database import DatabaseManager
-from lift.core.models import WorkoutCreate, WorkoutUpdate, SetCreate, SetType, WeightUnit
-from lift.services.workout_service import WorkoutService
+from lift.core.models import SetCreate, SetType, WeightUnit, WorkoutCreate, WorkoutUpdate
 from lift.services.set_service import SetService
+from lift.services.workout_service import WorkoutService
 
 
-@pytest.fixture
+@pytest.fixture()
 def db():
     """Create in-memory test database."""
     db = DatabaseManager(":memory:")
@@ -18,19 +19,19 @@ def db():
     return db
 
 
-@pytest.fixture
+@pytest.fixture()
 def workout_service(db):
     """Create workout service instance."""
     return WorkoutService(db)
 
 
-@pytest.fixture
+@pytest.fixture()
 def set_service(db):
     """Create set service instance."""
     return SetService(db)
 
 
-@pytest.fixture
+@pytest.fixture()
 def sample_workout(workout_service):
     """Create a sample workout for testing."""
     workout_create = WorkoutCreate(

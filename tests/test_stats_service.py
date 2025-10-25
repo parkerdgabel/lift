@@ -9,7 +9,7 @@ from lift.core.database import DatabaseManager
 from lift.services.stats_service import StatsService
 
 
-@pytest.fixture
+@pytest.fixture()
 def db() -> DatabaseManager:
     """Create a test database."""
     db = DatabaseManager(":memory:")
@@ -17,13 +17,13 @@ def db() -> DatabaseManager:
     return db
 
 
-@pytest.fixture
+@pytest.fixture()
 def stats_service(db: DatabaseManager) -> StatsService:
     """Create stats service with test database."""
     return StatsService(db)
 
 
-@pytest.fixture
+@pytest.fixture()
 def sample_data(db: DatabaseManager) -> dict:
     """Create sample workout data for testing."""
     with db.get_connection() as conn:
@@ -140,9 +140,7 @@ def test_get_training_frequency(stats_service: StatsService, sample_data: dict) 
 
 def test_get_exercise_progression(stats_service: StatsService, sample_data: dict) -> None:
     """Test getting exercise progression."""
-    progression = stats_service.get_exercise_progression(
-        sample_data["exercise_id"], limit=10
-    )
+    progression = stats_service.get_exercise_progression(sample_data["exercise_id"], limit=10)
 
     assert len(progression) == 3  # 3 sets
     assert "weight" in progression[0]

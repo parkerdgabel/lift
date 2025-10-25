@@ -11,7 +11,7 @@ from lift.core.database import DatabaseManager, reset_db_instance
 from lift.services.import_service import ImportService
 
 
-@pytest.fixture
+@pytest.fixture()
 def db():
     """Create a temporary test database."""
     with tempfile.TemporaryDirectory() as tmpdir:
@@ -32,9 +32,7 @@ def test_import_from_csv(db):
         csv_path = Path(tmpdir) / "exercises.csv"
         with open(csv_path, "w", newline="") as f:
             writer = csv.writer(f)
-            writer.writerow(
-                ["name", "category", "primary_muscle", "equipment", "movement_type"]
-            )
+            writer.writerow(["name", "category", "primary_muscle", "equipment", "movement_type"])
             writer.writerow(["Squat", "Legs", "Quads", "Barbell", "Compound"])
             writer.writerow(["Deadlift", "Pull", "Back", "Barbell", "Compound"])
 
@@ -46,9 +44,7 @@ def test_import_from_csv(db):
 
         # Verify data in database
         with db.get_connection() as conn:
-            result = conn.execute(
-                "SELECT name FROM exercises ORDER BY name"
-            ).fetchall()
+            result = conn.execute("SELECT name FROM exercises ORDER BY name").fetchall()
             assert len(result) == 2
             assert result[0][0] == "Deadlift"
             assert result[1][0] == "Squat"
@@ -89,9 +85,7 @@ def test_import_from_json(db):
 
         # Verify data in database
         with db.get_connection() as conn:
-            result = conn.execute(
-                "SELECT name FROM exercises WHERE name = 'Pull-up'"
-            ).fetchone()
+            result = conn.execute("SELECT name FROM exercises WHERE name = 'Pull-up'").fetchone()
             assert result is not None
             assert result[0] == "Pull-up"
 
@@ -223,9 +217,7 @@ def test_import_empty_csv(db):
         csv_path = Path(tmpdir) / "exercises.csv"
         with open(csv_path, "w", newline="") as f:
             writer = csv.writer(f)
-            writer.writerow(
-                ["name", "category", "primary_muscle", "equipment", "movement_type"]
-            )
+            writer.writerow(["name", "category", "primary_muscle", "equipment", "movement_type"])
 
         count = import_service.import_from_csv("exercises", str(csv_path))
 

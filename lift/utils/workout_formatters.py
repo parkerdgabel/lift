@@ -2,7 +2,6 @@
 
 from datetime import datetime
 from decimal import Decimal
-from typing import Optional
 
 from rich.console import Console
 from rich.panel import Panel
@@ -13,7 +12,7 @@ from lift.core.models import Set, Workout
 
 
 def format_workout_summary(
-    workout: Workout, summary: dict, console: Optional[Console] = None
+    workout: Workout, summary: dict, console: Console | None = None
 ) -> Panel:
     """
     Format workout summary as a Rich Panel.
@@ -46,9 +45,7 @@ def format_workout_summary(
     # Bodyweight
     if workout.bodyweight:
         content.append("Bodyweight: ", style="bold")
-        content.append(
-            f"{workout.bodyweight} {workout.bodyweight_unit.value}\n", style="cyan"
-        )
+        content.append(f"{workout.bodyweight} {workout.bodyweight_unit.value}\n", style="cyan")
 
     # Summary stats
     content.append("\nWorkout Statistics:\n", style="bold yellow")
@@ -58,7 +55,7 @@ def format_workout_summary(
         f"  Total Volume: {summary['total_volume']:,.0f} {workout.bodyweight_unit.value}\n"
     )
 
-    if summary['avg_rpe']:
+    if summary["avg_rpe"]:
         content.append(f"  Average RPE: {summary['avg_rpe']:.1f}\n")
 
     # Rating
@@ -142,7 +139,7 @@ def format_set_table(sets: list[Set], show_exercise_name: bool = True) -> Table:
 
 
 def format_exercise_performance(
-    exercise_name: str, sets: list[dict], last_workout_date: Optional[datetime] = None
+    exercise_name: str, sets: list[dict], last_workout_date: datetime | None = None
 ) -> Panel:
     """
     Format exercise performance history as a Rich Panel.
@@ -201,7 +198,7 @@ def format_exercise_performance(
 
 
 def format_workout_header(
-    workout_name: str, start_time: datetime, bodyweight: Optional[Decimal] = None
+    workout_name: str, start_time: datetime, bodyweight: Decimal | None = None
 ) -> Panel:
     """
     Format workout header for interactive session.
@@ -217,9 +214,7 @@ def format_workout_header(
     content = Text()
 
     content.append(f"{workout_name}\n", style="bold cyan")
-    content.append(
-        f"Started: {start_time.strftime('%I:%M %p')}", style="dim"
-    )
+    content.append(f"Started: {start_time.strftime('%I:%M %p')}", style="dim")
 
     if bodyweight:
         content.append(f" | Bodyweight: {bodyweight} lbs", style="dim")
@@ -234,8 +229,8 @@ def format_workout_header(
 def format_set_completion(
     weight: Decimal,
     reps: int,
-    rpe: Optional[Decimal] = None,
-    volume: Optional[Decimal] = None,
+    rpe: Decimal | None = None,
+    volume: Decimal | None = None,
     is_pr: bool = False,
 ) -> Text:
     """

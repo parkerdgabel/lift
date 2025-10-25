@@ -1,7 +1,5 @@
 """CLI commands for configuration management."""
 
-from typing import Optional
-
 import typer
 from rich.console import Console
 from rich.panel import Panel
@@ -9,6 +7,7 @@ from rich.table import Table
 
 from lift.core.database import get_db
 from lift.services.config_service import ConfigService
+
 
 # Create configuration app
 config_app = typer.Typer(name="config", help="Configuration management")

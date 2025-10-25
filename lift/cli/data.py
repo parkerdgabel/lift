@@ -1,7 +1,6 @@
 """CLI commands for data management (import/export/backup)."""
 
 from pathlib import Path
-from typing import Optional
 
 import typer
 from rich.console import Console
@@ -11,6 +10,7 @@ from rich.table import Table
 from lift.core.database import get_db
 from lift.services.export_service import ExportService
 from lift.services.import_service import ImportService
+
 
 # Create data management app
 data_app = typer.Typer(name="data", help="Data management commands")
@@ -26,13 +26,13 @@ def export(
         "-f",
         help="Export format (csv or json)",
     ),
-    table: Optional[str] = typer.Option(
+    table: str | None = typer.Option(
         None,
         "--table",
         "-t",
         help="Specific table to export (omit for all tables)",
     ),
-    output: Optional[str] = typer.Option(
+    output: str | None = typer.Option(
         None,
         "--output",
         "-o",
@@ -109,42 +109,39 @@ def export(
                         f"\n[green]Total: {total_rows} records exported to {output}[/green]"
                     )
 
-            else:  # JSON
-                if table:
-                    # Export single table to JSON
-                    if not output:
-                        output = f"{table}.json"
-                    export_service.export_to_json(table, output)
-                    count = db.get_table_count(table)
+            elif table:
+                # Export single table to JSON
+                if not output:
+                    output = f"{table}.json"
+                export_service.export_to_json(table, output)
+                count = db.get_table_count(table)
 
-                    console.print(
-                        Panel(
-                            f"[green]Successfully exported {count} rows from {table}[/green]\n"
-                            f"[dim]Output: {output}[/dim]",
-                            title="Export Complete",
-                            border_style="green",
-                        )
+                console.print(
+                    Panel(
+                        f"[green]Successfully exported {count} rows from {table}[/green]\n"
+                        f"[dim]Output: {output}[/dim]",
+                        title="Export Complete",
+                        border_style="green",
                     )
-                else:
-                    # Export all tables to single JSON file
-                    if not output:
-                        output = "lift_export.json"
-                    summary = export_service.export_all_to_json(output)
+                )
+            else:
+                # Export all tables to single JSON file
+                if not output:
+                    output = "lift_export.json"
+                summary = export_service.export_all_to_json(output)
 
-                    # Display summary
-                    table_display = Table(title="Export Summary")
-                    table_display.add_column("Table", style="cyan")
-                    table_display.add_column("Rows", style="green", justify="right")
+                # Display summary
+                table_display = Table(title="Export Summary")
+                table_display.add_column("Table", style="cyan")
+                table_display.add_column("Rows", style="green", justify="right")
 
-                    total_rows = 0
-                    for table_name, count in sorted(summary.items()):
-                        table_display.add_row(table_name, str(count))
-                        total_rows += count
+                total_rows = 0
+                for table_name, count in sorted(summary.items()):
+                    table_display.add_row(table_name, str(count))
+                    total_rows += count
 
-                    console.print(table_display)
-                    console.print(
-                        f"\n[green]Total: {total_rows} records exported to {output}[/green]"
-                    )
+                console.print(table_display)
+                console.print(f"\n[green]Total: {total_rows} records exported to {output}[/green]")
 
     except Exception as e:
         console.print(
@@ -161,7 +158,7 @@ def export(
 def import_data(
     ctx: typer.Context,
     file: str = typer.Argument(..., help="File to import"),
-    table: Optional[str] = typer.Option(
+    table: str | None = typer.Option(
         None,
         "--table",
         "-t",
@@ -254,9 +251,7 @@ def import_data(
                         total_rows += count
 
                     console.print(table_display)
-                    console.print(
-                        f"\n[green]Total: {total_rows} records imported[/green]"
-                    )
+                    console.print(f"\n[green]Total: {total_rows} records imported[/green]")
 
             else:
                 console.print(
@@ -283,7 +278,7 @@ def import_data(
 @data_app.command()
 def backup(
     ctx: typer.Context,
-    output: Optional[str] = typer.Option(
+    output: str | None = typer.Option(
         None,
         "--output",
         "-o",
@@ -397,8 +392,7 @@ def restore(
 
         console.print(
             Panel(
-                f"[green]Database restored successfully![/green]\n"
-                f"[dim]Source: {backup_path}[/dim]",
+                f"[green]Database restored successfully![/green]\n[dim]Source: {backup_path}[/dim]",
                 title="Restore Complete",
                 border_style="green",
             )

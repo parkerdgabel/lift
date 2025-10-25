@@ -4,20 +4,18 @@ CLI integration tests.
 Tests CLI commands end-to-end using Typer's testing utilities.
 """
 
-from decimal import Decimal
 from pathlib import Path
-from typing import Dict
 
 import pytest
 from typer.testing import CliRunner
 
-from lift.core.database import DatabaseManager
 from lift.main import app
+
 
 runner = CliRunner()
 
 
-@pytest.fixture
+@pytest.fixture()
 def temp_db(tmp_path: Path) -> str:
     """Create a temporary database path."""
     db_path = tmp_path / "test.duckdb"
@@ -102,7 +100,7 @@ class TestCLIExerciseCommands:
 
         assert result.exit_code == 0
         # Should show push exercises
-        assert ("Bench Press" in result.stdout or "Push" in result.stdout)
+        assert "Bench Press" in result.stdout or "Push" in result.stdout
 
     def test_exercises_info(self, temp_db: str) -> None:
         """Test getting exercise info."""
@@ -146,7 +144,7 @@ class TestCLIProgramCommands:
         result = runner.invoke(app, ["--db-path", temp_db, "program", "list"])
 
         assert result.exit_code == 0
-        assert ("PPL" in result.stdout or "Programs" in result.stdout)
+        assert "PPL" in result.stdout or "Programs" in result.stdout
 
     def test_program_show(self, temp_db: str) -> None:
         """Test showing program details."""
@@ -200,9 +198,7 @@ class TestCLIConfigCommands:
         """Test getting a config value."""
         runner.invoke(app, ["--db-path", temp_db, "init"])
 
-        result = runner.invoke(
-            app, ["--db-path", temp_db, "config", "get", "default_weight_unit"]
-        )
+        result = runner.invoke(app, ["--db-path", temp_db, "config", "get", "default_weight_unit"])
 
         assert result.exit_code == 0
         assert "lbs" in result.stdout
@@ -219,9 +215,7 @@ class TestCLIConfigCommands:
         assert "Configuration updated" in result.stdout
 
         # Verify the change
-        result = runner.invoke(
-            app, ["--db-path", temp_db, "config", "get", "default_weight_unit"]
-        )
+        result = runner.invoke(app, ["--db-path", temp_db, "config", "get", "default_weight_unit"])
         assert "kg" in result.stdout
 
 
@@ -369,9 +363,7 @@ class TestCLIErrorHandling:
         """Test handling of invalid program name."""
         runner.invoke(app, ["--db-path", temp_db, "init"])
 
-        result = runner.invoke(
-            app, ["--db-path", temp_db, "program", "show", "NonexistentProgram"]
-        )
+        result = runner.invoke(app, ["--db-path", temp_db, "program", "show", "NonexistentProgram"])
 
         # Should handle gracefully
         assert result.exit_code != 0 or "not found" in result.stdout.lower()

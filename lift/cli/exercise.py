@@ -1,7 +1,5 @@
 """CLI commands for exercise management."""
 
-from typing import Optional
-
 import typer
 from rich.console import Console
 from rich.panel import Panel
@@ -23,6 +21,7 @@ from lift.utils.exercise_formatters import (
     format_muscle_group_summary,
 )
 
+
 # Create exercise app
 exercise_app = typer.Typer(
     name="exercises",
@@ -35,19 +34,19 @@ console = Console()
 @exercise_app.command("list")
 def list_exercises(
     ctx: typer.Context,
-    category: Optional[str] = typer.Option(
+    category: str | None = typer.Option(
         None,
         "--category",
         "-c",
         help="Filter by category (Push, Pull, Legs, Core)",
     ),
-    muscle: Optional[str] = typer.Option(
+    muscle: str | None = typer.Option(
         None,
         "--muscle",
         "-m",
         help="Filter by primary muscle",
     ),
-    equipment: Optional[str] = typer.Option(
+    equipment: str | None = typer.Option(
         None,
         "--equipment",
         "-e",
@@ -275,7 +274,9 @@ def add_exercise(ctx: typer.Context) -> None:
                 try:
                     secondary_muscles.append(MuscleGroup(muscle_str))
                 except ValueError:
-                    console.print(f"[yellow]Warning: '{muscle_str}' is not a valid muscle group, skipping.[/yellow]")
+                    console.print(
+                        f"[yellow]Warning: '{muscle_str}' is not a valid muscle group, skipping.[/yellow]"
+                    )
 
         # Equipment
         equipment_options = [e.value for e in EquipmentType]
@@ -394,9 +395,7 @@ def delete_exercise(
 
         # Confirm deletion
         if not force:
-            confirm = Confirm.ask(
-                f"[yellow]Are you sure you want to delete '{name}'?[/yellow]"
-            )
+            confirm = Confirm.ask(f"[yellow]Are you sure you want to delete '{name}'?[/yellow]")
             if not confirm:
                 console.print("[dim]Deletion cancelled.[/dim]")
                 raise typer.Exit(0)

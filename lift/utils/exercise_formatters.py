@@ -40,13 +40,15 @@ def create_exercise_table(
         if show_id:
             row.append(str(exercise.id))
 
-        row.extend([
-            exercise.name,
-            exercise.category.value,
-            exercise.primary_muscle.value,
-            exercise.equipment.value,
-            exercise.movement_type.value,
-        ])
+        row.extend(
+            [
+                exercise.name,
+                exercise.category.value,
+                exercise.primary_muscle.value,
+                exercise.equipment.value,
+                exercise.movement_type.value,
+            ]
+        )
 
         table.add_row(*row)
 
@@ -73,11 +75,13 @@ def format_exercise_detail(exercise: Exercise, console: Console) -> None:
         secondary_str = ", ".join([muscle.value for muscle in exercise.secondary_muscles])
         content_lines.append(f"[bold]Secondary Muscles:[/bold] {secondary_str}")
 
-    content_lines.extend([
-        f"[bold blue]Equipment:[/bold blue] {exercise.equipment.value}",
-        f"[bold magenta]Movement Type:[/bold magenta] {exercise.movement_type.value}",
-        f"[bold]Custom:[/bold] {'Yes' if exercise.is_custom else 'No'}",
-    ])
+    content_lines.extend(
+        [
+            f"[bold blue]Equipment:[/bold blue] {exercise.equipment.value}",
+            f"[bold magenta]Movement Type:[/bold magenta] {exercise.movement_type.value}",
+            f"[bold]Custom:[/bold] {'Yes' if exercise.is_custom else 'No'}",
+        ]
+    )
 
     # Add instructions if present
     if exercise.instructions:

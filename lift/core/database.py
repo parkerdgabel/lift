@@ -1,9 +1,9 @@
 """Database connection and management using DuckDB."""
 
 import os
+from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Generator, Optional
 
 import duckdb
 
@@ -11,7 +11,7 @@ import duckdb
 class DatabaseManager:
     """Manages DuckDB database connection and operations."""
 
-    def __init__(self, db_path: Optional[str] = None) -> None:
+    def __init__(self, db_path: str | None = None) -> None:
         """
         Initialize database manager.
 
@@ -23,7 +23,7 @@ class DatabaseManager:
 
         self.db_path = Path(db_path).expanduser()
         self._ensure_db_directory()
-        self._connection: Optional[duckdb.DuckDBPyConnection] = None
+        self._connection: duckdb.DuckDBPyConnection | None = None
 
     def _get_default_db_path(self) -> str:
         """Get the default database path from environment or use ~/.lift/lift.duckdb."""
@@ -52,7 +52,7 @@ class DatabaseManager:
         finally:
             conn.close()
 
-    def execute(self, query: str, parameters: Optional[tuple] = None) -> list:
+    def execute(self, query: str, parameters: tuple | None = None) -> list:
         """
         Execute a query and return results.
 
@@ -101,8 +101,7 @@ class DatabaseManager:
 
             # Verify key tables exist
             tables = conn.execute(
-                "SELECT table_name FROM information_schema.tables "
-                "WHERE table_schema = 'main'"
+                "SELECT table_name FROM information_schema.tables WHERE table_schema = 'main'"
             ).fetchall()
 
             expected_tables = {
@@ -132,8 +131,7 @@ class DatabaseManager:
         try:
             with self.get_connection() as conn:
                 result = conn.execute(
-                    "SELECT COUNT(*) FROM information_schema.tables "
-                    "WHERE table_name = 'exercises'"
+                    "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'exercises'"
                 ).fetchone()
                 return result[0] > 0
         except Exception:
@@ -213,10 +211,10 @@ class DatabaseManager:
 
 
 # Global database instance
-_db_instance: Optional[DatabaseManager] = None
+_db_instance: DatabaseManager | None = None
 
 
-def get_db(db_path: Optional[str] = None) -> DatabaseManager:
+def get_db(db_path: str | None = None) -> DatabaseManager:
     """
     Get or create the global database instance.
 

@@ -7,7 +7,6 @@ These tests verify that all slices work together properly in realistic scenarios
 from datetime import datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
-from typing import Generator
 
 import pytest
 
@@ -16,8 +15,8 @@ from lift.core.models import (
     CategoryType,
     EquipmentType,
     ExerciseCreate,
-    MuscleGroup,
     MovementType,
+    MuscleGroup,
     SetType,
     WeightUnit,
 )
@@ -31,12 +30,12 @@ from lift.services.stats_service import StatsService
 from lift.services.workout_service import WorkoutService
 
 
-@pytest.fixture
-def db() -> Generator[DatabaseManager, None, None]:
+@pytest.fixture()
+def db() -> DatabaseManager:
     """Create a temporary in-memory database for testing."""
     db = DatabaseManager(":memory:")
     db.initialize_database()
-    yield db
+    return db
 
 
 class TestCompleteUserJourney:
@@ -373,8 +372,9 @@ class TestCompleteUserJourney:
         assert streak > 0  # Should have a streak
 
         # Step 12: Export data
-        from lift.services.export_service import ExportService
         import tempfile
+
+        from lift.services.export_service import ExportService
 
         export_service = ExportService(db)
 
@@ -391,7 +391,6 @@ class TestCompleteUserJourney:
             Path(export_path).unlink(missing_ok=True)
 
         # Step 13: Verify progression recommendations
-        from lift.utils.calculations import suggest_next_weight
 
         bench_progression = stats_service.get_exercise_progression(
             exercise_ids["Barbell Bench Press"], limit=3
@@ -428,7 +427,12 @@ class TestCompleteUserJourney:
         )
 
         # Create program
-        from lift.core.models import ProgramCreate, ProgramWorkoutCreate, ProgramExerciseCreate, SplitType
+        from lift.core.models import (
+            ProgramCreate,
+            ProgramExerciseCreate,
+            ProgramWorkoutCreate,
+            SplitType,
+        )
 
         program = program_service.create_program(
             ProgramCreate(
@@ -521,7 +525,7 @@ class TestCompleteUserJourney:
         workout_service = WorkoutService(db)
         set_service = SetService(db)
 
-        from lift.core.models import WorkoutCreate, SetCreate
+        from lift.core.models import SetCreate, WorkoutCreate
 
         workout = workout_service.create_workout(
             WorkoutCreate(name="Leg Day", bodyweight=Decimal("175.0"))
@@ -555,8 +559,9 @@ class TestCompleteUserJourney:
         assert len(prs) > 0
 
         # Verify export includes the workout
-        from lift.services.export_service import ExportService
         import tempfile
+
+        from lift.services.export_service import ExportService
 
         export_service = ExportService(db)
 
@@ -567,6 +572,7 @@ class TestCompleteUserJourney:
             export_service.export_to_json("workouts", export_path)
 
             import json
+
             with open(export_path) as f:
                 data = json.load(f)
 

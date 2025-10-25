@@ -1,7 +1,6 @@
 """Calculations for strength training metrics and progressive overload."""
 
 from decimal import Decimal
-from typing import Optional
 
 
 # ============================================================================
@@ -343,8 +342,7 @@ def suggest_next_reps(
     # Otherwise, aim for progression
     if last_rpe < Decimal("8"):
         return min(last_reps + 2, target_reps_max)
-    else:
-        return min(last_reps + 1, target_reps_max)
+    return min(last_reps + 1, target_reps_max)
 
 
 def calculate_fatigue_index(recent_workouts: list[dict]) -> float:
@@ -366,9 +364,7 @@ def calculate_fatigue_index(recent_workouts: list[dict]) -> float:
         return 0.0
 
     # Calculate average RPE
-    avg_rpe = sum(float(w.get("avg_rpe", 8.0)) for w in recent_workouts) / len(
-        recent_workouts
-    )
+    avg_rpe = sum(float(w.get("avg_rpe", 8.0)) for w in recent_workouts) / len(recent_workouts)
     rpe_factor = (avg_rpe - 6.0) / 4.0  # Normalize 6-10 to 0-1
 
     # Calculate frequency (workouts per week)
@@ -392,7 +388,7 @@ def calculate_fatigue_index(recent_workouts: list[dict]) -> float:
         volume_factor = 0.0
 
     # Weighted average
-    fatigue_index = (0.4 * rpe_factor + 0.3 * frequency_factor + 0.3 * volume_factor)
+    fatigue_index = 0.4 * rpe_factor + 0.3 * frequency_factor + 0.3 * volume_factor
     return max(0.0, min(fatigue_index, 1.0))
 
 
@@ -483,20 +479,13 @@ def rpe_to_rir(rpe: Decimal) -> int:
     # RPE 10 = 0 RIR, RPE 9.5 = 0-1 RIR, RPE 9 = 1 RIR, etc.
     if rpe >= Decimal("10"):
         return 0
-    elif rpe >= Decimal("9.5"):
+    if rpe >= Decimal("9.5") or rpe >= Decimal("9"):
         return 1
-    elif rpe >= Decimal("9"):
-        return 1
-    elif rpe >= Decimal("8.5"):
+    if rpe >= Decimal("8.5") or rpe >= Decimal("8"):
         return 2
-    elif rpe >= Decimal("8"):
-        return 2
-    elif rpe >= Decimal("7.5"):
+    if rpe >= Decimal("7.5") or rpe >= Decimal("7"):
         return 3
-    elif rpe >= Decimal("7"):
-        return 3
-    else:
-        return 4
+    return 4
 
 
 def rir_to_rpe(rir: int) -> Decimal:

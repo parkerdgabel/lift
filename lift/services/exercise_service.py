@@ -2,7 +2,6 @@
 
 import json
 from pathlib import Path
-from typing import Optional
 
 from lift.core.database import DatabaseManager, get_db
 from lift.core.models import Exercise, ExerciseCreate
@@ -11,7 +10,7 @@ from lift.core.models import Exercise, ExerciseCreate
 class ExerciseService:
     """Service for managing exercises."""
 
-    def __init__(self, db: Optional[DatabaseManager] = None) -> None:
+    def __init__(self, db: DatabaseManager | None = None) -> None:
         """
         Initialize the exercise service.
 
@@ -22,9 +21,9 @@ class ExerciseService:
 
     def get_all(
         self,
-        category: Optional[str] = None,
-        muscle: Optional[str] = None,
-        equipment: Optional[str] = None,
+        category: str | None = None,
+        muscle: str | None = None,
+        equipment: str | None = None,
     ) -> list[Exercise]:
         """
         Get all exercises with optional filters.
@@ -79,7 +78,7 @@ class ExerciseService:
             results = conn.execute(sql, [search_param]).fetchall()
             return [self._row_to_exercise(row) for row in results]
 
-    def get_by_id(self, exercise_id: int) -> Optional[Exercise]:
+    def get_by_id(self, exercise_id: int) -> Exercise | None:
         """
         Get an exercise by ID.
 
@@ -95,7 +94,7 @@ class ExerciseService:
             result = conn.execute(sql, [exercise_id]).fetchone()
             return self._row_to_exercise(result) if result else None
 
-    def get_by_name(self, name: str) -> Optional[Exercise]:
+    def get_by_name(self, name: str) -> Exercise | None:
         """
         Get an exercise by exact name (case-insensitive).
 
@@ -130,9 +129,7 @@ class ExerciseService:
             raise ValueError(f"Exercise '{exercise.name}' already exists")
 
         # Convert secondary_muscles list to JSON string
-        secondary_muscles_json = json.dumps(
-            [muscle.value for muscle in exercise.secondary_muscles]
-        )
+        secondary_muscles_json = json.dumps([muscle.value for muscle in exercise.secondary_muscles])
 
         sql = """
             INSERT INTO exercises (
@@ -260,15 +257,15 @@ class ExerciseService:
                 secondary_muscles = []
 
         return Exercise(
-            id=row[0],           # id
-            name=row[1],         # name
-            category=row[2],     # category
+            id=row[0],  # id
+            name=row[1],  # name
+            category=row[2],  # category
             primary_muscle=row[3],  # primary_muscle
             secondary_muscles=secondary_muscles,  # secondary_muscles (parsed from JSON)
-            equipment=row[5],    # equipment
+            equipment=row[5],  # equipment
             movement_type=row[6] if row[6] else "Compound",  # movement_type
             is_custom=bool(row[7]),  # is_custom
             instructions=row[8],  # instructions
-            video_url=row[9],    # video_url
+            video_url=row[9],  # video_url
             created_at=row[10],  # created_at
         )

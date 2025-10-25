@@ -10,7 +10,7 @@ from lift.core.models import PersonalRecordCreate, RecordType, WeightUnit
 from lift.services.pr_service import PRService
 
 
-@pytest.fixture
+@pytest.fixture()
 def db() -> DatabaseManager:
     """Create a test database."""
     db = DatabaseManager(":memory:")
@@ -18,13 +18,13 @@ def db() -> DatabaseManager:
     return db
 
 
-@pytest.fixture
+@pytest.fixture()
 def pr_service(db: DatabaseManager) -> PRService:
     """Create PR service with test database."""
     return PRService(db)
 
 
-@pytest.fixture
+@pytest.fixture()
 def sample_exercise(db: DatabaseManager) -> int:
     """Create a sample exercise and return its ID."""
     with db.get_connection() as conn:
@@ -37,7 +37,7 @@ def sample_exercise(db: DatabaseManager) -> int:
         return conn.execute("SELECT last_insert_rowid()").fetchone()[0]
 
 
-@pytest.fixture
+@pytest.fixture()
 def sample_workout(db: DatabaseManager, sample_exercise: int) -> dict:
     """Create a sample workout with sets."""
     with db.get_connection() as conn:
@@ -118,7 +118,9 @@ def test_get_all_prs(pr_service: PRService, sample_exercise: int) -> None:
     assert len(prs) == 2
 
 
-def test_get_prs_by_exercise(pr_service: PRService, sample_exercise: int, db: DatabaseManager) -> None:
+def test_get_prs_by_exercise(
+    pr_service: PRService, sample_exercise: int, db: DatabaseManager
+) -> None:
     """Test getting PRs filtered by exercise."""
     # Create another exercise
     with db.get_connection() as conn:
@@ -273,7 +275,9 @@ def test_auto_detect_prs_no_new_records(
     assert len(second_prs) == 0
 
 
-def test_auto_detect_volume_pr(pr_service: PRService, sample_exercise: int, db: DatabaseManager) -> None:
+def test_auto_detect_volume_pr(
+    pr_service: PRService, sample_exercise: int, db: DatabaseManager
+) -> None:
     """Test detection of volume PR."""
     with db.get_connection() as conn:
         # Create workout with high-volume set
@@ -417,9 +421,7 @@ def test_get_pr_history(pr_service: PRService, sample_exercise: int) -> None:
     assert history[0].value <= history[-1].value
 
 
-def test_pr_with_workout_and_set_ids(
-    pr_service: PRService, sample_workout: dict
-) -> None:
+def test_pr_with_workout_and_set_ids(pr_service: PRService, sample_workout: dict) -> None:
     """Test that PRs are linked to workouts and sets."""
     prs = pr_service.auto_detect_prs(sample_workout["workout_id"])
 

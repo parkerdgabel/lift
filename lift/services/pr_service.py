@@ -2,7 +2,6 @@
 
 from datetime import datetime
 from decimal import Decimal
-from typing import Optional
 
 from lift.core.database import DatabaseManager, get_db
 from lift.core.models import PersonalRecord, PersonalRecordCreate, RecordType
@@ -12,7 +11,7 @@ from lift.utils.calculations import calculate_1rm
 class PRService:
     """Service for managing personal records."""
 
-    def __init__(self, db: Optional[DatabaseManager] = None):
+    def __init__(self, db: DatabaseManager | None = None):
         """
         Initialize PR service.
 
@@ -186,7 +185,7 @@ class PRService:
 
         return self.create_pr(pr_create)
 
-    def get_all_prs(self, exercise_id: Optional[int] = None) -> list[PersonalRecord]:
+    def get_all_prs(self, exercise_id: int | None = None) -> list[PersonalRecord]:
         """
         Get all personal records.
 
@@ -239,9 +238,7 @@ class PRService:
 
         return prs
 
-    def get_pr_by_type(
-        self, exercise_id: int, record_type: RecordType
-    ) -> Optional[PersonalRecord]:
+    def get_pr_by_type(self, exercise_id: int, record_type: RecordType) -> PersonalRecord | None:
         """
         Get the current PR for a specific exercise and record type.
 

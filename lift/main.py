@@ -1,12 +1,11 @@
 """LIFT - Main CLI entry point."""
 
-from typing import Optional
-
 import typer
 from rich.console import Console
 from rich.panel import Panel
 
 from lift.core.database import get_db
+
 
 # Create main app
 app = typer.Typer(
@@ -23,7 +22,7 @@ console = Console()
 @app.callback()
 def main(
     ctx: typer.Context,
-    db_path: Optional[str] = typer.Option(
+    db_path: str | None = typer.Option(
         None,
         "--db-path",
         "-d",
@@ -85,9 +84,7 @@ def init(
             loaded_count = exercise_service.load_seed_exercises(force=force)
 
         if loaded_count > 0:
-            console.print(
-                f"\n[green]✓[/green] Loaded {loaded_count} exercises into the library"
-            )
+            console.print(f"\n[green]✓[/green] Loaded {loaded_count} exercises into the library")
 
         # Show database info
         info = db.get_database_info()
@@ -155,6 +152,7 @@ from lift.cli.exercise import exercise_app
 from lift.cli.program import program_app
 from lift.cli.stats import stats_app
 from lift.cli.workout import workout_app
+
 
 app.add_typer(body_app, name="body")
 app.add_typer(data_app, name="data")

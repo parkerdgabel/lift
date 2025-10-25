@@ -2,7 +2,6 @@
 
 import json
 import tempfile
-from datetime import datetime
 from decimal import Decimal
 from pathlib import Path
 
@@ -10,11 +9,6 @@ import pytest
 
 from lift.core.database import DatabaseManager, reset_db_instance
 from lift.core.models import (
-    CategoryType,
-    EquipmentType,
-    Exercise,
-    MovementType,
-    MuscleGroup,
     Program,
     ProgramCreate,
     ProgramExerciseCreate,
@@ -24,7 +18,7 @@ from lift.core.models import (
 from lift.services.program_service import ProgramService
 
 
-@pytest.fixture
+@pytest.fixture()
 def db():
     """Create a temporary database for testing."""
     reset_db_instance()
@@ -41,13 +35,13 @@ def db():
     reset_db_instance()
 
 
-@pytest.fixture
+@pytest.fixture()
 def service(db):
     """Create a program service with test database."""
     return ProgramService(db)
 
 
-@pytest.fixture
+@pytest.fixture()
 def sample_exercises(db):
     """Create sample exercises for testing."""
     exercises = [
@@ -642,9 +636,7 @@ class TestSeedPrograms:
             ]
         }
 
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".json", delete=False
-        ) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
             json.dump(programs_data, f)
             temp_file = f.name
 
@@ -696,9 +688,7 @@ class TestSeedPrograms:
             ]
         }
 
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".json", delete=False
-        ) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
             json.dump(programs_data, f)
             temp_file = f.name
 

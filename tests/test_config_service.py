@@ -10,7 +10,7 @@ from lift.core.models import MeasurementUnit, WeightUnit
 from lift.services.config_service import ConfigService
 
 
-@pytest.fixture
+@pytest.fixture()
 def db():
     """Create a temporary test database."""
     with tempfile.TemporaryDirectory() as tmpdir:
@@ -123,9 +123,7 @@ def test_delete_setting(db):
 
     # Verify it's gone from database
     with db.get_connection() as conn:
-        result = conn.execute(
-            "SELECT key FROM settings WHERE key = 'to_delete'"
-        ).fetchone()
+        result = conn.execute("SELECT key FROM settings WHERE key = 'to_delete'").fetchone()
         assert result is None
 
     # Delete non-existent setting

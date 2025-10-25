@@ -3,7 +3,6 @@
 from datetime import datetime
 from decimal import Decimal
 from enum import Enum
-from typing import Optional
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -128,8 +127,8 @@ class ExerciseBase(BaseModel):
     secondary_muscles: list[MuscleGroup] = Field(default_factory=list)
     equipment: EquipmentType
     movement_type: MovementType
-    instructions: Optional[str] = None
-    video_url: Optional[str] = None
+    instructions: str | None = None
+    video_url: str | None = None
 
 
 class ExerciseCreate(ExerciseBase):
@@ -157,16 +156,14 @@ class ProgramBase(BaseModel):
     """Base program model."""
 
     name: str = Field(..., min_length=1, max_length=200)
-    description: Optional[str] = None
+    description: str | None = None
     split_type: SplitType
     days_per_week: int = Field(..., ge=1, le=7)
-    duration_weeks: Optional[int] = Field(None, ge=1)
+    duration_weeks: int | None = Field(None, ge=1)
 
 
 class ProgramCreate(ProgramBase):
     """Model for creating a program."""
-
-    pass
 
 
 class Program(ProgramBase):
@@ -184,9 +181,9 @@ class ProgramWorkoutBase(BaseModel):
     """Base program workout model."""
 
     name: str = Field(..., min_length=1, max_length=200)
-    day_number: Optional[int] = Field(None, ge=1, le=7)
-    description: Optional[str] = None
-    estimated_duration_minutes: Optional[int] = Field(None, ge=1)
+    day_number: int | None = Field(None, ge=1, le=7)
+    description: str | None = None
+    estimated_duration_minutes: int | None = Field(None, ge=1)
 
 
 class ProgramWorkoutCreate(ProgramWorkoutBase):
@@ -212,12 +209,12 @@ class ProgramExerciseBase(BaseModel):
     target_sets: int = Field(..., ge=1)
     target_reps_min: int = Field(..., ge=1)
     target_reps_max: int = Field(..., ge=1)
-    target_rpe: Optional[Decimal] = Field(None, ge=6, le=10)
-    rest_seconds: Optional[int] = Field(None, ge=0)
-    tempo: Optional[str] = None
-    notes: Optional[str] = None
+    target_rpe: Decimal | None = Field(None, ge=6, le=10)
+    rest_seconds: int | None = Field(None, ge=0)
+    tempo: str | None = None
+    notes: str | None = None
     is_superset: bool = False
-    superset_group: Optional[int] = None
+    superset_group: int | None = None
 
     @field_validator("target_reps_max")
     @classmethod
@@ -251,30 +248,30 @@ class ProgramExercise(ProgramExerciseBase):
 class WorkoutBase(BaseModel):
     """Base workout model."""
 
-    name: Optional[str] = None
-    bodyweight: Optional[Decimal] = Field(None, gt=0)
+    name: str | None = None
+    bodyweight: Decimal | None = Field(None, gt=0)
     bodyweight_unit: WeightUnit = WeightUnit.LBS
-    notes: Optional[str] = None
-    rating: Optional[int] = Field(None, ge=1, le=5)
+    notes: str | None = None
+    rating: int | None = Field(None, ge=1, le=5)
 
 
 class WorkoutCreate(WorkoutBase):
     """Model for creating a workout."""
 
-    program_workout_id: Optional[int] = None
+    program_workout_id: int | None = None
     date: datetime = Field(default_factory=datetime.now)
 
 
 class WorkoutUpdate(BaseModel):
     """Model for updating a workout."""
 
-    name: Optional[str] = None
-    duration_minutes: Optional[int] = Field(None, ge=1)
-    bodyweight: Optional[Decimal] = Field(None, gt=0)
-    bodyweight_unit: Optional[WeightUnit] = None
-    notes: Optional[str] = None
-    rating: Optional[int] = Field(None, ge=1, le=5)
-    completed: Optional[bool] = None
+    name: str | None = None
+    duration_minutes: int | None = Field(None, ge=1)
+    bodyweight: Decimal | None = Field(None, gt=0)
+    bodyweight_unit: WeightUnit | None = None
+    notes: str | None = None
+    rating: int | None = Field(None, ge=1, le=5)
+    completed: bool | None = None
 
 
 class Workout(WorkoutBase):
@@ -282,8 +279,8 @@ class Workout(WorkoutBase):
 
     id: int
     date: datetime
-    program_workout_id: Optional[int] = None
-    duration_minutes: Optional[int] = None
+    program_workout_id: int | None = None
+    duration_minutes: int | None = None
     completed: bool = True
 
     model_config = {"from_attributes": True}
@@ -302,13 +299,13 @@ class SetBase(BaseModel):
     weight: Decimal = Field(..., ge=0)
     weight_unit: WeightUnit = WeightUnit.LBS
     reps: int = Field(..., ge=1)
-    rpe: Optional[Decimal] = Field(None, ge=6, le=10)
-    tempo: Optional[str] = None
+    rpe: Decimal | None = Field(None, ge=6, le=10)
+    tempo: str | None = None
     set_type: SetType = SetType.WORKING
-    rest_seconds: Optional[int] = Field(None, ge=0)
+    rest_seconds: int | None = Field(None, ge=0)
     is_superset: bool = False
-    superset_group: Optional[int] = None
-    notes: Optional[str] = None
+    superset_group: int | None = None
+    notes: str | None = None
 
 
 class SetCreate(SetBase):
@@ -338,16 +335,16 @@ class PersonalRecordBase(BaseModel):
     exercise_id: int
     record_type: RecordType
     value: Decimal = Field(..., gt=0)
-    reps: Optional[int] = Field(None, ge=1)
-    weight: Optional[Decimal] = Field(None, ge=0)
+    reps: int | None = Field(None, ge=1)
+    weight: Decimal | None = Field(None, ge=0)
     weight_unit: WeightUnit = WeightUnit.LBS
 
 
 class PersonalRecordCreate(PersonalRecordBase):
     """Model for creating a personal record."""
 
-    workout_id: Optional[int] = None
-    set_id: Optional[int] = None
+    workout_id: int | None = None
+    set_id: int | None = None
     date: datetime = Field(default_factory=datetime.now)
 
 
@@ -356,8 +353,8 @@ class PersonalRecord(PersonalRecordBase):
 
     id: int
     date: datetime
-    workout_id: Optional[int] = None
-    set_id: Optional[int] = None
+    workout_id: int | None = None
+    set_id: int | None = None
 
     model_config = {"from_attributes": True}
 
@@ -370,29 +367,29 @@ class PersonalRecord(PersonalRecordBase):
 class BodyMeasurementBase(BaseModel):
     """Base body measurement model."""
 
-    weight: Optional[Decimal] = Field(None, gt=0)
+    weight: Decimal | None = Field(None, gt=0)
     weight_unit: WeightUnit = WeightUnit.LBS
-    body_fat_pct: Optional[Decimal] = Field(None, ge=0, le=100)
+    body_fat_pct: Decimal | None = Field(None, ge=0, le=100)
 
     # Circumference measurements
-    neck: Optional[Decimal] = Field(None, gt=0)
-    shoulders: Optional[Decimal] = Field(None, gt=0)
-    chest: Optional[Decimal] = Field(None, gt=0)
-    waist: Optional[Decimal] = Field(None, gt=0)
-    hips: Optional[Decimal] = Field(None, gt=0)
+    neck: Decimal | None = Field(None, gt=0)
+    shoulders: Decimal | None = Field(None, gt=0)
+    chest: Decimal | None = Field(None, gt=0)
+    waist: Decimal | None = Field(None, gt=0)
+    hips: Decimal | None = Field(None, gt=0)
 
-    bicep_left: Optional[Decimal] = Field(None, gt=0)
-    bicep_right: Optional[Decimal] = Field(None, gt=0)
-    forearm_left: Optional[Decimal] = Field(None, gt=0)
-    forearm_right: Optional[Decimal] = Field(None, gt=0)
+    bicep_left: Decimal | None = Field(None, gt=0)
+    bicep_right: Decimal | None = Field(None, gt=0)
+    forearm_left: Decimal | None = Field(None, gt=0)
+    forearm_right: Decimal | None = Field(None, gt=0)
 
-    thigh_left: Optional[Decimal] = Field(None, gt=0)
-    thigh_right: Optional[Decimal] = Field(None, gt=0)
-    calf_left: Optional[Decimal] = Field(None, gt=0)
-    calf_right: Optional[Decimal] = Field(None, gt=0)
+    thigh_left: Decimal | None = Field(None, gt=0)
+    thigh_right: Decimal | None = Field(None, gt=0)
+    calf_left: Decimal | None = Field(None, gt=0)
+    calf_right: Decimal | None = Field(None, gt=0)
 
     measurement_unit: MeasurementUnit = MeasurementUnit.INCHES
-    notes: Optional[str] = None
+    notes: str | None = None
 
 
 class BodyMeasurementCreate(BodyMeasurementBase):
@@ -420,13 +417,11 @@ class SettingBase(BaseModel):
 
     key: str
     value: str
-    description: Optional[str] = None
+    description: str | None = None
 
 
 class SettingCreate(SettingBase):
     """Model for creating a setting."""
-
-    pass
 
 
 class Setting(SettingBase):

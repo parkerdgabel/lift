@@ -1,8 +1,7 @@
 """Statistics and analytics service for workout data."""
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from decimal import Decimal
-from typing import Optional
 
 from lift.core.database import DatabaseManager, get_db
 
@@ -10,7 +9,7 @@ from lift.core.database import DatabaseManager, get_db
 class StatsService:
     """Service for calculating workout statistics and analytics."""
 
-    def __init__(self, db: Optional[DatabaseManager] = None):
+    def __init__(self, db: DatabaseManager | None = None):
         """
         Initialize stats service.
 
@@ -20,7 +19,7 @@ class StatsService:
         self.db = db or get_db()
 
     def get_workout_summary(
-        self, start_date: Optional[datetime] = None, end_date: Optional[datetime] = None
+        self, start_date: datetime | None = None, end_date: datetime | None = None
     ) -> dict:
         """
         Get overall workout summary statistics.
@@ -77,7 +76,9 @@ class StatsService:
             "total_volume": Decimal(str(result[1])) if result[1] else Decimal(0),
             "total_sets": result[2],
             "avg_duration": round(result[3], 1) if result[3] else 0,
-            "avg_rpe": Decimal(str(result[4])).quantize(Decimal("0.1")) if result[4] else Decimal(0),
+            "avg_rpe": Decimal(str(result[4])).quantize(Decimal("0.1"))
+            if result[4]
+            else Decimal(0),
             "total_exercises": result[5],
         }
 
@@ -180,7 +181,7 @@ class StatsService:
         return summaries
 
     def get_muscle_volume_breakdown(
-        self, start_date: Optional[datetime] = None, end_date: Optional[datetime] = None
+        self, start_date: datetime | None = None, end_date: datetime | None = None
     ) -> dict[str, Decimal]:
         """
         Get volume breakdown by muscle group.

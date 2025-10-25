@@ -2,7 +2,6 @@
 
 from datetime import datetime, timedelta
 from decimal import Decimal
-from typing import Optional
 
 import typer
 from rich.console import Console
@@ -10,16 +9,13 @@ from rich.panel import Panel
 from rich.table import Table
 
 from lift.core.database import get_db
-from lift.core.models import RecordType
 from lift.services.pr_service import PRService
 from lift.services.stats_service import StatsService
 from lift.utils.charts import (
-    generate_frequency_chart,
-    generate_muscle_distribution_chart,
     generate_progression_chart,
-    generate_set_distribution_chart,
     generate_volume_chart,
 )
+
 
 stats_app = typer.Typer(name="stats", help="Analytics and statistics")
 console = Console()
@@ -253,7 +249,7 @@ def exercise_stats(
 @stats_app.command(name="volume")
 def volume_stats(
     ctx: typer.Context,
-    muscle_group: Optional[str] = typer.Option(None, "--muscle", "-m", help="Filter by muscle group"),
+    muscle_group: str | None = typer.Option(None, "--muscle", "-m", help="Filter by muscle group"),
     chart: bool = typer.Option(False, "--chart", "-c", help="Show volume chart"),
     weeks: int = typer.Option(12, "--weeks", "-w", help="Weeks to analyze"),
 ) -> None:
@@ -318,7 +314,7 @@ def volume_stats(
 @stats_app.command(name="pr")
 def pr_stats(
     ctx: typer.Context,
-    exercise: Optional[str] = typer.Option(None, "--exercise", "-e", help="Filter by exercise"),
+    exercise: str | None = typer.Option(None, "--exercise", "-e", help="Filter by exercise"),
     recent: bool = typer.Option(False, "--recent", "-r", help="Show recent PRs"),
     days: int = typer.Option(30, "--days", "-d", help="Days for recent PRs"),
 ) -> None:
@@ -351,9 +347,7 @@ def pr_stats(
         table.add_column("Date", justify="right")
 
         for pr in recent_prs:
-            weight_reps = (
-                f"{pr['weight']} x {pr['reps']}" if pr["weight"] else "-"
-            )
+            weight_reps = f"{pr['weight']} x {pr['reps']}" if pr["weight"] else "-"
             table.add_row(
                 pr["exercise_name"],
                 pr["record_type"],
@@ -437,9 +431,7 @@ def pr_stats(
 
         console.print(table)
 
-        console.print(
-            "\n[dim]Use --exercise to see PRs for a specific exercise[/dim]"
-        )
+        console.print("\n[dim]Use --exercise to see PRs for a specific exercise[/dim]")
         console.print("[dim]Use --recent to see recently set PRs[/dim]")
 
 
@@ -514,7 +506,7 @@ def muscle_stats(
     console.print(f"[bold]Total Volume:[/bold] {format_volume(Decimal(str(total_volume)))} lbs")
 
     # Exercise breakdown
-    console.print(f"\n[bold cyan]Exercises:[/bold cyan]")
+    console.print("\n[bold cyan]Exercises:[/bold cyan]")
     table = Table(show_header=True)
     table.add_column("Exercise", style="cyan")
     table.add_column("Sets", justify="right")
@@ -547,8 +539,7 @@ def streak_stats(ctx: typer.Context) -> None:
     if streak == 0:
         console.print(
             Panel(
-                "[yellow]No active streak[/yellow]\n\n"
-                "Start a new streak by completing a workout!",
+                "[yellow]No active streak[/yellow]\n\nStart a new streak by completing a workout!",
                 title="Consistency Streak",
                 border_style="yellow",
             )
@@ -628,8 +619,12 @@ def progress_stats(
     # Filter by weeks
     cutoff_date = datetime.now() - timedelta(weeks=weeks)
     filtered_progression = [
-        p for p in progression
-        if (p["date"] if isinstance(p["date"], datetime) else datetime.fromisoformat(str(p["date"]))) >= cutoff_date
+        p
+        for p in progression
+        if (
+            p["date"] if isinstance(p["date"], datetime) else datetime.fromisoformat(str(p["date"]))
+        )
+        >= cutoff_date
     ]
 
     console.print(
@@ -664,7 +659,7 @@ def progress_stats(
         elif change < 0:
             console.print(f"\n[red]Trending down: {change:.1f}%[/red]")
         else:
-            console.print(f"\n[yellow]Stable performance[/yellow]")
+            console.print("\n[yellow]Stable performance[/yellow]")
 
     # Show chart
     if chart and len(filtered_progression) >= 3:

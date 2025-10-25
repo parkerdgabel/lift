@@ -3,7 +3,6 @@
 import csv
 import json
 from pathlib import Path
-from typing import Any, Optional
 
 from lift.core.database import DatabaseManager
 
@@ -60,7 +59,7 @@ class ImportService:
             column_names = [col[0] for col in columns_info]
 
             # Read CSV file
-            with open(file_path_obj, "r", encoding="utf-8") as f:
+            with open(file_path_obj, encoding="utf-8") as f:
                 reader = csv.DictReader(f)
                 csv_headers = reader.fieldnames
 
@@ -98,9 +97,7 @@ class ImportService:
                 placeholders = ", ".join(["?" for _ in insert_columns])
                 columns_str = ", ".join(insert_columns)
 
-                insert_query = (
-                    f"INSERT INTO {table_name} ({columns_str}) VALUES ({placeholders})"
-                )
+                insert_query = f"INSERT INTO {table_name} ({columns_str}) VALUES ({placeholders})"
 
                 # Insert data
                 for row_dict in rows_data:
@@ -130,7 +127,7 @@ class ImportService:
         if not file_path_obj.exists():
             raise FileNotFoundError(f"JSON file not found: {file_path}")
 
-        with open(file_path_obj, "r", encoding="utf-8") as f:
+        with open(file_path_obj, encoding="utf-8") as f:
             data = json.load(f)
 
         import_summary = {}
@@ -185,9 +182,7 @@ class ImportService:
             placeholders = ", ".join(["?" for _ in insert_columns])
             columns_str = ", ".join(insert_columns)
 
-            insert_query = (
-                f"INSERT INTO {table_name} ({columns_str}) VALUES ({placeholders})"
-            )
+            insert_query = f"INSERT INTO {table_name} ({columns_str}) VALUES ({placeholders})"
 
             # Insert each row
             for row_dict in data:
@@ -228,7 +223,9 @@ class ImportService:
                     f"WHERE table_name = '{table_name}'"
                 ).fetchall()
 
-                valid_columns = {col[0]: {"type": col[1], "nullable": col[2]} for col in columns_info}
+                valid_columns = {
+                    col[0]: {"type": col[1], "nullable": col[2]} for col in columns_info
+                }
 
                 # Validate each row
                 for row in data:
@@ -271,7 +268,7 @@ class ImportService:
         if not file_path_obj.exists():
             raise FileNotFoundError(f"Exercise file not found: {file_path}")
 
-        with open(file_path_obj, "r", encoding="utf-8") as f:
+        with open(file_path_obj, encoding="utf-8") as f:
             exercises = json.load(f)
 
         if not isinstance(exercises, list):
@@ -295,9 +292,7 @@ class ImportService:
                 if "secondary_muscles" in exercise and isinstance(
                     exercise["secondary_muscles"], list
                 ):
-                    exercise["secondary_muscles"] = json.dumps(
-                        exercise["secondary_muscles"]
-                    )
+                    exercise["secondary_muscles"] = json.dumps(exercise["secondary_muscles"])
 
                 # Build INSERT query
                 columns = list(exercise.keys())

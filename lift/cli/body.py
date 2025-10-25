@@ -2,12 +2,11 @@
 
 from datetime import datetime
 from decimal import Decimal, InvalidOperation
-from typing import Optional
 
 import typer
 from rich.console import Console
 from rich.panel import Panel
-from rich.prompt import Confirm, Prompt
+from rich.prompt import Prompt
 
 from lift.core.database import get_db
 from lift.core.models import BodyMeasurementCreate, MeasurementUnit, WeightUnit
@@ -20,6 +19,7 @@ from lift.utils.body_formatters import (
     format_progress_summary,
     format_weight_log_response,
 )
+
 
 # Create body tracking app
 body_app = typer.Typer(
@@ -67,9 +67,7 @@ def weight(
         measurement = service.log_weight(weight_val, weight_unit)
 
         # Display confirmation
-        panel = format_weight_log_response(
-            weight_val, weight_unit.value, previous, seven_day_avg
-        )
+        panel = format_weight_log_response(weight_val, weight_unit.value, previous, seven_day_avg)
         console.print(panel)
 
     except InvalidOperation:
@@ -186,7 +184,8 @@ def measure(
         measurement = service.log_measurement(measurement_create)
 
         console.print(
-            "\n" + Panel(
+            "\n"
+            + Panel(
                 "[bold green]Measurement saved successfully![/bold green]",
                 border_style="green",
             )
@@ -207,7 +206,7 @@ def measure(
 @body_app.command()
 def history(
     ctx: typer.Context,
-    measurement: Optional[str] = typer.Option(
+    measurement: str | None = typer.Option(
         None,
         "--measurement",
         "-m",
@@ -327,7 +326,9 @@ def progress(
 @body_app.command()
 def chart(
     ctx: typer.Context,
-    measurement: str = typer.Argument(..., help="Measurement to chart (e.g., weight, chest, waist)"),
+    measurement: str = typer.Argument(
+        ..., help="Measurement to chart (e.g., weight, chest, waist)"
+    ),
     weeks: int = typer.Option(12, "--weeks", "-w", help="Number of weeks to chart"),
 ) -> None:
     """
@@ -391,7 +392,9 @@ def latest(
         measurement = service.get_latest_measurement()
 
         if not measurement:
-            console.print("[yellow]No measurements found. Log one with 'lift body measure'[/yellow]")
+            console.print(
+                "[yellow]No measurements found. Log one with 'lift body measure'[/yellow]"
+            )
             return
 
         panel = format_measurement_detail(measurement)

@@ -3,19 +3,17 @@
 import re
 from datetime import datetime
 from decimal import Decimal
-from typing import Optional
 
 import typer
 from rich.console import Console
-from rich.panel import Panel
 from rich.prompt import Confirm, Prompt
 from rich.table import Table
 
 from lift.core.database import get_db
-from lift.core.models import SetCreate, SetType, WeightUnit, WorkoutCreate, WorkoutUpdate
+from lift.core.models import SetCreate, SetType, WeightUnit, WorkoutCreate
 from lift.services.set_service import SetService
 from lift.services.workout_service import WorkoutService
-from lift.utils.calculations import calculate_1rm_epley, calculate_volume_load
+from lift.utils.calculations import calculate_volume_load
 from lift.utils.workout_formatters import (
     format_exercise_performance,
     format_set_completion,
@@ -25,6 +23,7 @@ from lift.utils.workout_formatters import (
     format_workout_summary,
 )
 
+
 # Create workout CLI app
 workout_app = typer.Typer(help="Log and track workouts")
 console = Console()
@@ -33,11 +32,11 @@ console = Console()
 @workout_app.command("start")
 def start_workout(
     ctx: typer.Context,
-    name: Optional[str] = typer.Option(None, "--name", "-n", help="Workout name"),
+    name: str | None = typer.Option(None, "--name", "-n", help="Workout name"),
     freestyle: bool = typer.Option(
         False, "--freestyle", "-f", help="Freestyle workout (no program)"
     ),
-    bodyweight: Optional[float] = typer.Option(
+    bodyweight: float | None = typer.Option(
         None, "--bodyweight", "-bw", help="Current bodyweight in lbs"
     ),
 ) -> None:
@@ -74,9 +73,7 @@ def start_workout(
 
     # Display header
     console.print()
-    console.print(
-        format_workout_header(workout_name, start_time, workout_create.bodyweight)
-    )
+    console.print(format_workout_header(workout_name, start_time, workout_create.bodyweight))
     console.print()
 
     # Check if RPE is enabled
@@ -118,17 +115,12 @@ def start_workout(
         if last_performance:
             # Group by workout
             last_workout_sets = [
-                s for s in last_performance
-                if s["workout_id"] == last_performance[0]["workout_id"]
+                s for s in last_performance if s["workout_id"] == last_performance[0]["workout_id"]
             ]
 
             last_date = last_performance[0]["workout_date"]
             console.print()
-            console.print(
-                format_exercise_performance(
-                    exercise_name, last_workout_sets, last_date
-                )
-            )
+            console.print(format_exercise_performance(exercise_name, last_workout_sets, last_date))
 
         # Log sets for this exercise
         console.print(
@@ -220,7 +212,7 @@ def start_workout(
 @workout_app.command("log")
 def log_workout(
     ctx: typer.Context,
-    name: Optional[str] = typer.Option(None, "--name", "-n", help="Workout name"),
+    name: str | None = typer.Option(None, "--name", "-n", help="Workout name"),
 ) -> None:
     """
     Quick manual workout logging (simpler than interactive session).
@@ -360,8 +352,8 @@ def delete_workout(
 
 
 def _parse_set_input(
-    input_str: str, last_set: Optional[dict], rpe_enabled: bool
-) -> Optional[tuple[Decimal, int, Optional[Decimal]]]:
+    input_str: str, last_set: dict | None, rpe_enabled: bool
+) -> tuple[Decimal, int, Decimal | None] | None:
     """
     Parse set input with shortcuts.
 
@@ -418,7 +410,7 @@ def _parse_set_input(
     return None
 
 
-def _lookup_exercise(db, exercise_name: str) -> Optional[int]:
+def _lookup_exercise(db, exercise_name: str) -> int | None:
     """
     Look up exercise by name (fuzzy matching).
 
@@ -443,9 +435,7 @@ def _lookup_exercise(db, exercise_name: str) -> Optional[int]:
             ).fetchone()
 
             if result:
-                console.print(
-                    f"[dim]Found exercise: {result[1]}[/dim]"
-                )
+                console.print(f"[dim]Found exercise: {result[1]}[/dim]")
                 return result[0]
 
     except Exception as e:

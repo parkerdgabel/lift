@@ -1,9 +1,7 @@
 """Program management service for creating and managing training programs."""
 
 import json
-from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 from lift.core.database import DatabaseManager, get_db
 from lift.core.models import (
@@ -19,7 +17,7 @@ from lift.core.models import (
 class ProgramService:
     """Service for managing training programs, workouts, and exercises."""
 
-    def __init__(self, db: Optional[DatabaseManager] = None) -> None:
+    def __init__(self, db: DatabaseManager | None = None) -> None:
         """
         Initialize program service.
 
@@ -109,7 +107,7 @@ class ProgramService:
                 for row in results
             ]
 
-    def get_program(self, id: int) -> Optional[Program]:
+    def get_program(self, id: int) -> Program | None:
         """
         Get a program by ID.
 
@@ -144,7 +142,7 @@ class ProgramService:
                 updated_at=result[8],
             )
 
-    def get_program_by_name(self, name: str) -> Optional[Program]:
+    def get_program_by_name(self, name: str) -> Program | None:
         """
         Get a program by name.
 
@@ -210,7 +208,7 @@ class ProgramService:
         if not update_fields:
             return program
 
-        set_clause = ", ".join(f"{k} = ?" for k in update_fields.keys())
+        set_clause = ", ".join(f"{k} = ?" for k in update_fields)
         query = f"""
             UPDATE programs
             SET {set_clause}, updated_at = CURRENT_TIMESTAMP
@@ -297,7 +295,7 @@ class ProgramService:
                 updated_at=result[8],
             )
 
-    def get_active_program(self) -> Optional[Program]:
+    def get_active_program(self) -> Program | None:
         """
         Get the currently active program.
 
@@ -402,9 +400,7 @@ class ProgramService:
 
             # Verify exercise exists
             exercise_query = "SELECT id FROM exercises WHERE id = ?"
-            exercise_result = conn.execute(
-                exercise_query, (exercise.exercise_id,)
-            ).fetchone()
+            exercise_result = conn.execute(exercise_query, (exercise.exercise_id,)).fetchone()
             if not exercise_result:
                 raise ValueError(f"Exercise with ID {exercise.exercise_id} not found")
 
@@ -646,7 +642,7 @@ class ProgramService:
                 updated_at=new_program_result[8],
             )
 
-    def load_seed_programs(self, programs_file: Optional[str] = None) -> int:
+    def load_seed_programs(self, programs_file: str | None = None) -> int:
         """
         Load sample programs from JSON file.
 
@@ -661,9 +657,7 @@ class ProgramService:
             ValueError: If JSON is invalid
         """
         if programs_file is None:
-            programs_file = str(
-                Path(__file__).parent.parent / "data" / "programs.json"
-            )
+            programs_file = str(Path(__file__).parent.parent / "data" / "programs.json")
 
         programs_path = Path(programs_file)
         if not programs_path.exists():
@@ -701,9 +695,7 @@ class ProgramService:
                         name=workout_data["name"],
                         day_number=workout_data.get("day_number"),
                         description=workout_data.get("description"),
-                        estimated_duration_minutes=workout_data.get(
-                            "estimated_duration_minutes"
-                        ),
+                        estimated_duration_minutes=workout_data.get("estimated_duration_minutes"),
                     ),
                 )
 

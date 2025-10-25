@@ -1,7 +1,6 @@
 """CLI commands for managing training programs."""
 
 from decimal import Decimal
-from typing import Optional
 
 import typer
 from rich.console import Console
@@ -21,6 +20,7 @@ from lift.utils.program_formatters import (
     format_program_list,
     format_program_summary,
 )
+
 
 program_app = typer.Typer(name="program", help="Manage training programs")
 console = Console()
@@ -88,9 +88,7 @@ def create(ctx: typer.Context) -> None:
             )
         )
 
-        console.print(
-            f"\n[green]✓[/green] Program [bold]{program.name}[/bold] created!\n"
-        )
+        console.print(f"\n[green]✓[/green] Program [bold]{program.name}[/bold] created!\n")
 
     except ValueError as e:
         console.print(f"\n[red]Error:[/red] {e}\n")
@@ -106,17 +104,13 @@ def create(ctx: typer.Context) -> None:
 
         workout_name = Prompt.ask("[bold]Workout name[/bold]")
 
-        day_number = Prompt.ask(
-            "[bold]Day number[/bold] (1-7, optional)", default=""
-        )
+        day_number = Prompt.ask("[bold]Day number[/bold] (1-7, optional)", default="")
         if day_number:
             day_number = int(day_number)
         else:
             day_number = None
 
-        workout_description = Prompt.ask(
-            "[bold]Description[/bold] (optional)", default=""
-        )
+        workout_description = Prompt.ask("[bold]Description[/bold] (optional)", default="")
         if not workout_description:
             workout_description = None
 
@@ -141,9 +135,7 @@ def create(ctx: typer.Context) -> None:
                 ),
             )
 
-            console.print(
-                f"[green]✓[/green] Workout [bold]{workout.name}[/bold] added!\n"
-            )
+            console.print(f"[green]✓[/green] Workout [bold]{workout.name}[/bold] added!\n")
 
         except ValueError as e:
             console.print(f"[red]Error:[/red] {e}\n")
@@ -162,9 +154,7 @@ def create(ctx: typer.Context) -> None:
     console.print("\n")
     _display_program(service, program.name)
 
-    console.print(
-        f"\n[green]✓[/green] Program [bold]{program.name}[/bold] created successfully!\n"
-    )
+    console.print(f"\n[green]✓[/green] Program [bold]{program.name}[/bold] created successfully!\n")
 
 
 def _add_exercises_interactive(ctx: typer.Context, workout_id: int) -> None:
@@ -210,9 +200,7 @@ def _add_exercises_interactive(ctx: typer.Context, workout_id: int) -> None:
         # Get exercise parameters
         target_sets = IntPrompt.ask("[bold]Sets[/bold]", default=3)
 
-        reps_input = Prompt.ask(
-            "[bold]Reps[/bold] (e.g., 8-10 or just 10)", default="8-10"
-        )
+        reps_input = Prompt.ask("[bold]Reps[/bold] (e.g., 8-10 or just 10)", default="8-10")
 
         if "-" in reps_input:
             parts = reps_input.split("-")
@@ -221,17 +209,13 @@ def _add_exercises_interactive(ctx: typer.Context, workout_id: int) -> None:
         else:
             target_reps_min = target_reps_max = int(reps_input)
 
-        target_rpe = Prompt.ask(
-            "[bold]Target RPE[/bold] (6-10, optional)", default=""
-        )
+        target_rpe = Prompt.ask("[bold]Target RPE[/bold] (6-10, optional)", default="")
         if target_rpe:
             target_rpe = Decimal(target_rpe)
         else:
             target_rpe = None
 
-        rest_seconds = Prompt.ask(
-            "[bold]Rest (seconds)[/bold] (optional)", default=""
-        )
+        rest_seconds = Prompt.ask("[bold]Rest (seconds)[/bold] (optional)", default="")
         if rest_seconds:
             rest_seconds = int(rest_seconds)
         else:
@@ -537,17 +521,13 @@ def edit(
         # Add workout
         workout_name = Prompt.ask("\n[bold]Workout name[/bold]")
 
-        day_number = Prompt.ask(
-            "[bold]Day number[/bold] (1-7, optional)", default=""
-        )
+        day_number = Prompt.ask("[bold]Day number[/bold] (1-7, optional)", default="")
         if day_number:
             day_number = int(day_number)
         else:
             day_number = None
 
-        workout_description = Prompt.ask(
-            "[bold]Description[/bold] (optional)", default=""
-        )
+        workout_description = Prompt.ask("[bold]Description[/bold] (optional)", default="")
         if not workout_description:
             workout_description = None
 
@@ -571,9 +551,7 @@ def edit(
                 ),
             )
 
-            console.print(
-                f"\n[green]✓[/green] Workout [bold]{workout.name}[/bold] added!\n"
-            )
+            console.print(f"\n[green]✓[/green] Workout [bold]{workout.name}[/bold] added!\n")
 
             if Confirm.ask("Add exercises to this workout?", default=True):
                 _add_exercises_interactive(ctx, workout.id)
@@ -587,9 +565,7 @@ def edit(
         workouts = service.get_program_workouts(program.id)
 
         if not workouts:
-            console.print(
-                "\n[yellow]No workouts found. Add a workout first.[/yellow]\n"
-            )
+            console.print("\n[yellow]No workouts found. Add a workout first.[/yellow]\n")
             raise typer.Exit(1)
 
         console.print("\n[bold]Select workout:[/bold]")
@@ -610,9 +586,7 @@ def edit(
         console.print("\n[bold]Update program details[/bold]")
         console.print("(Leave blank to keep current value)\n")
 
-        new_name = Prompt.ask(
-            f"[bold]Name[/bold] (current: {program.name})", default=""
-        )
+        new_name = Prompt.ask(f"[bold]Name[/bold] (current: {program.name})", default="")
         new_description = Prompt.ask(
             f"[bold]Description[/bold] (current: {program.description or 'None'})",
             default="",
@@ -632,9 +606,7 @@ def edit(
         if updates:
             try:
                 updated = service.update_program(program.id, updates)
-                console.print(
-                    f"\n[green]✓[/green] Program [bold]{updated.name}[/bold] updated!\n"
-                )
+                console.print(f"\n[green]✓[/green] Program [bold]{updated.name}[/bold] updated!\n")
             except ValueError as e:
                 console.print(f"\n[red]Error:[/red] {e}\n")
                 raise typer.Exit(1)
@@ -653,9 +625,7 @@ def edit(
 @program_app.command("import-samples")
 def import_samples(
     ctx: typer.Context,
-    file: Optional[str] = typer.Option(
-        None, "--file", "-f", help="Path to programs JSON file"
-    ),
+    file: str | None = typer.Option(None, "--file", "-f", help="Path to programs JSON file"),
 ) -> None:
     """
     Import sample training programs from JSON file.

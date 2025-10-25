@@ -2,7 +2,6 @@
 
 from datetime import datetime
 from decimal import Decimal
-from typing import Optional
 
 from lift.core.database import DatabaseManager, get_db
 from lift.core.models import Set, SetCreate
@@ -11,7 +10,7 @@ from lift.core.models import Set, SetCreate
 class SetService:
     """Service for managing workout sets."""
 
-    def __init__(self, db: Optional[DatabaseManager] = None) -> None:
+    def __init__(self, db: DatabaseManager | None = None) -> None:
         """
         Initialize set service.
 
@@ -96,9 +95,7 @@ class SetService:
             results = conn.execute(query, (workout_id,)).fetchall()
             return [self._row_to_set(row) for row in results]
 
-    def get_sets_for_exercise(
-        self, exercise_id: int, limit: int = 50
-    ) -> list[Set]:
+    def get_sets_for_exercise(self, exercise_id: int, limit: int = 50) -> list[Set]:
         """
         Get recent sets for an exercise across all workouts.
 
@@ -209,9 +206,7 @@ class SetService:
             max_set = result[0] if result and result[0] else 0
             return max_set + 1
 
-    def get_last_set_for_exercise_in_workout(
-        self, workout_id: int, exercise_id: int
-    ) -> Optional[Set]:
+    def get_last_set_for_exercise_in_workout(self, workout_id: int, exercise_id: int) -> Set | None:
         """
         Get the most recent set for an exercise in a workout.
 

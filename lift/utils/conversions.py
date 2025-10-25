@@ -1,6 +1,6 @@
 """Unit conversion utilities for body measurements and weights."""
 
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import ROUND_HALF_UP, Decimal
 
 from lift.core.models import MeasurementUnit, WeightUnit
 
@@ -105,10 +105,9 @@ def convert_weight(value: Decimal, from_unit: WeightUnit, to_unit: WeightUnit) -
 
     if from_unit == WeightUnit.LBS and to_unit == WeightUnit.KG:
         return lbs_to_kg(value)
-    elif from_unit == WeightUnit.KG and to_unit == WeightUnit.LBS:
+    if from_unit == WeightUnit.KG and to_unit == WeightUnit.LBS:
         return kg_to_lbs(value)
-    else:
-        raise ValueError(f"Unknown weight unit conversion: {from_unit} to {to_unit}")
+    raise ValueError(f"Unknown weight unit conversion: {from_unit} to {to_unit}")
 
 
 def convert_measurement(
@@ -134,7 +133,6 @@ def convert_measurement(
 
     if from_unit == MeasurementUnit.INCHES and to_unit == MeasurementUnit.CENTIMETERS:
         return inches_to_cm(value)
-    elif from_unit == MeasurementUnit.CENTIMETERS and to_unit == MeasurementUnit.INCHES:
+    if from_unit == MeasurementUnit.CENTIMETERS and to_unit == MeasurementUnit.INCHES:
         return cm_to_inches(value)
-    else:
-        raise ValueError(f"Unknown measurement unit conversion: {from_unit} to {to_unit}")
+    raise ValueError(f"Unknown measurement unit conversion: {from_unit} to {to_unit}")

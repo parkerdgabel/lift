@@ -2,7 +2,6 @@
 
 from datetime import datetime
 from decimal import Decimal
-from typing import Optional
 
 import plotext as plt
 
@@ -109,7 +108,10 @@ def generate_progression_chart(
 
 
 def generate_muscle_distribution_chart(
-    data: dict[str, Decimal], title: str = "Volume by Muscle Group", width: int = 80, height: int = 20
+    data: dict[str, Decimal],
+    title: str = "Volume by Muscle Group",
+    width: int = 80,
+    height: int = 20,
 ) -> str:
     """
     Generate bar chart showing volume distribution by muscle group.

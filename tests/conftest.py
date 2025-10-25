@@ -4,9 +4,9 @@ Shared pytest fixtures for all tests.
 This module provides reusable fixtures that can be used across all test files.
 """
 
+from collections.abc import Generator
 from datetime import datetime, timedelta
 from decimal import Decimal
-from typing import Dict, Generator
 
 import pytest
 
@@ -15,8 +15,8 @@ from lift.core.models import (
     CategoryType,
     EquipmentType,
     ExerciseCreate,
-    MuscleGroup,
     MovementType,
+    MuscleGroup,
     ProgramCreate,
     ProgramExerciseCreate,
     ProgramWorkoutCreate,
@@ -39,7 +39,7 @@ def reset_global_db() -> Generator[None, None, None]:
     reset_db_instance()
 
 
-@pytest.fixture
+@pytest.fixture()
 def db() -> Generator[DatabaseManager, None, None]:
     """Create a temporary in-memory database for testing."""
     import tempfile
@@ -61,7 +61,7 @@ def db() -> Generator[DatabaseManager, None, None]:
             Path(temp_path + ".wal").unlink()
 
 
-@pytest.fixture
+@pytest.fixture()
 def exercise_data() -> list[dict]:
     """Standard set of exercises for testing."""
     return [
@@ -132,8 +132,8 @@ def exercise_data() -> list[dict]:
     ]
 
 
-@pytest.fixture
-def loaded_exercises(db: DatabaseManager, exercise_data: list[dict]) -> Dict[str, int]:
+@pytest.fixture()
+def loaded_exercises(db: DatabaseManager, exercise_data: list[dict]) -> dict[str, int]:
     """Database with exercises pre-loaded. Returns dict of exercise_name -> exercise_id."""
     exercise_service = ExerciseService(db)
     exercise_ids = {}
@@ -145,10 +145,10 @@ def loaded_exercises(db: DatabaseManager, exercise_data: list[dict]) -> Dict[str
     return exercise_ids
 
 
-@pytest.fixture
+@pytest.fixture()
 def sample_workout(
-    db: DatabaseManager, loaded_exercises: Dict[str, int]
-) -> tuple[int, Dict[str, int]]:
+    db: DatabaseManager, loaded_exercises: dict[str, int]
+) -> tuple[int, dict[str, int]]:
     """Create a sample workout with sets. Returns (workout_id, exercise_ids)."""
     workout_service = WorkoutService(db)
     set_service = SetService(db)
@@ -196,10 +196,10 @@ def sample_workout(
     return workout.id, loaded_exercises
 
 
-@pytest.fixture
+@pytest.fixture()
 def sample_program(
-    db: DatabaseManager, loaded_exercises: Dict[str, int]
-) -> tuple[int, int, Dict[str, int]]:
+    db: DatabaseManager, loaded_exercises: dict[str, int]
+) -> tuple[int, int, dict[str, int]]:
     """
     Create a sample program with a workout template.
 
@@ -263,10 +263,10 @@ def sample_program(
     return program.id, push_workout.id, loaded_exercises
 
 
-@pytest.fixture
+@pytest.fixture()
 def multi_week_workout_data(
-    db: DatabaseManager, loaded_exercises: Dict[str, int]
-) -> tuple[list[int], Dict[str, int]]:
+    db: DatabaseManager, loaded_exercises: dict[str, int]
+) -> tuple[list[int], dict[str, int]]:
     """
     Create 4 weeks of workout data with progression.
 
@@ -329,10 +329,10 @@ def multi_week_workout_data(
     return workout_ids, loaded_exercises
 
 
-@pytest.fixture
+@pytest.fixture()
 def realistic_training_cycle(
-    db: DatabaseManager, loaded_exercises: Dict[str, int]
-) -> tuple[list[int], Dict[str, int]]:
+    db: DatabaseManager, loaded_exercises: dict[str, int]
+) -> tuple[list[int], dict[str, int]]:
     """
     Create a realistic 8-week training cycle with:
     - Progressive overload

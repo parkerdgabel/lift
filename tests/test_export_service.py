@@ -10,7 +10,7 @@ from lift.core.database import DatabaseManager, reset_db_instance
 from lift.services.export_service import ExportService
 
 
-@pytest.fixture
+@pytest.fixture()
 def db():
     """Create a temporary test database."""
     with tempfile.TemporaryDirectory() as tmpdir:
@@ -53,7 +53,7 @@ def test_export_to_csv(db):
         assert output_path.exists()
 
         # Verify content
-        with open(output_path, "r") as f:
+        with open(output_path) as f:
             lines = f.readlines()
             assert len(lines) >= 2  # Header + at least 1 data row
             assert "name" in lines[0].lower()
@@ -90,7 +90,7 @@ def test_export_to_json(db):
         assert output_path.exists()
 
         # Verify content
-        with open(output_path, "r") as f:
+        with open(output_path) as f:
             data = json.load(f)
             assert isinstance(data, list)
             assert len(data) >= 1
@@ -114,7 +114,7 @@ def test_export_all_to_json(db):
         # Verify file exists and content
         assert output_path.exists()
 
-        with open(output_path, "r") as f:
+        with open(output_path) as f:
             data = json.load(f)
             assert "export_date" in data
             assert "tables" in data
@@ -144,7 +144,7 @@ def test_export_empty_table(db):
         # Verify file exists with headers only
         assert output_path.exists()
 
-        with open(output_path, "r") as f:
+        with open(output_path) as f:
             lines = f.readlines()
             assert len(lines) == 1  # Header only
 
@@ -172,7 +172,7 @@ def test_export_workout_history(db):
         # Verify file exists and content
         assert output_path.exists()
 
-        with open(output_path, "r") as f:
+        with open(output_path) as f:
             data = json.load(f)
             assert "workouts" in data
             assert "workout_count" in data

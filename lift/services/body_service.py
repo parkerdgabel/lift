@@ -2,7 +2,6 @@
 
 from datetime import datetime, timedelta
 from decimal import Decimal
-from typing import Optional
 
 from lift.core.database import DatabaseManager
 from lift.core.models import (
@@ -25,9 +24,7 @@ class BodyService:
         """
         self.db = db
 
-    def log_weight(
-        self, weight: Decimal, unit: WeightUnit = WeightUnit.LBS
-    ) -> BodyMeasurement:
+    def log_weight(self, weight: Decimal, unit: WeightUnit = WeightUnit.LBS) -> BodyMeasurement:
         """
         Quick log bodyweight only.
 
@@ -105,7 +102,7 @@ class BodyService:
             return self._row_to_measurement(result[0])
         raise RuntimeError("Failed to create body measurement")
 
-    def get_latest_measurement(self) -> Optional[BodyMeasurement]:
+    def get_latest_measurement(self) -> BodyMeasurement | None:
         """
         Get the most recent body measurement.
 
@@ -125,7 +122,7 @@ class BodyService:
             return self._row_to_measurement(result[0])
         return None
 
-    def get_latest_weight(self) -> Optional[tuple[Decimal, WeightUnit]]:
+    def get_latest_weight(self) -> tuple[Decimal, WeightUnit] | None:
         """
         Get the most recent bodyweight entry.
 
@@ -382,7 +379,7 @@ class BodyService:
             "differences": comparison["differences"],
         }
 
-    def get_seven_day_average(self, field: str = "weight") -> Optional[Decimal]:
+    def get_seven_day_average(self, field: str = "weight") -> Decimal | None:
         """
         Get 7-day moving average for a field.
 

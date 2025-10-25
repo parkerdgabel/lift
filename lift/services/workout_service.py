@@ -1,8 +1,6 @@
 """Workout service for managing workout sessions."""
 
-from datetime import datetime
 from decimal import Decimal
-from typing import Optional
 
 from lift.core.database import DatabaseManager, get_db
 from lift.core.models import Workout, WorkoutCreate, WorkoutUpdate
@@ -11,7 +9,7 @@ from lift.core.models import Workout, WorkoutCreate, WorkoutUpdate
 class WorkoutService:
     """Service for managing workout sessions."""
 
-    def __init__(self, db: Optional[DatabaseManager] = None) -> None:
+    def __init__(self, db: DatabaseManager | None = None) -> None:
         """
         Initialize workout service.
 
@@ -63,7 +61,7 @@ class WorkoutService:
 
             return self._row_to_workout(result)
 
-    def get_workout(self, id: int) -> Optional[Workout]:
+    def get_workout(self, id: int) -> Workout | None:
         """
         Get a workout by ID.
 
@@ -103,7 +101,7 @@ class WorkoutService:
             results = conn.execute(query, (limit,)).fetchall()
             return [self._row_to_workout(row) for row in results]
 
-    def get_last_workout(self) -> Optional[Workout]:
+    def get_last_workout(self) -> Workout | None:
         """
         Get the most recent workout.
 
@@ -169,7 +167,7 @@ class WorkoutService:
         params.append(id)
         query = f"""
             UPDATE workouts
-            SET {', '.join(update_fields)}
+            SET {", ".join(update_fields)}
             WHERE id = ?
             RETURNING *
         """
@@ -260,14 +258,10 @@ class WorkoutService:
                 "total_sets": result[1] or 0,
                 "total_volume": Decimal(str(result[2])) if result[2] else Decimal("0"),
                 "avg_rpe": Decimal(str(result[3])) if result[3] else None,
-                "max_set_volume": (
-                    Decimal(str(result[4])) if result[4] else Decimal("0")
-                ),
+                "max_set_volume": (Decimal(str(result[4])) if result[4] else Decimal("0")),
             }
 
-    def get_last_performance(
-        self, exercise_id: int, limit: int = 1
-    ) -> list[dict]:
+    def get_last_performance(self, exercise_id: int, limit: int = 1) -> list[dict]:
         """
         Get the last performance for an exercise (most recent sets).
 
