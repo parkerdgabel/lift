@@ -1,0 +1,599 @@
+.TH LIFT 1 "January 2025" "lift 0.1.0" "User Commands"
+.SH NAME
+lift \- bodybuilding workout tracker CLI
+.SH SYNOPSIS
+.B lift
+[\fB\-\-db\-path\fR \fIPATH\fR]
+[\fB\-\-help\fR]
+[\fB\-\-version\fR]
+.I COMMAND
+[\fIOPTIONS\fR] [\fIARGS\fR]
+.SH DESCRIPTION
+.B lift
+is a robust, feature-complete command-line interface for tracking weightlifting sessions with a focus on bodybuilding and progressive overload.
+.PP
+LIFT provides a comprehensive suite of tools for tracking exercises, logging workouts, managing training programs, analyzing performance statistics, tracking body measurements, and managing workout data.
+.PP
+The application uses DuckDB for high-performance analytical queries and stores all data locally in a single database file.
+.SH GLOBAL OPTIONS
+.TP
+.BR \-\-db\-path " " \fIPATH\fR
+Specify a custom database path. Default: ~/.lift/lift.duckdb
+.TP
+.BR \-\-help
+Show help message and exit.
+.TP
+.BR \-\-version
+Show program version and exit.
+.SH COMMANDS
+.SS Database Management
+.TP
+.B init
+Initialize the database and load seed data (137 exercises).
+.RS
+.TP
+.BR \-\-force
+Force reinitialization of an existing database.
+.RE
+.TP
+.B info
+Display database information and table statistics.
+.TP
+.B version
+Display version information.
+.SS Exercise Management
+.TP
+.B exercises list
+List all exercises with optional filtering.
+.RS
+.TP
+.BR \-\-category " " \fICATEGORY\fR
+Filter by category (Push, Pull, Legs, Core).
+.TP
+.BR \-\-muscle " " \fIMUSCLE\fR
+Filter by primary muscle group.
+.TP
+.BR \-\-equipment " " \fIEQUIPMENT\fR
+Filter by equipment type.
+.TP
+.BR \-\-summary
+Show summary statistics instead of full list.
+.RE
+.TP
+.B exercises search
+\fIQUERY\fR
+Search exercises by name.
+.TP
+.B exercises info
+\fINAME\fR
+Display detailed information about a specific exercise.
+.TP
+.B exercises stats
+Show exercise library statistics.
+.TP
+.B exercises add
+Add a custom exercise (interactive).
+.TP
+.B exercises delete
+\fINAME\fR
+Delete a custom exercise.
+.RS
+.TP
+.BR \-\-force
+Skip confirmation prompt.
+.RE
+.SS Workout Tracking
+.TP
+.B workout start
+Start an interactive workout session.
+.RS
+.TP
+.BR \-\-name " " \fINAME\fR
+Name for the workout session.
+.TP
+.BR \-\-program " " \fIPROGRAM\fR
+Start workout from a program template.
+.PP
+During a workout session, log sets using shortcuts:
+.RS
+.TP
+.I 185 10
+185 lbs × 10 reps
+.TP
+.I 185 10 8.5
+185 lbs × 10 reps @ RPE 8.5
+.TP
+.I s
+Same as previous set
+.TP
+.I +5
+Add 5 lbs to previous weight
+.TP
+.I -5 8
+Subtract 5 lbs, 8 reps
+.TP
+.I done
+Finish current exercise
+.RE
+.RE
+.TP
+.B workout last
+Display details of the last workout.
+.TP
+.B workout history
+Show workout history.
+.RS
+.TP
+.BR \-\-limit " " \fIN\fR
+Limit number of workouts shown (default: 10).
+.RE
+.TP
+.B workout show
+\fIWORKOUT_ID\fR
+Display detailed information about a specific workout.
+.TP
+.B workout delete
+\fIWORKOUT_ID\fR
+Delete a workout.
+.RS
+.TP
+.BR \-\-force
+Skip confirmation prompt.
+.RE
+.SS Program Management
+.TP
+.B program create
+Create a new training program (interactive).
+.TP
+.B program list
+List all training programs.
+.TP
+.B program show
+\fINAME\fR
+Display detailed program information.
+.TP
+.B program activate
+\fINAME\fR
+Set a program as active.
+.TP
+.B program clone
+\fISOURCE\fR \fIDESTINATION\fR
+Clone an existing program.
+.TP
+.B program delete
+\fINAME\fR
+Delete a program.
+.RS
+.TP
+.BR \-\-force
+Skip confirmation prompt.
+.RE
+.TP
+.B program import-samples
+Import sample programs (PPL 6-Day, Upper/Lower 4-Day, Full Body 3-Day).
+.SS Statistics & Analytics
+.TP
+.B stats summary
+Show training summary.
+.RS
+.TP
+.BR \-\-week
+Show weekly summary.
+.TP
+.BR \-\-month
+Show monthly summary.
+.RE
+.TP
+.B stats exercise
+\fINAME\fR
+Show statistics for a specific exercise.
+.RS
+.TP
+.BR \-\-chart
+Display progression chart.
+.RE
+.TP
+.B stats volume
+Analyze training volume.
+.RS
+.TP
+.BR \-\-weeks " " \fIN\fR
+Number of weeks to analyze (default: 4).
+.RE
+.TP
+.B stats pr
+Show personal records.
+.RS
+.TP
+.BR \-\-exercise " " \fINAME\fR
+Show PRs for specific exercise.
+.RE
+.TP
+.B stats muscle
+\fIMUSCLE\fR
+Analyze volume for a specific muscle group.
+.TP
+.B stats streak
+Show current training streak.
+.TP
+.B stats progress
+\fIEXERCISE\fR
+Show detailed progression for an exercise.
+.RS
+.TP
+.BR \-\-chart
+Display progression chart.
+.RE
+.SS Body Tracking
+.TP
+.B body weight
+\fIWEIGHT\fR
+Log bodyweight.
+.RS
+.TP
+.BR \-\-unit " " \fIUNIT\fR
+Weight unit (lbs or kg).
+.RE
+.TP
+.B body measure
+Log full body measurements (interactive).
+.TP
+.B body history
+View measurement history.
+.RS
+.TP
+.BR \-\-measurement " " \fINAME\fR
+Specific measurement (weight, chest, waist, etc.).
+.TP
+.BR \-\-weeks " " \fIN\fR
+Number of weeks to show (default: 12).
+.TP
+.BR \-\-limit " " \fIN\fR
+Maximum number of entries (default: 20).
+.RE
+.TP
+.B body progress
+Show progress comparison.
+.RS
+.TP
+.BR \-\-weeks " " \fIN\fR
+Compare with N weeks ago (default: 4).
+.RE
+.TP
+.B body chart
+\fIMEASUREMENT\fR
+Display terminal chart for a measurement.
+.RS
+.TP
+.BR \-\-weeks " " \fIN\fR
+Number of weeks to chart (default: 12).
+.RE
+.TP
+.B body latest
+Show most recent measurements.
+.SS Data Management
+.TP
+.B data export
+Export data from database.
+.RS
+.TP
+.BR \-\-format " " \fIFORMAT\fR
+Export format: csv or json (default: json).
+.TP
+.BR \-\-table " " \fITABLE\fR
+Specific table to export (omit for all tables).
+.TP
+.BR \-\-output " " \fIPATH\fR
+Output file or directory path.
+.RE
+.TP
+.B data import
+\fIFILE\fR
+Import data from a file.
+.RS
+.TP
+.BR \-\-table " " \fITABLE\fR
+Target table name (required for CSV).
+.RE
+.TP
+.B data backup
+Create a database backup.
+.RS
+.TP
+.BR \-\-output " " \fIPATH\fR
+Backup directory path.
+.RE
+.TP
+.B data restore
+\fIPATH\fR
+Restore database from backup.
+.RS
+.TP
+.BR \-\-force
+Skip confirmation prompt.
+.RE
+.TP
+.B data optimize
+Optimize database for better performance.
+.SS Configuration
+.TP
+.B config list
+List all configuration settings.
+.TP
+.B config get
+\fIKEY\fR
+Get a configuration value.
+.TP
+.B config set
+\fIKEY\fR \fIVALUE\fR
+Set a configuration value.
+.TP
+.B config reset
+Reset configuration to defaults.
+.RS
+.TP
+.BR \-\-force
+Skip confirmation prompt.
+.RE
+.SH CONFIGURATION SETTINGS
+.TP
+.B default_weight_unit
+Default weight unit: lbs or kg (default: lbs)
+.TP
+.B default_measurement_unit
+Default measurement unit: in or cm (default: in)
+.TP
+.B enable_rpe
+Enable RPE (Rate of Perceived Exertion) tracking (default: true)
+.TP
+.B enable_tempo
+Enable tempo tracking (default: false)
+.TP
+.B rest_timer_default
+Default rest timer in seconds (default: 90)
+.TP
+.B auto_detect_pr
+Automatically detect personal records (default: true)
+.SH EXAMPLES
+.SS Initialize and Start Using LIFT
+.PP
+.nf
+.RS
+# Initialize the database
+$ lift init
+
+# Start your first workout
+$ lift workout start
+
+# List available exercises
+$ lift exercises list
+
+# Search for bench press variations
+$ lift exercises search bench
+.RE
+.fi
+.SS Log a Workout Session
+.PP
+.nf
+.RS
+$ lift workout start --name "Push Day"
+
+# The interactive session will prompt you:
+Exercise: bench press
+Set 1 > 185 10 8
+✓ 185 lbs × 10 reps @ RPE 8.0
+
+Set 2 > s
+✓ 185 lbs × 10 reps @ RPE 8.0
+
+Set 3 > +5 8 9
+✓ 190 lbs × 8 reps @ RPE 9.0
+
+Set 4 > done
+
+Exercise: overhead press
+# ... continue logging
+.RE
+.fi
+.SS View Statistics and Progress
+.PP
+.nf
+.RS
+# Show personal records
+$ lift stats pr
+
+# View progression for a specific exercise
+$ lift stats exercise "Bench Press" --chart
+
+# Check weekly training summary
+$ lift stats summary --week
+
+# View training streak
+$ lift stats streak
+.RE
+.fi
+.SS Manage Training Programs
+.PP
+.nf
+.RS
+# Import sample programs
+$ lift program import-samples
+
+# List available programs
+$ lift program list
+
+# View program details
+$ lift program show "PPL 6-Day"
+
+# Activate a program
+$ lift program activate "PPL 6-Day"
+
+# Start workout from active program
+$ lift workout start
+.RE
+.fi
+.SS Track Body Measurements
+.PP
+.nf
+.RS
+# Log bodyweight
+$ lift body weight 185.5
+
+# Log full measurements (interactive)
+$ lift body measure
+
+# View weight history
+$ lift body history --measurement weight --weeks 12
+
+# Display weight chart
+$ lift body chart weight --weeks 8
+
+# Compare progress
+$ lift body progress --weeks 4
+.RE
+.fi
+.SS Export and Backup Data
+.PP
+.nf
+.RS
+# Export all data to JSON
+$ lift data export --format json --output my_workouts.json
+
+# Export workouts table to CSV
+$ lift data export --format csv --table workouts --output workouts.csv
+
+# Create a backup
+$ lift data backup --output ~/backups/lift_backup
+
+# Restore from backup
+$ lift data restore ~/backups/lift_backup
+.RE
+.fi
+.SS Configure LIFT
+.PP
+.nf
+.RS
+# View all settings
+$ lift config list
+
+# Change to metric units
+$ lift config set default_weight_unit kg
+$ lift config set default_measurement_unit cm
+
+# Enable tempo tracking
+$ lift config set enable_tempo true
+
+# Set default rest timer to 2 minutes
+$ lift config set rest_timer_default 120
+.RE
+.fi
+.SS Use Custom Database Location
+.PP
+.nf
+.RS
+# Initialize database in custom location
+$ lift --db-path ~/my_workouts.duckdb init
+
+# Use custom database for commands
+$ lift --db-path ~/my_workouts.duckdb workout start
+
+# Set via environment variable
+$ export LIFT_DB_PATH=~/my_workouts.duckdb
+$ lift workout start
+.RE
+.fi
+.SH ENVIRONMENT
+.TP
+.B LIFT_DB_PATH
+Path to the database file. Overrides the default (~/.lift/lift.duckdb) but is overridden by
+.BR \-\-db\-path .
+.SH FILES
+.TP
+.I ~/.lift/lift.duckdb
+Default database file location.
+.TP
+.I ~/.lift/lift.duckdb.wal
+Write-Ahead Log (WAL) file for the database.
+.SH DATABASE SCHEMA
+The database includes the following main tables:
+.TP
+.B exercises
+Exercise library with 137 pre-loaded exercises and custom exercises.
+.TP
+.B workouts
+Workout session records with date, duration, and notes.
+.TP
+.B sets
+Individual set logs with weight, reps, RPE, and tempo.
+.TP
+.B programs
+Training program definitions.
+.TP
+.B program_workouts
+Workout templates within programs.
+.TP
+.B program_exercises
+Exercise prescriptions with target sets, reps, and RPE.
+.TP
+.B personal_records
+Personal record tracking (1RM, 3RM, 5RM, 10RM, volume).
+.TP
+.B body_measurements
+Body measurement and tracking data.
+.TP
+.B settings
+Application configuration settings.
+.PP
+The database also includes analytical views for efficient querying:
+.BR workout_volume ,
+.BR weekly_muscle_volume ,
+.BR exercise_progression ,
+.BR bodyweight_trend .
+.SH EXERCISE CATEGORIES
+.TP
+.B Push
+Pressing movements (bench press, overhead press, dips, etc.)
+.TP
+.B Pull
+Pulling movements (rows, pull-ups, deadlifts, curls, etc.)
+.TP
+.B Legs
+Lower body exercises (squats, leg press, lunges, leg curls, etc.)
+.TP
+.B Core
+Core and abdominal exercises (planks, crunches, leg raises, etc.)
+.SH MUSCLE GROUPS
+Chest, Back, Shoulders, Triceps, Biceps, Forearms, Quads, Hamstrings, Glutes, Calves, Abs, Obliques, Lower Back
+.SH EQUIPMENT TYPES
+Barbell, Dumbbell, Cable, Machine, Bodyweight, Bands, Kettlebell, Smith Machine
+.SH EXIT STATUS
+.TP
+.B 0
+Successful execution
+.TP
+.B 1
+General error (invalid input, database error, etc.)
+.SH NOTES
+.SS Progressive Overload
+LIFT automatically tracks your progression and can detect when you've achieved new personal records. The system uses multiple 1RM calculation formulas to estimate your strength levels.
+.SS RPE (Rate of Perceived Exertion)
+RPE is a subjective measure of how difficult a set felt, on a scale typically from 1-10. An RPE of 8 means you could have done 2 more reps before failure.
+.SS Database Performance
+The database is optimized for analytical queries. Running
+.B lift data optimize
+periodically can help maintain performance with large datasets.
+.SH BUGS
+Report bugs at: https://github.com/parkerdgabel/lift/issues
+.SH AUTHOR
+Written by Parker Gabel.
+.SH COPYRIGHT
+Copyright \(co 2025 Parker Gabel. License: MIT
+.br
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+.SH SEE ALSO
+Full documentation: https://github.com/parkerdgabel/lift
+.PP
+Related tools:
+.BR sqlite3 (1),
+.BR duckdb (1)

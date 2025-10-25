@@ -1,0 +1,21 @@
+# Include additional package data
+include LICENSE
+include README.md
+include CHANGELOG.md
+include pyproject.toml
+
+# Include man page
+include man/lift.1
+
+# Include data files
+recursive-include lift/data *.json
+recursive-include lift/core *.sql
+
+# Exclude development files
+exclude .gitignore
+exclude .pre-commit-config.yaml
+exclude .secrets.baseline
+recursive-exclude tests *
+recursive-exclude .github *
+recursive-exclude debian *
+recursive-exclude packaging *

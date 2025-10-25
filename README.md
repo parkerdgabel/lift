@@ -144,6 +144,28 @@ lift program list
 lift program show "PPL 6-Day"
 ```
 
+## Documentation
+
+### Man Page
+
+LIFT includes a comprehensive man page with detailed documentation of all commands and options.
+
+```bash
+# View the man page (after installation)
+man lift
+
+# Or view directly from source
+man man/lift.1
+```
+
+The man page includes:
+- Complete command reference
+- Detailed option descriptions
+- Practical examples for all features
+- Configuration settings
+- Database schema information
+- Environment variables
+
 ## Usage Guide
 
 ### Exercise Management

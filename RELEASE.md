@@ -27,7 +27,12 @@ This document describes how to create a new release of LIFT with multi-platform 
    lift version  # Verify it works
    ```
 
-5. **Commit All Changes**
+5. **Test Man Page**
+   ```bash
+   man man/lift.1  # Verify man page renders correctly
+   ```
+
+6. **Commit All Changes**
    ```bash
    git add -A
    git commit -m "Prepare release vX.Y.Z"
