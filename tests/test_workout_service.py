@@ -5,18 +5,9 @@ from decimal import Decimal
 
 import pytest
 
-from lift.core.database import DatabaseManager
 from lift.core.models import SetCreate, SetType, WeightUnit, WorkoutCreate, WorkoutUpdate
 from lift.services.set_service import SetService
 from lift.services.workout_service import WorkoutService
-
-
-@pytest.fixture()
-def db():
-    """Create in-memory test database."""
-    db = DatabaseManager(":memory:")
-    db.initialize_database()
-    return db
 
 
 @pytest.fixture()
@@ -168,13 +159,14 @@ class TestWorkoutService:
         """Test getting workout summary with sets."""
         # First, create an exercise
         with db.get_connection() as conn:
-            conn.execute(
+            result = conn.execute(
                 """
                 INSERT INTO exercises (name, category, primary_muscle, equipment, movement_type)
                 VALUES ('Bench Press', 'Push', 'Chest', 'Barbell', 'Compound')
+                RETURNING id
                 """
-            )
-            exercise_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+            ).fetchone()
+            exercise_id = result[0]
 
         # Add sets to the workout
         for i in range(3):
@@ -210,13 +202,14 @@ class TestWorkoutService:
         """Test getting last performance for an exercise."""
         # Create exercise
         with db.get_connection() as conn:
-            conn.execute(
+            result = conn.execute(
                 """
                 INSERT INTO exercises (name, category, primary_muscle, equipment, movement_type)
                 VALUES ('Squat', 'Legs', 'Quads', 'Barbell', 'Compound')
+                RETURNING id
                 """
-            )
-            exercise_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+            ).fetchone()
+            exercise_id = result[0]
 
         # Create workout and sets
         workout_create = WorkoutCreate(
@@ -253,13 +246,14 @@ class TestSetService:
         """Test adding a set."""
         # Create exercise
         with db.get_connection() as conn:
-            conn.execute(
+            result = conn.execute(
                 """
                 INSERT INTO exercises (name, category, primary_muscle, equipment, movement_type)
                 VALUES ('Deadlift', 'Pull', 'Back', 'Barbell', 'Compound')
+                RETURNING id
                 """
-            )
-            exercise_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+            ).fetchone()
+            exercise_id = result[0]
 
         set_create = SetCreate(
             workout_id=sample_workout.id,
@@ -285,13 +279,14 @@ class TestSetService:
         """Test retrieving all sets for a workout."""
         # Create exercise
         with db.get_connection() as conn:
-            conn.execute(
+            result = conn.execute(
                 """
                 INSERT INTO exercises (name, category, primary_muscle, equipment, movement_type)
                 VALUES ('Row', 'Pull', 'Back', 'Barbell', 'Compound')
+                RETURNING id
                 """
-            )
-            exercise_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+            ).fetchone()
+            exercise_id = result[0]
 
         # Add multiple sets
         for i in range(4):
@@ -316,13 +311,14 @@ class TestSetService:
         """Test volume calculation."""
         # Create exercise
         with db.get_connection() as conn:
-            conn.execute(
+            result = conn.execute(
                 """
                 INSERT INTO exercises (name, category, primary_muscle, equipment, movement_type)
                 VALUES ('Press', 'Push', 'Shoulders', 'Barbell', 'Compound')
+                RETURNING id
                 """
-            )
-            exercise_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+            ).fetchone()
+            exercise_id = result[0]
 
         # Add sets with varying weights and reps
         sets_data = [
@@ -367,13 +363,14 @@ class TestSetService:
         """Test deleting a set."""
         # Create exercise and set
         with db.get_connection() as conn:
-            conn.execute(
+            result = conn.execute(
                 """
                 INSERT INTO exercises (name, category, primary_muscle, equipment, movement_type)
                 VALUES ('Curl', 'Pull', 'Biceps', 'Dumbbell', 'Isolation')
+                RETURNING id
                 """
-            )
-            exercise_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+            ).fetchone()
+            exercise_id = result[0]
 
         set_create = SetCreate(
             workout_id=sample_workout.id,

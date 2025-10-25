@@ -10,14 +10,6 @@ from lift.services.stats_service import StatsService
 
 
 @pytest.fixture()
-def db() -> DatabaseManager:
-    """Create a test database."""
-    db = DatabaseManager(":memory:")
-    db.initialize_database()
-    return db
-
-
-@pytest.fixture()
 def stats_service(db: DatabaseManager) -> StatsService:
     """Create stats service with test database."""
     return StatsService(db)
@@ -28,24 +20,26 @@ def sample_data(db: DatabaseManager) -> dict:
     """Create sample workout data for testing."""
     with db.get_connection() as conn:
         # Create exercise
-        conn.execute(
+        result = conn.execute(
             """
             INSERT INTO exercises (name, category, primary_muscle, equipment, movement_type)
             VALUES ('Bench Press', 'Push', 'Chest', 'Barbell', 'Compound')
+            RETURNING id
         """
-        )
-        exercise_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+        ).fetchone()
+        exercise_id = result[0]
 
         # Create workout
         workout_date = datetime.now() - timedelta(days=1)
-        conn.execute(
+        result = conn.execute(
             """
             INSERT INTO workouts (date, name, duration_minutes, completed)
             VALUES (?, 'Push Day', 60, TRUE)
+            RETURNING id
         """,
             (workout_date,),
-        )
-        workout_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+        ).fetchone()
+        workout_id = result[0]
 
         # Create sets
         sets_data = [
@@ -204,25 +198,27 @@ def test_multiple_workouts_summary(db: DatabaseManager, stats_service: StatsServ
     """Test summary with multiple workouts."""
     with db.get_connection() as conn:
         # Create exercise
-        conn.execute(
+        result = conn.execute(
             """
             INSERT INTO exercises (name, category, primary_muscle, equipment, movement_type)
             VALUES ('Squat', 'Legs', 'Quads', 'Barbell', 'Compound')
+            RETURNING id
         """
-        )
-        exercise_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+        ).fetchone()
+        exercise_id = result[0]
 
         # Create multiple workouts
         for i in range(3):
             workout_date = datetime.now() - timedelta(days=i)
-            conn.execute(
+            result = conn.execute(
                 """
                 INSERT INTO workouts (date, name, duration_minutes, completed)
                 VALUES (?, 'Leg Day', 70, TRUE)
+                RETURNING id
             """,
                 (workout_date,),
-            )
-            workout_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+            ).fetchone()
+            workout_id = result[0]
 
             # Add sets
             conn.execute(
@@ -244,23 +240,25 @@ def test_volume_calculation_accuracy(db: DatabaseManager, stats_service: StatsSe
     """Test that volume calculations are accurate."""
     with db.get_connection() as conn:
         # Create exercise
-        conn.execute(
+        result = conn.execute(
             """
             INSERT INTO exercises (name, category, primary_muscle, equipment, movement_type)
             VALUES ('Deadlift', 'Pull', 'Back', 'Barbell', 'Compound')
+            RETURNING id
         """
-        )
-        exercise_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+        ).fetchone()
+        exercise_id = result[0]
 
         # Create workout
-        conn.execute(
+        result = conn.execute(
             """
             INSERT INTO workouts (date, name, completed)
             VALUES (?, 'Pull Day', TRUE)
+            RETURNING id
         """,
             (datetime.now(),),
-        )
-        workout_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+        ).fetchone()
+        workout_id = result[0]
 
         # Add set with known volume: 405 lbs × 3 reps = 1215 lbs
         conn.execute(
@@ -282,23 +280,25 @@ def test_rpe_averaging(db: DatabaseManager, stats_service: StatsService) -> None
     """Test that RPE averaging is correct."""
     with db.get_connection() as conn:
         # Create exercise
-        conn.execute(
+        result = conn.execute(
             """
             INSERT INTO exercises (name, category, primary_muscle, equipment, movement_type)
             VALUES ('OHP', 'Push', 'Shoulders', 'Barbell', 'Compound')
+            RETURNING id
         """
-        )
-        exercise_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+        ).fetchone()
+        exercise_id = result[0]
 
         # Create workout
-        conn.execute(
+        result = conn.execute(
             """
             INSERT INTO workouts (date, name, completed)
             VALUES (?, 'Push Day', TRUE)
+            RETURNING id
         """,
             (datetime.now(),),
-        )
-        workout_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+        ).fetchone()
+        workout_id = result[0]
 
         # Add sets with specific RPE values: 7, 8, 9 (avg = 8.0)
         for i, rpe in enumerate([7.0, 8.0, 9.0], 1):

@@ -8,8 +8,6 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
 
-import pytest
-
 from lift.core.database import DatabaseManager
 from lift.core.models import (
     CategoryType,
@@ -28,14 +26,6 @@ from lift.services.program_service import ProgramService
 from lift.services.set_service import SetService
 from lift.services.stats_service import StatsService
 from lift.services.workout_service import WorkoutService
-
-
-@pytest.fixture()
-def db() -> DatabaseManager:
-    """Create a temporary in-memory database for testing."""
-    db = DatabaseManager(":memory:")
-    db.initialize_database()
-    return db
 
 
 class TestCompleteUserJourney:

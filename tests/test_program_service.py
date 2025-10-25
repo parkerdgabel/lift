@@ -7,7 +7,6 @@ from pathlib import Path
 
 import pytest
 
-from lift.core.database import DatabaseManager, reset_db_instance
 from lift.core.models import (
     Program,
     ProgramCreate,
@@ -16,23 +15,6 @@ from lift.core.models import (
     SplitType,
 )
 from lift.services.program_service import ProgramService
-
-
-@pytest.fixture()
-def db():
-    """Create a temporary database for testing."""
-    reset_db_instance()
-    with tempfile.NamedTemporaryFile(suffix=".duckdb", delete=False) as f:
-        db_path = f.name
-
-    db = DatabaseManager(db_path)
-    db.initialize_database()
-
-    yield db
-
-    # Cleanup
-    Path(db_path).unlink(missing_ok=True)
-    reset_db_instance()
 
 
 @pytest.fixture()

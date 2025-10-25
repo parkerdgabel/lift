@@ -309,10 +309,11 @@ class PRService:
                 workout_id,
                 set_id
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            RETURNING *
         """
 
         with self.db.get_connection() as conn:
-            cursor = conn.execute(
+            result = conn.execute(
                 query,
                 (
                     pr.exercise_id,
@@ -325,13 +326,6 @@ class PRService:
                     pr.workout_id,
                     pr.set_id,
                 ),
-            )
-
-            pr_id = cursor.lastrowid
-
-            # Fetch the created record
-            result = conn.execute(
-                "SELECT * FROM personal_records WHERE id = ?", (pr_id,)
             ).fetchone()
 
         return PersonalRecord(

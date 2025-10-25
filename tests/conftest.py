@@ -45,10 +45,11 @@ def db() -> Generator[DatabaseManager, None, None]:
     import tempfile
     from pathlib import Path
 
-    # Create a temporary file for the database
+    # Create a temporary file path (delete the empty file so DuckDB can create it fresh)
     temp_file = tempfile.NamedTemporaryFile(suffix=".duckdb", delete=False)
     temp_path = temp_file.name
     temp_file.close()
+    Path(temp_path).unlink()  # Delete empty file so DuckDB can create it
 
     try:
         db = DatabaseManager(temp_path)

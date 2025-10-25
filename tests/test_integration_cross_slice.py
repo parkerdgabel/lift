@@ -32,14 +32,6 @@ from lift.services.workout_service import WorkoutService
 
 
 @pytest.fixture()
-def db() -> DatabaseManager:
-    """Create a temporary in-memory database for testing."""
-    db = DatabaseManager(":memory:")
-    db.initialize_database()
-    return db
-
-
-@pytest.fixture()
 def loaded_db(db: DatabaseManager) -> DatabaseManager:
     """Database with exercises and config pre-loaded."""
     exercise_service = ExerciseService(db)

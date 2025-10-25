@@ -11,14 +11,6 @@ from lift.services.body_service import BodyService
 
 
 @pytest.fixture()
-def db() -> DatabaseManager:
-    """Create an in-memory test database."""
-    db = DatabaseManager(":memory:")
-    db.initialize_database()
-    return db
-
-
-@pytest.fixture()
 def service(db: DatabaseManager) -> BodyService:
     """Create a BodyService instance with test database."""
     return BodyService(db)

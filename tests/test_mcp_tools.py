@@ -2,7 +2,6 @@
 
 import pytest
 
-from lift.core.database import DatabaseManager
 from lift.mcp.tools import (
     GetExerciseInfoTool,
     LogBodyweightTool,
@@ -13,14 +12,6 @@ from lift.mcp.tools import (
 from lift.services.body_service import BodyService
 from lift.services.exercise_service import ExerciseService
 from lift.services.workout_service import WorkoutService
-
-
-@pytest.fixture()
-def db():
-    """Create in-memory test database."""
-    db = DatabaseManager(":memory:")
-    db.initialize_database()
-    return db
 
 
 @pytest.fixture()

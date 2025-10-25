@@ -11,14 +11,6 @@ from lift.services.pr_service import PRService
 
 
 @pytest.fixture()
-def db() -> DatabaseManager:
-    """Create a test database."""
-    db = DatabaseManager(":memory:")
-    db.initialize_database()
-    return db
-
-
-@pytest.fixture()
 def pr_service(db: DatabaseManager) -> PRService:
     """Create PR service with test database."""
     return PRService(db)
@@ -28,13 +20,14 @@ def pr_service(db: DatabaseManager) -> PRService:
 def sample_exercise(db: DatabaseManager) -> int:
     """Create a sample exercise and return its ID."""
     with db.get_connection() as conn:
-        conn.execute(
+        result = conn.execute(
             """
             INSERT INTO exercises (name, category, primary_muscle, equipment, movement_type)
             VALUES ('Bench Press', 'Push', 'Chest', 'Barbell', 'Compound')
+            RETURNING id
         """
-        )
-        return conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+        ).fetchone()
+        return result[0]
 
 
 @pytest.fixture()
@@ -42,14 +35,15 @@ def sample_workout(db: DatabaseManager, sample_exercise: int) -> dict:
     """Create a sample workout with sets."""
     with db.get_connection() as conn:
         # Create workout
-        conn.execute(
+        result = conn.execute(
             """
             INSERT INTO workouts (date, name, duration_minutes, completed)
             VALUES (?, 'Push Day', 60, TRUE)
+            RETURNING id
         """,
             (datetime.now(),),
-        )
-        workout_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+        ).fetchone()
+        workout_id = result[0]
 
         # Create sets with various rep ranges
         sets_data = [
@@ -61,15 +55,16 @@ def sample_workout(db: DatabaseManager, sample_exercise: int) -> dict:
 
         set_ids = []
         for set_data in sets_data:
-            conn.execute(
+            result = conn.execute(
                 """
                 INSERT INTO sets (
                     workout_id, exercise_id, set_number, weight, reps, rpe, set_type
                 ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                RETURNING id
             """,
                 set_data,
-            )
-            set_ids.append(conn.execute("SELECT last_insert_rowid()").fetchone()[0])
+            ).fetchone()
+            set_ids.append(result[0])
 
     return {
         "workout_id": workout_id,
@@ -124,13 +119,14 @@ def test_get_prs_by_exercise(
     """Test getting PRs filtered by exercise."""
     # Create another exercise
     with db.get_connection() as conn:
-        conn.execute(
+        result = conn.execute(
             """
             INSERT INTO exercises (name, category, primary_muscle, equipment, movement_type)
             VALUES ('Squat', 'Legs', 'Quads', 'Barbell', 'Compound')
+            RETURNING id
         """
-        )
-        squat_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+        ).fetchone()
+        squat_id = result[0]
 
     # Create PRs for both exercises
     for exercise_id in [sample_exercise, squat_id]:
@@ -251,14 +247,15 @@ def test_auto_detect_prs_no_new_records(
 
     # Create another workout with same or lower weights
     with pr_service.db.get_connection() as conn:
-        conn.execute(
+        result = conn.execute(
             """
             INSERT INTO workouts (date, name, completed)
             VALUES (?, 'Push Day 2', TRUE)
+            RETURNING id
         """,
             (datetime.now(),),
-        )
-        workout_id_2 = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+        ).fetchone()
+        workout_id_2 = result[0]
 
         # Add sets with lower weights
         conn.execute(
@@ -281,14 +278,15 @@ def test_auto_detect_volume_pr(
     """Test detection of volume PR."""
     with db.get_connection() as conn:
         # Create workout with high-volume set
-        conn.execute(
+        result = conn.execute(
             """
             INSERT INTO workouts (date, name, completed)
             VALUES (?, 'Volume Day', TRUE)
+            RETURNING id
         """,
             (datetime.now(),),
-        )
-        workout_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+        ).fetchone()
+        workout_id = result[0]
 
         # Add set with high volume: 225 × 15 = 3375 lbs
         conn.execute(
@@ -313,14 +311,15 @@ def test_auto_detect_max_weight_pr(
 ) -> None:
     """Test detection of max weight PR."""
     with db.get_connection() as conn:
-        conn.execute(
+        result = conn.execute(
             """
             INSERT INTO workouts (date, name, completed)
             VALUES (?, 'Max Day', TRUE)
+            RETURNING id
         """,
             (datetime.now(),),
-        )
-        workout_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+        ).fetchone()
+        workout_id = result[0]
 
         # Add set with very heavy weight
         conn.execute(
@@ -451,14 +450,15 @@ def test_multiple_exercises_pr_detection(pr_service: PRService, db: DatabaseMana
         bench_id, squat_id = exercises[0][0], exercises[1][0]
 
         # Create workout
-        conn.execute(
+        result = conn.execute(
             """
             INSERT INTO workouts (date, name, completed)
             VALUES (?, 'Full Body', TRUE)
+            RETURNING id
         """,
             (datetime.now(),),
-        )
-        workout_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+        ).fetchone()
+        workout_id = result[0]
 
         # Add sets for both exercises
         conn.execute(

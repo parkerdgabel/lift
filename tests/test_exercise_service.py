@@ -20,8 +20,11 @@ from lift.services.exercise_service import ExerciseService
 @pytest.fixture()
 def temp_db():
     """Create a temporary database for testing."""
-    with tempfile.NamedTemporaryFile(suffix=".duckdb", delete=False) as f:
-        db_path = f.name
+    # Create temp file and delete it so DuckDB can create it fresh
+    temp_file = tempfile.NamedTemporaryFile(suffix=".duckdb", delete=False)
+    db_path = temp_file.name
+    temp_file.close()
+    Path(db_path).unlink()  # Delete empty file
 
     # Reset the global instance to ensure clean state
     reset_db_instance()
