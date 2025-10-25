@@ -487,15 +487,16 @@ class TestExportImportIntegration:
             with open(export_path) as f:
                 data = json.load(f)
 
-            assert "exercises" in data
-            assert "workouts" in data
-            assert "sets" in data
-            assert "body_measurements" in data
+            assert "tables" in data
+            assert "exercises" in data["tables"]
+            assert "workouts" in data["tables"]
+            assert "sets" in data["tables"]
+            assert "body_measurements" in data["tables"]
 
-            assert len(data["exercises"]) == len(exercises)
-            assert len(data["workouts"]) == 1
-            assert len(data["sets"]) == 1
-            assert len(data["body_measurements"]) == 1
+            assert len(data["tables"]["exercises"]) == len(exercises)
+            assert len(data["tables"]["workouts"]) == 1
+            assert len(data["tables"]["sets"]) == 1
+            assert len(data["tables"]["body_measurements"]) == 1
 
         finally:
             Path(export_path).unlink(missing_ok=True)

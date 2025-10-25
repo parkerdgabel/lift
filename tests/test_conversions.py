@@ -27,7 +27,7 @@ class TestWeightConversions:
         # Edge cases
         assert lbs_to_kg(Decimal("0")) == Decimal("0.00")
         assert lbs_to_kg(Decimal("1")) == Decimal("0.45")
-        assert lbs_to_kg(Decimal("220.5")) == Decimal("100.01")
+        assert lbs_to_kg(Decimal("220.5")) == Decimal("100.02")
 
     def test_kg_to_lbs(self) -> None:
         """Test kilograms to pounds conversion."""

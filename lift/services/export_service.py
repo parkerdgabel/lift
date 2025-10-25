@@ -174,11 +174,13 @@ class ExportService:
                     headers = [col[0] for col in columns]
                     row_dict = dict(zip(headers, row, strict=False))
 
-                # Convert timestamps to ISO format
+                # Convert timestamps and Decimals for JSON serialization
                 processed_dict = {}
                 for key, value in row_dict.items():
                     if isinstance(value, datetime):
                         processed_dict[key] = value.isoformat()
+                    elif isinstance(value, Decimal):
+                        processed_dict[key] = float(value)
                     else:
                         processed_dict[key] = value
 

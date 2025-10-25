@@ -251,7 +251,7 @@ class WorkoutService:
 
             if not result:
                 return {
-                    "exercise_count": 0,
+                    "total_exercises": 0,
                     "total_sets": 0,
                     "total_volume": Decimal("0"),
                     "avg_rpe": None,
@@ -259,7 +259,7 @@ class WorkoutService:
                 }
 
             return {
-                "exercise_count": result[0] or 0,
+                "total_exercises": result[0] or 0,
                 "total_sets": result[1] or 0,
                 "total_volume": Decimal(str(result[2])) if result[2] else Decimal("0"),
                 "avg_rpe": Decimal(str(result[3])) if result[3] else None,

@@ -66,16 +66,17 @@ def sample_workout_with_sets(workout_service, set_service, exercise_service):
     workout = workout_service.create_workout(workout_create)
 
     # Add sets
-    for _ in range(3):
+    for i in range(1, 4):
         set_create = SetCreate(
             workout_id=workout.id,
             exercise_id=bench_press.id,
+            set_number=i,
             weight=Decimal("225"),
             reps=8,
             rpe=Decimal("7.5"),
             set_type=SetType.WORKING,
         )
-        set_service.create_set(set_create)
+        set_service.add_set(set_create)
 
     return workout
 
