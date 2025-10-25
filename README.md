@@ -74,10 +74,10 @@ A robust, feature-complete command-line interface for tracking weightlifting ses
 
 ```bash
 # Standard installation
-pip install lift
+pip install lift-tracker
 
 # With MCP server support for Claude Desktop
-pip install lift[mcp]
+pip install lift-tracker[mcp]
 ```
 
 ### Install with Homebrew (macOS/Linux)

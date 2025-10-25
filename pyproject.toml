@@ -1,5 +1,5 @@
 [project]
-name = "lift"
+name = "lift-tracker"
 version = "0.1.0"
 description = "A robust feature-complete CLI for tracking weightlifting sessions with a focus on bodybuilding"
 authors = [{name = "Parker Gabel", email = "parkerdgabel@gmail.com"}]
@@ -20,12 +20,6 @@ classifiers = [
     "Typing :: Typed",
 ]
 
-[project.urls]
-Homepage = "https://github.com/parkerdgabel/lift"
-Repository = "https://github.com/parkerdgabel/lift"
-Issues = "https://github.com/parkerdgabel/lift/issues"
-Changelog = "https://github.com/parkerdgabel/lift/blob/main/CHANGELOG.md"
-
 dependencies = [
     "typer[all]>=0.12.0",
     "rich>=13.7.0",
@@ -34,6 +28,12 @@ dependencies = [
     "plotext>=5.2.8",
     "python-dateutil>=2.9.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/parkerdgabel/lift"
+Repository = "https://github.com/parkerdgabel/lift"
+Issues = "https://github.com/parkerdgabel/lift/issues"
+Changelog = "https://github.com/parkerdgabel/lift/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
 dev = [

@@ -187,7 +187,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/p/lift
+      url: https://pypi.org/p/lift-tracker
     permissions:
       id-token: write
     steps:

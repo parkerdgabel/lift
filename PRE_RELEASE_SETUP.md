@@ -25,24 +25,24 @@ You need to create the project on PyPI before trusted publishing will work.
    twine upload dist/*
    ```
    - Enter your PyPI username and password
-   - This creates the `lift` project on PyPI
+   - This creates the `lift-tracker` project on PyPI
 
 **Option B: Register via Web Interface**
 1. Log in to https://pypi.org
 2. Click "Your projects" → "Publishing"
-3. Fill in the project name: `lift`
+3. Fill in the project name: `lift-tracker`
 
 ## 3. Configure PyPI Trusted Publishing
 
 Trusted publishing allows GitHub Actions to publish to PyPI without API tokens.
 
 1. **Go to PyPI Project Settings**
-   - Navigate to https://pypi.org/manage/project/lift/settings/publishing/
+   - Navigate to https://pypi.org/manage/project/lift-tracker/settings/publishing/
 
 2. **Add a New Trusted Publisher**
    - Click "Add a new pending publisher"
    - Fill in the form:
-     - **PyPI Project Name:** `lift`
+     - **PyPI Project Name:** `lift-tracker`
      - **Owner:** `parkerdgabel`
      - **Repository name:** `lift`
      - **Workflow name:** `release.yml`

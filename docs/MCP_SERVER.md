@@ -33,7 +33,7 @@ Model Context Protocol (MCP) is an open protocol that allows AI assistants to se
 
 1. **Install LIFT with MCP support**:
    ```bash
-   pip install lift[mcp]
+   pip install lift-tracker[mcp]
    ```
 
 2. **Install Claude Desktop**:

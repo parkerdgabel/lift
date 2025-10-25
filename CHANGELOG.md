@@ -5,7 +5,7 @@ All notable changes to LIFT will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.1.0] - 2025-01-26
+## [0.1.0] - TBD
 
 ### Added
 
@@ -57,6 +57,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Configuration management (7 settings)
   - Data optimization tools
 
+- **MCP Server Integration** - AI assistant integration via Model Context Protocol
+  - Full MCP protocol implementation using official MCP SDK
+  - Stdio transport for Claude Desktop and other MCP clients
+  - 4 MCP Resources: workouts, exercises, stats via lift:// URIs
+  - 4 MCP Tools: search_exercises, get_exercise_info, start_workout, log_bodyweight
+  - 5 CLI commands: start, config, info, capabilities, setup
+  - Extensible handler architecture for resources and tools
+  - JSON-based configuration system at `~/.lift/mcp-server.json`
+  - Complete user guide (docs/MCP_SERVER.md) and developer documentation
+  - Optional dependency group (install with `pip install lift-tracker[mcp]`)
+
 #### Technical Features
 - **Database** - DuckDB for high-performance analytical queries
   - Efficient schema with sequences for auto-increment
@@ -94,5 +105,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - pydantic >= 2.8.0
 - plotext >= 5.2.8
 - python-dateutil >= 2.9.0
+
+#### Optional Dependencies
+- mcp >= 1.0.0 (for MCP server integration)
+- httpx >= 0.27.0 (for MCP server SSE transport)
 
 [0.1.0]: https://github.com/parkerdgabel/lift/releases/tag/v0.1.0
