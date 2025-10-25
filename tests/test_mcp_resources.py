@@ -99,7 +99,7 @@ class TestWorkoutResourceHandler:
         resources = handler.list_resources()
 
         assert len(resources) > 0
-        assert any(r.uri == "lift://workouts/recent" for r in resources)
+        assert any(str(r.uri) == "lift://workouts/recent" for r in resources)
 
     def test_get_recent_workouts(self, db, sample_workout_with_sets):
         """Test getting recent workouts."""
@@ -167,7 +167,7 @@ class TestExerciseResourceHandler:
         resources = handler.list_resources()
 
         assert len(resources) > 0
-        assert any(r.uri == "lift://exercises/library" for r in resources)
+        assert any(str(r.uri) == "lift://exercises/library" for r in resources)
 
     def test_get_exercise_library(self, db_with_seed_exercises):
         """Test getting complete exercise library."""

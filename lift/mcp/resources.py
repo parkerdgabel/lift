@@ -10,6 +10,7 @@ from lift.core.database import DatabaseManager
 from lift.mcp.config import get_database_path
 from lift.mcp.handlers import ResourceHandler
 from lift.services.exercise_service import ExerciseService
+from lift.services.set_service import SetService
 from lift.services.stats_service import StatsService
 from lift.services.workout_service import WorkoutService
 
@@ -24,6 +25,7 @@ class WorkoutResourceHandler(ResourceHandler):
         """Initialize workout resource handler."""
         super().__init__(db)
         self.workout_service = WorkoutService(self.db)
+        self.set_service = SetService(self.db)
 
     def can_handle(self, uri: str) -> bool:
         """Check if this handler can process the given URI."""
@@ -78,16 +80,32 @@ class WorkoutResourceHandler(ResourceHandler):
             return {"error": f"Workout not found: {workout_id}"}
 
         summary = self.workout_service.get_workout_summary(workout_id)
+        sets = self.set_service.get_sets_for_workout(workout_id)
 
         return {
-            "id": workout.id,
-            "date": str(workout.date),
-            "name": workout.name,
-            "bodyweight": float(workout.bodyweight) if workout.bodyweight else None,
-            "duration_minutes": workout.duration_minutes,
-            "rating": workout.rating,
-            "notes": workout.notes,
-            "summary": summary,
+            "workout": {
+                "id": workout.id,
+                "date": str(workout.date),
+                "name": workout.name,
+                "bodyweight": float(workout.bodyweight) if workout.bodyweight else None,
+                "duration_minutes": workout.duration_minutes,
+                "rating": workout.rating,
+                "notes": workout.notes,
+                "summary": summary,
+                "sets": [
+                    {
+                        "id": s.id,
+                        "exercise_id": s.exercise_id,
+                        "set_number": s.set_number,
+                        "weight": float(s.weight) if s.weight else None,
+                        "weight_unit": s.weight_unit.value if s.weight_unit else None,
+                        "reps": s.reps,
+                        "rpe": float(s.rpe) if s.rpe else None,
+                        "set_type": s.set_type.value if s.set_type else None,
+                    }
+                    for s in sets
+                ],
+            }
         }
 
 
@@ -199,12 +217,11 @@ class StatsResourceHandler(ResourceHandler):
             start_date = end_date - timedelta(days=7)
 
         summary = self.stats_service.get_workout_summary(start_date, end_date)
-        return {
-            "period": period,
-            "start_date": str(start_date.date()),
-            "end_date": str(end_date.date()),
-            "summary": summary,
-        }
+        # Merge period into summary dict
+        summary["period"] = period
+        summary["start_date"] = str(start_date.date())
+        summary["end_date"] = str(end_date.date())
+        return {"summary": summary}
 
 
 def get_all_resource_handlers() -> list[ResourceHandler]:

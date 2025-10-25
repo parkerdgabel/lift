@@ -294,5 +294,5 @@ def test_import_json_invalid_format(db):
         with open(json_path, "w") as f:
             json.dump(data, f)
 
-        with pytest.raises(ValueError, match="Invalid JSON format"):
+        with pytest.raises(ValueError, match="Single table JSON import requires"):
             import_service.import_from_json(str(json_path))

@@ -151,13 +151,13 @@ class TestGetExerciseInfoTool:
     def test_get_existing_exercise(self, db_with_seed_exercises):
         """Test getting info for existing exercise."""
         tool = GetExerciseInfoTool(db_with_seed_exercises)
-        result = tool.execute({"exercise_name": "Bench Press (Barbell)"})
+        result = tool.execute({"exercise_name": "Barbell Bench Press"})
 
         assert result["success"] is True
         assert "data" in result
 
         exercise = result["data"]
-        assert exercise["name"] == "Bench Press (Barbell)"
+        assert exercise["name"] == "Barbell Bench Press"
         assert exercise["category"] == "Push"
         assert exercise["primary_muscle"] == "Chest"
         assert "equipment" in exercise

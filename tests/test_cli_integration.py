@@ -154,7 +154,7 @@ class TestCLIProgramCommands:
         result = runner.invoke(app, ["--db-path", temp_db, "program", "show", "PPL 6-Day"])
 
         assert result.exit_code == 0
-        assert "PPL 6-Day" in result.stdout
+        assert "PPL 6-DAY" in result.stdout
 
 
 class TestCLIBodyCommands:
