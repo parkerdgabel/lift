@@ -149,6 +149,7 @@ from lift.cli.body import body_app
 from lift.cli.config import config_app
 from lift.cli.data import data_app
 from lift.cli.exercise import exercise_app
+from lift.cli.mcp import mcp_app
 from lift.cli.program import program_app
 from lift.cli.stats import stats_app
 from lift.cli.workout import workout_app
@@ -158,6 +159,7 @@ app.add_typer(body_app, name="body")
 app.add_typer(data_app, name="data")
 app.add_typer(config_app, name="config")
 app.add_typer(exercise_app, name="exercises")
+app.add_typer(mcp_app, name="mcp")
 app.add_typer(program_app, name="program")
 app.add_typer(stats_app, name="stats")
 app.add_typer(workout_app, name="workout")

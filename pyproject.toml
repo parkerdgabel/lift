@@ -44,6 +44,10 @@ dev = [
     "pre-commit>=3.7.0",
     "bandit[toml]>=1.7.0",
 ]
+mcp = [
+    "mcp>=1.0.0",           # Official MCP SDK
+    "httpx>=0.27.0",        # For SSE transport
+]
 
 [project.scripts]
 lift = "lift.main:app"

@@ -57,6 +57,14 @@ A robust, feature-complete command-line interface for tracking weightlifting ses
 - Configuration management
 - Data optimization tools
 
+### 🤖 AI Assistant Integration (MCP Server)
+- **Claude Desktop integration** via Model Context Protocol
+- Natural language workout tracking and analysis
+- AI-powered exercise recommendations
+- Intelligent progression analysis
+- Conversational data queries
+- See [MCP Server Documentation](docs/MCP_SERVER.md) for setup
+
 ## Installation
 
 ### Requirements
@@ -65,7 +73,11 @@ A robust, feature-complete command-line interface for tracking weightlifting ses
 ### Install from PyPI (Recommended)
 
 ```bash
+# Standard installation
 pip install lift
+
+# With MCP server support for Claude Desktop
+pip install lift[mcp]
 ```
 
 ### Install with Homebrew (macOS/Linux)
@@ -165,6 +177,33 @@ The man page includes:
 - Configuration settings
 - Database schema information
 - Environment variables
+
+### MCP Server (AI Assistant Integration)
+
+LIFT can integrate with Claude Desktop and other AI assistants via the Model Context Protocol.
+
+```bash
+# Quick setup with interactive wizard
+lift mcp setup
+
+# Or manually configure
+lift mcp config >> ~/Library/Application\ Support/Claude/claude_desktop_config.json
+
+# Start the MCP server (usually automatic via Claude Desktop)
+lift mcp start
+```
+
+Once configured, you can interact with your workout data naturally through Claude:
+
+```
+You: "Show me my recent workouts"
+You: "What exercises target chest?"
+You: "How is my bench press progressing?"
+You: "Start a new workout called Push Day"
+You: "Log my weight at 185 lbs"
+```
+
+See [MCP Server Documentation](docs/MCP_SERVER.md) for complete setup and usage guide.
 
 ## Usage Guide
 
