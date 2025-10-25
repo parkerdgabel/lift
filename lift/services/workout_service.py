@@ -1,6 +1,7 @@
 """Workout service for managing workout sessions."""
 
 from decimal import Decimal
+from typing import Any
 
 from lift.core.database import DatabaseManager, get_db
 from lift.core.models import Workout, WorkoutCreate, WorkoutUpdate
@@ -126,8 +127,8 @@ class WorkoutService:
             ValueError: If workout not found
         """
         # Build dynamic update query based on provided fields
-        update_fields = []
-        params = []
+        update_fields: list[str] = []
+        params: list[Any] = []
 
         if update.name is not None:
             update_fields.append("name = ?")

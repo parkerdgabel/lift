@@ -209,7 +209,10 @@ class TestGetDatabasePath:
 
         db_path = get_database_path()
         # Environment variable should take precedence
-        assert "env/db.duckdb" in db_path
+        # Use Path for cross-platform compatibility
+        from pathlib import Path
+
+        assert Path("env/db.duckdb").as_posix() in Path(db_path).as_posix()
 
     def test_expanduser_in_database_path(self, temp_config_file):
         """Test that tilde is expanded in database path."""
@@ -219,4 +222,7 @@ class TestGetDatabasePath:
         db_path = get_database_path()
         # Should not contain tilde
         assert "~" not in db_path
-        assert "test/db.duckdb" in db_path
+        # Use Path for cross-platform compatibility
+        from pathlib import Path
+
+        assert Path("test/db.duckdb").as_posix() in Path(db_path).as_posix()
