@@ -53,7 +53,7 @@ class WorkoutService:
                     workout.bodyweight_unit.value if workout.bodyweight_unit else "lbs",
                     workout.notes,
                     workout.rating,
-                    True,  # completed defaults to True
+                    False,  # completed starts as False, set to True when finished
                 ),
             ).fetchone()
 
@@ -111,6 +111,27 @@ class WorkoutService:
         """
         workouts = self.get_recent_workouts(limit=1)
         return workouts[0] if workouts else None
+
+    def get_incomplete_workouts(self, limit: int = 5) -> list[Workout]:
+        """
+        Get incomplete (unfinished) workouts ordered by date.
+
+        Args:
+            limit: Maximum number of workouts to return
+
+        Returns:
+            List of incomplete workouts
+        """
+        query = """
+            SELECT * FROM workouts
+            WHERE completed = FALSE
+            ORDER BY date DESC
+            LIMIT ?
+        """
+
+        with self.db.get_connection() as conn:
+            results = conn.execute(query, (limit,)).fetchall()
+            return [self._row_to_workout(row) for row in results]
 
     def update_workout(self, id: int, update: WorkoutUpdate) -> Workout:
         """

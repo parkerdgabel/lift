@@ -5,12 +5,13 @@ from datetime import datetime
 from decimal import Decimal
 
 import typer
+from pydantic import ValidationError
 from rich.console import Console
 from rich.prompt import Confirm, Prompt
 from rich.table import Table
 
 from lift.core.database import DatabaseManager, get_db
-from lift.core.models import SetCreate, SetType, WeightUnit, WorkoutCreate
+from lift.core.models import SetCreate, SetType, WeightUnit, Workout, WorkoutCreate
 from lift.services.program_service import ProgramService
 from lift.services.set_service import SetService
 from lift.services.workout_service import WorkoutService
@@ -58,6 +59,20 @@ def start_workout(
     workout_service = WorkoutService(db)
     set_service = SetService(db)
     program_service = ProgramService(db)
+
+    # Check for incomplete workouts and warn user
+    incomplete = workout_service.get_incomplete_workouts(limit=1)
+    if incomplete and not freestyle:
+        console.print(
+            f"\n[yellow]⚠ You have an incomplete workout from {incomplete[0].date.strftime('%Y-%m-%d %H:%M')}[/yellow]"
+        )
+        console.print(
+            "[dim]Use 'lift workout incomplete' to view, 'lift workout complete <id>' to finish it,"
+        )
+        console.print("or 'lift workout abandon <id>' to delete it[/dim]\n")
+
+        if not Confirm.ask("Start a new workout anyway?", default=True):
+            raise typer.Exit(0)
 
     # Check for active program (unless freestyle)
     program_context: dict | None = None
@@ -129,19 +144,30 @@ def start_workout(
         "total_volume": Decimal("0"),
         "total_sets": 0,
         "exercises": set(),
+        "completed_indices": set(),  # Track completed exercise indices
+        "skipped_indices": set(),  # Track skipped exercise indices
     }
 
     # Main workout loop
     if program_context:
-        # Program-based workout: iterate through prescribed exercises
-        for idx, exercise_data in enumerate(program_context["exercises"], 1):  # type: ignore[index, arg-type, var-annotated]
+        # Program-based workout: flexible exercise navigation
+        exercises = program_context["exercises"]  # type: ignore[index]
+        current_idx = 0
+
+        while current_idx < len(exercises):  # type: ignore[arg-type]
+            # Skip if already completed
+            if current_idx in workout_state["completed_indices"]:  # type: ignore[operator]
+                current_idx += 1
+                continue
+
+            exercise_data = exercises[current_idx]  # type: ignore[index]
             prog_exercise = exercise_data["program_exercise"]
             exercise_id = prog_exercise.exercise_id
             exercise_name = exercise_data["exercise_name"]
 
             console.print()
             console.print(
-                f"\n[bold cyan]Exercise {idx} of {len(program_context['exercises'])}: {exercise_name}[/bold cyan]"  # type: ignore[index, arg-type]
+                f"\n[bold cyan]Exercise {current_idx + 1} of {len(exercises)}: {exercise_name}[/bold cyan]"  # type: ignore[arg-type]
             )
 
             # Display program prescription
@@ -197,19 +223,19 @@ def start_workout(
 
                 weight, reps, rpe = parsed
 
-                set_create = SetCreate(
-                    workout_id=workout.id,
-                    exercise_id=exercise_id,
-                    set_number=set_number,
-                    weight=weight,
-                    weight_unit=WeightUnit.LBS,
-                    reps=reps,
-                    rpe=rpe,
-                    set_type=SetType.WORKING,
-                    rest_seconds=None,
-                )
-
                 try:
+                    set_create = SetCreate(
+                        workout_id=workout.id,
+                        exercise_id=exercise_id,
+                        set_number=set_number,
+                        weight=weight,
+                        weight_unit=WeightUnit.LBS,
+                        reps=reps,
+                        rpe=rpe,
+                        set_type=SetType.WORKING,
+                        rest_seconds=None,
+                    )
+
                     created_set = set_service.add_set(set_create)
                     volume = calculate_volume_load(weight, reps)
 
@@ -226,6 +252,24 @@ def start_workout(
                     last_set_data = {"weight": weight, "reps": reps, "rpe": rpe}
                     set_number += 1
 
+                except ValidationError as e:
+                    # Extract validation error details for user-friendly message
+                    error_details = []
+                    for error in e.errors():
+                        field = error["loc"][0] if error["loc"] else "unknown"
+                        msg = error["msg"]
+                        if field == "rpe" and "greater_than_equal" in error["type"]:
+                            error_details.append(f"RPE must be between 6.0 and 10.0 (got {rpe})")
+                        elif field == "weight" and "greater_than_equal" in error["type"]:
+                            error_details.append(f"Weight must be greater than 0 (got {weight})")
+                        elif field == "reps" and "greater_than_equal" in error["type"]:
+                            error_details.append(f"Reps must be at least 1 (got {reps})")
+                        else:
+                            error_details.append(f"{field}: {msg}")
+
+                    console.print(f"[red]Invalid input: {', '.join(error_details)}[/red]")
+                    console.print("[dim]Please try again with valid values[/dim]")
+                    continue
                 except Exception as e:
                     console.print(f"[red]Error saving set: {e}[/red]")
                     continue
@@ -235,11 +279,71 @@ def start_workout(
                 f"\n[dim]Completed {set_number - 1}/{prog_exercise.target_sets} target sets[/dim]"
             )
 
-            # Ask if user wants to continue
-            if idx < len(program_context["exercises"]) and not Confirm.ask(  # type: ignore[index, arg-type]
-                "\nContinue to next exercise?", default=True
-            ):
-                break
+            # Mark as completed
+            workout_state["completed_indices"].add(current_idx)  # type: ignore[attr-defined]
+
+            # Show navigation menu
+            if current_idx < len(exercises) - 1:  # type: ignore[arg-type]
+                action = _show_exercise_menu(
+                    current_idx,
+                    exercises,  # type: ignore[arg-type]
+                    workout_state["completed_indices"],  # type: ignore[arg-type]
+                    workout_state["skipped_indices"],  # type: ignore[arg-type]
+                )
+
+                if action == "next":
+                    current_idx += 1
+                elif action == "skip":
+                    # Prompt for exercise number
+                    while True:
+                        try:
+                            skip_to = Prompt.ask(
+                                f"Enter exercise number (1-{len(exercises)})",  # type: ignore[arg-type]
+                                default=str(current_idx + 2),
+                            )
+                            skip_to_idx = int(skip_to) - 1
+
+                            if 0 <= skip_to_idx < len(exercises):  # type: ignore[arg-type]
+                                # Mark current as skipped (already logged some sets though)
+                                current_idx = skip_to_idx
+                                break
+
+                            console.print(
+                                f"[yellow]Invalid exercise number. Use 1-{len(exercises)}[/yellow]"
+                            )  # type: ignore[arg-type]
+                        except ValueError:
+                            console.print("[yellow]Please enter a valid number[/yellow]")
+
+                elif action == "view":
+                    _show_remaining_exercises(
+                        exercises,  # type: ignore[arg-type]
+                        current_idx,
+                        workout_state["completed_indices"],  # type: ignore[arg-type]
+                        workout_state["skipped_indices"],  # type: ignore[arg-type]
+                    )
+                    # Don't increment, will show menu again for same exercise
+                    continue
+
+                elif action == "finish":
+                    # Mark remaining as skipped
+                    for idx in range(current_idx + 1, len(exercises)):  # type: ignore[arg-type]
+                        if idx not in workout_state["completed_indices"]:  # type: ignore[operator]
+                            workout_state["skipped_indices"].add(idx)  # type: ignore[attr-defined]
+                    break
+            else:
+                # Last exercise, move on
+                current_idx += 1
+
+        # Prompt for skipped exercises
+        _prompt_for_skipped_exercises(
+            exercises,  # type: ignore[arg-type]
+            workout_state["skipped_indices"],  # type: ignore[arg-type]
+            workout,
+            workout_service,
+            set_service,
+            workout_state,
+            rpe_enabled,
+        )
     else:
         # Freestyle workout: existing logic
         while True:
@@ -300,19 +404,19 @@ def start_workout(
 
                 weight, reps, rpe = parsed
 
-                set_create = SetCreate(
-                    workout_id=workout.id,
-                    exercise_id=exercise_id,
-                    set_number=set_number,
-                    weight=weight,
-                    weight_unit=WeightUnit.LBS,
-                    reps=reps,
-                    rpe=rpe,
-                    set_type=SetType.WORKING,
-                    rest_seconds=None,
-                )
-
                 try:
+                    set_create = SetCreate(
+                        workout_id=workout.id,
+                        exercise_id=exercise_id,
+                        set_number=set_number,
+                        weight=weight,
+                        weight_unit=WeightUnit.LBS,
+                        reps=reps,
+                        rpe=rpe,
+                        set_type=SetType.WORKING,
+                        rest_seconds=None,
+                    )
+
                     created_set = set_service.add_set(set_create)
                     volume = calculate_volume_load(weight, reps)
 
@@ -329,6 +433,24 @@ def start_workout(
                     last_set_data = {"weight": weight, "reps": reps, "rpe": rpe}
                     set_number += 1
 
+                except ValidationError as e:
+                    # Extract validation error details for user-friendly message
+                    error_details = []
+                    for error in e.errors():
+                        field = error["loc"][0] if error["loc"] else "unknown"
+                        msg = error["msg"]
+                        if field == "rpe" and "greater_than_equal" in error["type"]:
+                            error_details.append(f"RPE must be between 6.0 and 10.0 (got {rpe})")
+                        elif field == "weight" and "greater_than_equal" in error["type"]:
+                            error_details.append(f"Weight must be greater than 0 (got {weight})")
+                        elif field == "reps" and "greater_than_equal" in error["type"]:
+                            error_details.append(f"Reps must be at least 1 (got {reps})")
+                        else:
+                            error_details.append(f"{field}: {msg}")
+
+                    console.print(f"[red]Invalid input: {', '.join(error_details)}[/red]")
+                    console.print("[dim]Please try again with valid values[/dim]")
+                    continue
                 except Exception as e:
                     console.print(f"[red]Error saving set: {e}[/red]")
                     continue
@@ -369,6 +491,125 @@ def log_workout(
     """
     console.print("[yellow]Quick workout logging coming soon![/yellow]")
     console.print("For now, use 'lift workout start' for interactive logging.")
+
+
+@workout_app.command("incomplete")
+def show_incomplete_workouts(ctx: typer.Context) -> None:
+    """Show incomplete workouts that can be resumed or abandoned."""
+    db = get_db(ctx.obj.get("db_path"))
+    workout_service = WorkoutService(db)
+    set_service = SetService(db)
+
+    incomplete = workout_service.get_incomplete_workouts(limit=10)
+
+    if not incomplete:
+        console.print("[green]No incomplete workouts found.[/green]")
+        return
+
+    console.print(f"\n[bold]Incomplete Workouts ({len(incomplete)})[/bold]\n")
+
+    for workout in incomplete:
+        # Get sets for this workout
+        sets = set_service.get_sets_for_workout(workout.id)
+        exercises = {s.exercise_id for s in sets}
+
+        # Calculate duration
+        if workout.duration_minutes:
+            duration = f"{workout.duration_minutes}m"
+        else:
+            # Calculate elapsed time since workout start
+            elapsed = datetime.now() - workout.date
+            duration = f"{int(elapsed.total_seconds() / 60)}m ago"
+
+        console.print(
+            f"[cyan]ID {workout.id}[/cyan] - {workout.name or 'Workout'} "
+            f"({workout.date.strftime('%Y-%m-%d %H:%M')})"
+        )
+        console.print(f"  [dim]{len(sets)} sets, {len(exercises)} exercises, {duration}[/dim]")
+        console.print()
+
+    console.print("[dim]Use 'lift workout abandon <id>' to delete an incomplete workout[/dim]")
+    console.print("[dim]Use 'lift workout complete <id>' to mark a workout as complete[/dim]")
+
+
+@workout_app.command("complete")
+def complete_workout_cmd(
+    ctx: typer.Context,
+    workout_id: int = typer.Argument(..., help="Workout ID to mark as complete"),
+) -> None:
+    """Mark an incomplete workout as complete."""
+    db = get_db(ctx.obj.get("db_path"))
+    workout_service = WorkoutService(db)
+
+    try:
+        workout = workout_service.get_workout(workout_id)
+        if not workout:
+            console.print(f"[red]Workout {workout_id} not found[/red]")
+            raise typer.Exit(1)
+
+        if workout.completed:
+            console.print(f"[yellow]Workout {workout_id} is already complete[/yellow]")
+            return
+
+        # Calculate duration if not set
+        duration = workout.duration_minutes
+        if not duration:
+            elapsed = datetime.now() - workout.date
+            duration = int(elapsed.total_seconds() / 60)
+
+        workout = workout_service.finish_workout(workout_id, duration)
+        console.print(f"[green]✓[/green] Workout {workout_id} marked as complete ({duration}m)")
+
+    except Exception as e:
+        console.print(f"[red]Error completing workout: {e}[/red]")
+        raise typer.Exit(1)
+
+
+@workout_app.command("abandon")
+def abandon_workout(
+    ctx: typer.Context,
+    workout_id: int = typer.Argument(..., help="Workout ID to abandon"),
+    force: bool = typer.Option(False, "--force", "-f", help="Skip confirmation"),
+) -> None:
+    """Delete an incomplete workout."""
+    db = get_db(ctx.obj.get("db_path"))
+    workout_service = WorkoutService(db)
+    set_service = SetService(db)
+
+    try:
+        workout = workout_service.get_workout(workout_id)
+        if not workout:
+            console.print(f"[red]Workout {workout_id} not found[/red]")
+            raise typer.Exit(1)
+
+        if workout.completed and not force:
+            console.print(
+                f"[yellow]Workout {workout_id} is already complete. Use --force to delete anyway[/yellow]"
+            )
+            raise typer.Exit(1)
+
+        # Show workout info
+        sets = set_service.get_sets_for_workout(workout_id)
+        exercises = {s.exercise_id for s in sets}
+
+        console.print(
+            f"\n[yellow]About to delete workout {workout_id}:[/yellow]\n"
+            f"  Name: {workout.name or 'Workout'}\n"
+            f"  Date: {workout.date.strftime('%Y-%m-%d %H:%M')}\n"
+            f"  Sets: {len(sets)}\n"
+            f"  Exercises: {len(exercises)}\n"
+        )
+
+        if not force and not Confirm.ask("Delete this workout?", default=False):
+            console.print("[dim]Cancelled[/dim]")
+            return
+
+        workout_service.delete_workout(workout_id)
+        console.print(f"[green]✓[/green] Workout {workout_id} deleted")
+
+    except Exception as e:
+        console.print(f"[red]Error abandoning workout: {e}[/red]")
+        raise typer.Exit(1)
 
 
 @workout_app.command("last")
@@ -608,3 +849,232 @@ def _get_setting(db: DatabaseManager, key: str, default: str = "") -> str:
         pass
 
     return default
+
+
+def _show_exercise_menu(current_idx: int, exercises: list, completed: set, skipped: set) -> str:
+    """
+    Show exercise navigation menu and get user choice.
+
+    Args:
+        current_idx: Current exercise index
+        exercises: List of all exercises
+        completed: Set of completed exercise indices
+        skipped: Set of skipped exercise indices
+
+    Returns:
+        Action string: "next", "skip", "view", or "finish"
+    """
+    console.print()
+
+    # Show next exercise name if available
+    next_idx = current_idx + 1
+    while next_idx < len(exercises) and next_idx in completed:
+        next_idx += 1
+
+    if next_idx < len(exercises):
+        next_name = exercises[next_idx]["exercise_name"]
+        console.print(f"[dim]Next: {next_name}[/dim]\n")
+
+    console.print("[bold]Options:[/bold]")
+    if next_idx < len(exercises):
+        console.print(f"  [cyan][n][/cyan] Next exercise ({next_name})")
+    console.print("  [cyan][s][/cyan] Skip to exercise #")
+    console.print("  [cyan][v][/cyan] View all exercises")
+    console.print("  [cyan][f][/cyan] Finish workout")
+
+    while True:
+        choice = Prompt.ask("Choice", default="n").lower().strip()
+
+        if choice == "n":
+            return "next"
+        if choice == "s":
+            return "skip"
+        if choice == "v":
+            return "view"
+        if choice == "f":
+            return "finish"
+
+        console.print("[yellow]Invalid choice. Use n/s/v/f[/yellow]")
+
+
+def _show_remaining_exercises(
+    exercises: list, current_idx: int, completed: set, skipped: set
+) -> None:
+    """
+    Display table of all exercises with their status.
+
+    Args:
+        exercises: List of all exercises
+        current_idx: Current exercise index
+        completed: Set of completed exercise indices
+        skipped: Set of skipped exercise indices
+    """
+    console.print("\n[bold]All Exercises:[/bold]\n")
+
+    for idx, exercise_data in enumerate(exercises):
+        exercise_name = exercise_data["exercise_name"]
+
+        if idx in completed:
+            status = "[green]✓[/green]"
+            label = "[dim](completed)[/dim]"
+        elif idx in skipped:
+            status = "[yellow]⊗[/yellow]"
+            label = "[yellow](skipped)[/yellow]"
+        elif idx == current_idx:
+            status = "[cyan]→[/cyan]"
+            label = "[cyan](current)[/cyan]"
+        else:
+            status = "[ ]"
+            label = ""
+
+        console.print(f"  {status} {idx + 1}. {exercise_name} {label}")
+
+    console.print()
+
+
+def _prompt_for_skipped_exercises(
+    exercises: list,
+    skipped: set,
+    workout: Workout,
+    workout_service: WorkoutService,
+    set_service: SetService,
+    workout_state: dict,
+    rpe_enabled: bool,
+) -> None:
+    """
+    Prompt user to complete skipped exercises at the end of workout.
+
+    Args:
+        exercises: List of all exercises
+        skipped: Set of skipped exercise indices
+        workout: Workout object
+        workout_service: WorkoutService instance
+        set_service: SetService instance
+        workout_state: Workout state dictionary
+        rpe_enabled: Whether RPE tracking is enabled
+    """
+    if not skipped:
+        return
+
+    console.print("\n[yellow]You skipped the following exercises:[/yellow]")
+    for idx in sorted(skipped):
+        console.print(f"  - {exercises[idx]['exercise_name']}")
+
+    console.print()
+
+    if not Confirm.ask("Complete skipped exercises now?", default=True):
+        return
+
+    # Process each skipped exercise
+    for idx in sorted(skipped):
+        exercise_data = exercises[idx]
+        prog_exercise = exercise_data["program_exercise"]
+        exercise_id = prog_exercise.exercise_id
+        exercise_name = exercise_data["exercise_name"]
+
+        console.print()
+        console.print(f"\n[bold cyan]Skipped Exercise: {exercise_name}[/bold cyan]")
+
+        # Display program prescription
+        console.print()
+        prog_exercise_dict = {
+            "target_sets": prog_exercise.target_sets,
+            "target_reps_min": prog_exercise.target_reps_min,
+            "target_reps_max": prog_exercise.target_reps_max,
+            "target_rpe": prog_exercise.target_rpe,
+            "rest_seconds": prog_exercise.rest_seconds,
+            "tempo": prog_exercise.tempo,
+            "notes": prog_exercise.notes,
+        }
+        console.print(format_program_prescription(exercise_name, prog_exercise_dict))
+
+        # Show last performance
+        last_performance = workout_service.get_last_performance(exercise_id, limit=1)
+        if last_performance:
+            last_workout_sets = [
+                s for s in last_performance if s["workout_id"] == last_performance[0]["workout_id"]
+            ]
+            last_date = last_performance[0]["workout_date"]
+            console.print()
+            console.print(format_exercise_performance(exercise_name, last_workout_sets, last_date))
+
+        # Log sets for this exercise
+        console.print(f"\n[bold]Logging sets for {exercise_name}[/bold]")
+        console.print(
+            "[dim]Format: <weight> <reps> [rpe] or use shortcuts: s (same), +5/-5 (adjust weight)[/dim]"
+        )
+        console.print()
+
+        workout_state["exercises"].add(exercise_id)  # type: ignore[attr-defined]
+        set_number = 1
+        last_set_data = None
+
+        while True:
+            set_input = Prompt.ask(f"[cyan]Set {set_number}[/cyan]", default="done")
+
+            if set_input.lower() == "done":
+                break
+
+            parsed = _parse_set_input(set_input, last_set_data, rpe_enabled)
+
+            if not parsed:
+                console.print("[red]Invalid input. Use format: weight reps [rpe][/red]")
+                continue
+
+            weight, reps, rpe = parsed
+
+            try:
+                set_create = SetCreate(
+                    workout_id=workout.id,
+                    exercise_id=exercise_id,
+                    set_number=set_number,
+                    weight=weight,
+                    weight_unit=WeightUnit.LBS,
+                    reps=reps,
+                    rpe=rpe,
+                    set_type=SetType.WORKING,
+                    rest_seconds=None,
+                )
+
+                created_set = set_service.add_set(set_create)
+                volume = calculate_volume_load(weight, reps)
+
+                is_pr = False
+                if last_performance:
+                    best_weight = max(s["weight"] for s in last_performance)
+                    if weight > best_weight:
+                        is_pr = True
+
+                console.print(format_set_completion(weight, reps, rpe, volume, is_pr))
+
+                workout_state["total_volume"] = workout_state["total_volume"] + volume  # type: ignore[operator]
+                workout_state["total_sets"] = workout_state["total_sets"] + 1  # type: ignore[operator]
+                last_set_data = {"weight": weight, "reps": reps, "rpe": rpe}
+                set_number += 1
+
+            except ValidationError as e:
+                # Extract validation error details for user-friendly message
+                error_details = []
+                for error in e.errors():
+                    field = error["loc"][0] if error["loc"] else "unknown"
+                    msg = error["msg"]
+                    if field == "rpe" and "greater_than_equal" in error["type"]:
+                        error_details.append(f"RPE must be between 6.0 and 10.0 (got {rpe})")
+                    elif field == "weight" and "greater_than_equal" in error["type"]:
+                        error_details.append(f"Weight must be greater than 0 (got {weight})")
+                    elif field == "reps" and "greater_than_equal" in error["type"]:
+                        error_details.append(f"Reps must be at least 1 (got {reps})")
+                    else:
+                        error_details.append(f"{field}: {msg}")
+
+                console.print(f"[red]Invalid input: {', '.join(error_details)}[/red]")
+                console.print("[dim]Please try again with valid values[/dim]")
+                continue
+            except Exception as e:
+                console.print(f"[red]Error saving set: {e}[/red]")
+                continue
+
+        # Show completion vs target
+        console.print(
+            f"\n[dim]Completed {set_number - 1}/{prog_exercise.target_sets} target sets[/dim]"
+        )

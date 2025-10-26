@@ -56,7 +56,7 @@ class TestWorkoutService:
         assert workout.bodyweight_unit == WeightUnit.LBS
         assert workout.notes == "Felt strong today"
         assert workout.rating == 4
-        assert workout.completed is True
+        assert workout.completed is False  # New workouts start incomplete
 
     def test_create_workout_minimal(self, workout_service):
         """Test creating a workout with minimal data."""
