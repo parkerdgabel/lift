@@ -81,12 +81,12 @@ def summary(
 
     # Create summary panel
     summary_text = (
-        f"[bold]Workouts:[/bold] {summary_data['total_workouts']}\n"
-        f"[bold]Total Volume:[/bold] {format_volume(summary_data['total_volume'])} lbs\n"
-        f"[bold]Total Sets:[/bold] {summary_data['total_sets']}\n"
-        f"[bold]Avg Duration:[/bold] {summary_data['avg_duration']:.0f} min\n"
-        f"[bold]Avg RPE:[/bold] {summary_data['avg_rpe']}\n"
-        f"[bold]Exercises Used:[/bold] {summary_data['total_exercises']}"
+        f"[bold]Workouts:[/bold] {summary_data.total_workouts}\n"
+        f"[bold]Total Volume:[/bold] {format_volume(summary_data.total_volume)} lbs\n"
+        f"[bold]Total Sets:[/bold] {summary_data.total_sets}\n"
+        f"[bold]Avg Duration:[/bold] {summary_data.avg_duration:.0f} min\n"
+        f"[bold]Avg RPE:[/bold] {summary_data.avg_rpe}\n"
+        f"[bold]Exercises Used:[/bold] {summary_data.total_exercises}"
     )
 
     console.print(

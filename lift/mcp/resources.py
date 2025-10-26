@@ -91,7 +91,7 @@ class WorkoutResourceHandler(ResourceHandler):
                 "duration_minutes": workout.duration_minutes,
                 "rating": workout.rating,
                 "notes": workout.notes,
-                "summary": summary,
+                "summary": summary.model_dump(),
                 "sets": [
                     {
                         "id": s.id,
@@ -217,11 +217,12 @@ class StatsResourceHandler(ResourceHandler):
             start_date = end_date - timedelta(days=7)
 
         summary = self.stats_service.get_workout_summary(start_date, end_date)
-        # Merge period into summary dict
-        summary["period"] = period
-        summary["start_date"] = str(start_date.date())
-        summary["end_date"] = str(end_date.date())
-        return {"summary": summary}
+        # Convert Pydantic model to dict and add period info
+        summary_dict = summary.model_dump()
+        summary_dict["period"] = period
+        summary_dict["start_date"] = str(start_date.date())
+        summary_dict["end_date"] = str(end_date.date())
+        return {"summary": summary_dict}
 
 
 def get_all_resource_handlers() -> list[ResourceHandler]:
