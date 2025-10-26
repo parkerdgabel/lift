@@ -220,21 +220,53 @@ class ExerciseService:
             exercises_data = json.load(f)
 
         loaded_count = 0
-        for exercise_data in exercises_data:
-            try:
-                # Create ExerciseCreate object from JSON data
-                exercise = ExerciseCreate(**exercise_data)
 
-                # Skip if already exists
-                if self.get_by_name(exercise.name):
+        # Use a single connection for all inserts to avoid Windows transaction issues
+        with self.db.get_connection() as conn:
+            for exercise_data in exercises_data:
+                try:
+                    # Create ExerciseCreate object from JSON data
+                    exercise = ExerciseCreate(**exercise_data)
+
+                    # Check if already exists using the same connection
+                    existing = conn.execute(
+                        "SELECT COUNT(*) FROM exercises WHERE name = ?", (exercise.name,)
+                    ).fetchone()
+
+                    if existing and existing[0] > 0:
+                        continue
+
+                    # Convert secondary_muscles list to JSON string
+                    secondary_muscles_json = json.dumps(
+                        [muscle.value for muscle in exercise.secondary_muscles]
+                    )
+
+                    # Insert using the same connection
+                    conn.execute(
+                        """
+                        INSERT INTO exercises (
+                            name, category, primary_muscle, secondary_muscles,
+                            equipment, movement_type, is_custom, instructions, video_url
+                        )
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        """,
+                        (
+                            exercise.name,
+                            exercise.category.value,
+                            exercise.primary_muscle.value,
+                            secondary_muscles_json,
+                            exercise.equipment.value,
+                            exercise.movement_type.value,
+                            exercise.is_custom,
+                            exercise.instructions,
+                            exercise.video_url,
+                        ),
+                    )
+                    loaded_count += 1
+                except Exception as e:
+                    # Log error but continue loading other exercises
+                    print(f"Warning: Failed to load exercise '{exercise_data.get('name')}': {e}")
                     continue
-
-                self.create(exercise)
-                loaded_count += 1
-            except Exception as e:
-                # Log error but continue loading other exercises
-                print(f"Warning: Failed to load exercise '{exercise_data.get('name')}': {e}")
-                continue
 
         return loaded_count
 
