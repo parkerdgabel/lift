@@ -278,14 +278,24 @@ class ProgramService:
             conn.execute("UPDATE programs SET is_active = FALSE")
 
             # Activate the specified program
-            result = conn.execute(
+            # Note: DuckDB has issues with RETURNING clause when foreign keys reference the row
+            conn.execute(
                 """
                 UPDATE programs
                 SET is_active = TRUE, updated_at = CURRENT_TIMESTAMP
                 WHERE id = ?
-                RETURNING id, name, description, split_type, days_per_week, duration_weeks,
-                          is_active, created_at, updated_at
-            """,
+                """,
+                (id,),
+            )
+
+            # Fetch the updated program
+            result = conn.execute(
+                """
+                SELECT id, name, description, split_type, days_per_week, duration_weeks,
+                       is_active, created_at, updated_at
+                FROM programs
+                WHERE id = ?
+                """,
                 (id,),
             ).fetchone()
 
