@@ -135,9 +135,9 @@ def start_workout(
     if program_context:
         # Program-based workout: iterate through prescribed exercises
         for idx, exercise_data in enumerate(program_context["exercises"], 1):  # type: ignore[index, arg-type, var-annotated]
-            exercise_id = exercise_data["exercise_id"]
-            exercise_name = exercise_data["exercise_name"]
             prog_exercise = exercise_data["program_exercise"]
+            exercise_id = prog_exercise.exercise_id
+            exercise_name = exercise_data["exercise_name"]
 
             console.print()
             console.print(
