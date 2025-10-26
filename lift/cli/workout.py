@@ -9,7 +9,7 @@ from rich.console import Console
 from rich.prompt import Confirm, Prompt
 from rich.table import Table
 
-from lift.core.database import get_db
+from lift.core.database import DatabaseManager, get_db
 from lift.core.models import SetCreate, SetType, WeightUnit, WorkoutCreate
 from lift.services.set_service import SetService
 from lift.services.workout_service import WorkoutService
@@ -179,8 +179,8 @@ def start_workout(
                 console.print(format_set_completion(weight, reps, rpe, volume, is_pr))
 
                 # Update state
-                workout_state["total_volume"] += volume
-                workout_state["total_sets"] += 1
+                workout_state["total_volume"] = workout_state["total_volume"] + volume  # type: ignore[operator]
+                workout_state["total_sets"] = workout_state["total_sets"] + 1  # type: ignore[operator]
                 last_set_data = {"weight": weight, "reps": reps, "rpe": rpe}
                 set_number += 1
 
@@ -410,7 +410,7 @@ def _parse_set_input(
     return None
 
 
-def _lookup_exercise(db, exercise_name: str) -> int | None:
+def _lookup_exercise(db: DatabaseManager, exercise_name: str) -> int | None:
     """
     Look up exercise by name (fuzzy matching).
 
@@ -444,7 +444,7 @@ def _lookup_exercise(db, exercise_name: str) -> int | None:
     return None
 
 
-def _get_setting(db, key: str, default: str = "") -> str:
+def _get_setting(db: DatabaseManager, key: str, default: str = "") -> str:
     """Get a setting value from the database."""
     try:
         with db.get_connection() as conn:

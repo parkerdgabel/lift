@@ -218,7 +218,16 @@ class WorkoutService:
             ValueError: If workout not found
         """
         return self.update_workout(
-            id, WorkoutUpdate(duration_minutes=duration_minutes, completed=True)
+            id,
+            WorkoutUpdate(
+                duration_minutes=duration_minutes,
+                completed=True,
+                name=None,
+                bodyweight=None,
+                bodyweight_unit=None,
+                notes=None,
+                rating=None,
+            ),
         )
 
     def get_workout_summary(self, id: int) -> dict:

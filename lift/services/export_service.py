@@ -5,6 +5,7 @@ import json
 from datetime import datetime
 from decimal import Decimal
 from pathlib import Path
+from typing import Any
 
 from lift.core.database import DatabaseManager
 
@@ -175,7 +176,7 @@ class ExportService:
                     row_dict = dict(zip(headers, row, strict=False))
 
                 # Convert timestamps and Decimals for JSON serialization
-                processed_dict = {}
+                processed_dict: dict[str, str | float | int | None] = {}
                 for key, value in row_dict.items():
                     if isinstance(value, datetime):
                         processed_dict[key] = value.isoformat()
@@ -211,7 +212,7 @@ class ExportService:
                 "ORDER BY table_name"
             ).fetchall()
 
-            database_export = {
+            database_export: dict[str, Any] = {
                 "export_date": datetime.now().isoformat(),
                 "tables": {},
             }
@@ -239,7 +240,7 @@ class ExportService:
                         row_dict = dict(zip(headers, row, strict=False))
 
                     # Convert timestamps and Decimals for JSON serialization
-                    processed_dict = {}
+                    processed_dict: dict[str, str | float | int | None] = {}
                     for key, value in row_dict.items():
                         if isinstance(value, datetime):
                             processed_dict[key] = value.isoformat()
@@ -326,7 +327,9 @@ class ExportService:
                 ).fetchall()
 
                 # Convert workout data
-                processed_workout = {}
+                processed_workout: dict[
+                    str, str | int | float | None | list[dict[str, str | int | float | None]]
+                ] = {}
                 for key, value in workout_dict.items():
                     if isinstance(value, datetime):
                         processed_workout[key] = value.isoformat()
@@ -334,10 +337,10 @@ class ExportService:
                         processed_workout[key] = value
 
                 # Convert sets data
-                processed_sets = []
+                processed_sets: list[dict[str, str | int | float | None]] = []
                 for set_row in sets:
                     set_dict = dict(set_row._asdict()) if hasattr(set_row, "_asdict") else {}
-                    processed_set = {}
+                    processed_set: dict[str, str | int | float | None] = {}
                     for key, value in set_dict.items():
                         if isinstance(value, datetime):
                             processed_set[key] = value.isoformat()

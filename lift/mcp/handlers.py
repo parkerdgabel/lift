@@ -3,6 +3,8 @@
 import logging
 from typing import Any
 
+from mcp.types import Resource
+
 from lift.core.database import DatabaseManager
 from lift.mcp.config import get_database_path
 
@@ -78,7 +80,7 @@ class ResourceHandler(BaseHandler):
         """
         raise NotImplementedError
 
-    def list_resources(self) -> list[dict[str, Any]]:
+    def list_resources(self) -> list[Resource]:
         """
         List all available resources of this type.
 

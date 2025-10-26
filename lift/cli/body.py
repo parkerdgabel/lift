@@ -183,9 +183,9 @@ def measure(
         # Save measurement
         measurement = service.log_measurement(measurement_create)
 
+        console.print("\n")
         console.print(
-            "\n"
-            + Panel(
+            Panel(
                 "[bold green]Measurement saved successfully![/bold green]",
                 border_style="green",
             )

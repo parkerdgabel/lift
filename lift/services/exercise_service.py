@@ -256,6 +256,8 @@ class ExerciseService:
             except json.JSONDecodeError:
                 secondary_muscles = []
 
+        from lift.core.models import MovementType
+
         return Exercise(
             id=row[0],  # id
             name=row[1],  # name
@@ -263,7 +265,7 @@ class ExerciseService:
             primary_muscle=row[3],  # primary_muscle
             secondary_muscles=secondary_muscles,  # secondary_muscles (parsed from JSON)
             equipment=row[5],  # equipment
-            movement_type=row[6] if row[6] else "Compound",  # movement_type
+            movement_type=MovementType(row[6]) if row[6] else MovementType.COMPOUND,
             is_custom=bool(row[7]),  # is_custom
             instructions=row[8],  # instructions
             video_url=row[9],  # video_url

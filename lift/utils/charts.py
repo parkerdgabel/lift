@@ -3,7 +3,7 @@
 from datetime import datetime
 from decimal import Decimal
 
-import plotext as plt
+import plotext as plt  # type: ignore[import-untyped]
 
 
 def generate_volume_chart(

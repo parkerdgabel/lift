@@ -4,7 +4,7 @@ from datetime import datetime
 from decimal import Decimal
 from enum import Enum
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, ValidationInfo, field_validator
 
 
 # ============================================================================
@@ -218,7 +218,7 @@ class ProgramExerciseBase(BaseModel):
 
     @field_validator("target_reps_max")
     @classmethod
-    def validate_rep_range(cls, v: int, info) -> int:
+    def validate_rep_range(cls, v: int, info: ValidationInfo) -> int:
         """Ensure max reps >= min reps."""
         if "target_reps_min" in info.data and v < info.data["target_reps_min"]:
             raise ValueError("target_reps_max must be >= target_reps_min")

@@ -2,7 +2,7 @@
 
 from decimal import Decimal
 
-import plotext as plt
+import plotext as plt  # type: ignore[import-untyped]
 from rich.panel import Panel
 from rich.table import Table
 
@@ -291,7 +291,7 @@ def format_measurement_chart(measurement_name: str, data: list[dict]) -> str:
     else:
         stats += f"[bold]Trend:[/bold] {trend:.1f} {unit}"
 
-    return chart_output + "\n" + stats
+    return chart_output + "\n" + stats  # type: ignore[no-any-return]
 
 
 def format_weight_log_response(

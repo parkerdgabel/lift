@@ -238,7 +238,7 @@ def calculate_tonnage(sets_data: list[tuple[Decimal, int]]) -> Decimal:
     Returns:
         Total tonnage
     """
-    return sum(weight * Decimal(reps) for weight, reps in sets_data)
+    return sum((weight * Decimal(reps) for weight, reps in sets_data), start=Decimal(0))
 
 
 # ============================================================================

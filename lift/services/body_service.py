@@ -42,6 +42,22 @@ class BodyService:
             weight=weight,
             weight_unit=unit,
             date=datetime.now(),
+            body_fat_pct=None,
+            neck=None,
+            shoulders=None,
+            chest=None,
+            waist=None,
+            hips=None,
+            bicep_left=None,
+            bicep_right=None,
+            forearm_left=None,
+            forearm_right=None,
+            thigh_left=None,
+            thigh_right=None,
+            calf_left=None,
+            calf_right=None,
+            measurement_unit=MeasurementUnit.INCHES,
+            notes=None,
         )
         return self.log_measurement(measurement_create)
 

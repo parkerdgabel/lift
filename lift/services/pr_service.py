@@ -171,13 +171,15 @@ class PRService:
         Returns:
             Created PersonalRecord
         """
+        from lift.core.models import WeightUnit
+
         pr_create = PersonalRecordCreate(
             exercise_id=exercise_id,
             record_type=record_type,
             value=value,
             reps=reps,
             weight=weight,
-            weight_unit=weight_unit,
+            weight_unit=WeightUnit(weight_unit),
             workout_id=workout_id,
             set_id=set_id,
             date=datetime.now(),
@@ -327,6 +329,9 @@ class PRService:
                     pr.set_id,
                 ),
             ).fetchone()
+
+        if not result:
+            raise RuntimeError("Failed to create personal record")
 
         return PersonalRecord(
             id=result[0],
