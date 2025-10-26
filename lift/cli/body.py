@@ -44,12 +44,12 @@ def weight(
     value: float = typer.Argument(..., help="Body weight value"),
     unit: str = typer.Option("lbs", "--unit", "-u", help="Weight unit (lbs or kg)"),
 ) -> None:
-    """
-    Quick log bodyweight.
+    """Quick log bodyweight.
 
     Example:
         lift body weight 185.2
         lift body weight 84.0 --unit kg
+
     """
     try:
         weight_val = Decimal(str(value))
@@ -82,14 +82,14 @@ def weight(
 def measure(
     ctx: typer.Context,
 ) -> None:
-    """
-    Interactive comprehensive body measurement entry.
+    """Interactive comprehensive body measurement entry.
 
     Prompts for weight, body fat percentage, and all circumference measurements.
     Press Enter to skip any optional measurement.
 
     Example:
         lift body measure
+
     """
     console.print(
         Panel(
@@ -215,8 +215,7 @@ def history(
     weeks: int = typer.Option(12, "--weeks", "-w", help="Number of weeks to show"),
     limit: int = typer.Option(20, "--limit", "-l", help="Maximum number of entries"),
 ) -> None:
-    """
-    Show body measurement history.
+    """Show body measurement history.
 
     Without --measurement flag, shows overview of all measurements.
     With --measurement flag, shows detailed history of that specific measurement.
@@ -225,6 +224,7 @@ def history(
         lift body history
         lift body history --measurement weight --weeks 8
         lift body history --limit 10
+
     """
     try:
         service = _get_body_service(ctx)
@@ -273,8 +273,7 @@ def progress(
     ctx: typer.Context,
     weeks: int = typer.Option(4, "--weeks", "-w", help="Number of weeks to compare"),
 ) -> None:
-    """
-    Show progress report comparing current vs X weeks ago.
+    """Show progress report comparing current vs X weeks ago.
 
     Displays changes in weight, body fat, and all measurements with
     absolute and percentage changes.
@@ -282,6 +281,7 @@ def progress(
     Example:
         lift body progress
         lift body progress --weeks 8
+
     """
     try:
         service = _get_body_service(ctx)
@@ -331,8 +331,7 @@ def chart(
     ),
     weeks: int = typer.Option(12, "--weeks", "-w", help="Number of weeks to chart"),
 ) -> None:
-    """
-    Display a terminal chart for a specific measurement trend.
+    """Display a terminal chart for a specific measurement trend.
 
     Shows a line chart with current value, average, and trend direction.
 
@@ -340,6 +339,7 @@ def chart(
         lift body chart weight
         lift body chart chest --weeks 8
         lift body chart waist --weeks 16
+
     """
     try:
         service = _get_body_service(ctx)
@@ -378,13 +378,13 @@ def chart(
 def latest(
     ctx: typer.Context,
 ) -> None:
-    """
-    Show the most recent body measurement.
+    """Show the most recent body measurement.
 
     Displays all recorded values from the latest measurement entry.
 
     Example:
         lift body latest
+
     """
     try:
         service = _get_body_service(ctx)

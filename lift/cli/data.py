@@ -39,8 +39,7 @@ def export(
         help="Output file or directory path",
     ),
 ) -> None:
-    """
-    Export data from the database.
+    """Export data from the database.
 
     Export all data or specific tables in CSV or JSON format.
     """
@@ -165,8 +164,7 @@ def import_data(
         help="Target table name (required for CSV, auto-detected for JSON)",
     ),
 ) -> None:
-    """
-    Import data from a file.
+    """Import data from a file.
 
     Supports CSV and JSON formats. Format is auto-detected from file extension.
     """
@@ -285,8 +283,7 @@ def backup(
         help="Backup directory path",
     ),
 ) -> None:
-    """
-    Create a database backup.
+    """Create a database backup.
 
     Creates a backup of the database in Parquet format using DuckDB's EXPORT DATABASE.
     """
@@ -351,8 +348,7 @@ def restore(
         help="Skip confirmation prompt",
     ),
 ) -> None:
-    """
-    Restore database from a backup.
+    """Restore database from a backup.
 
     WARNING: This will overwrite the current database!
     """
@@ -411,8 +407,7 @@ def restore(
 
 @data_app.command()
 def optimize(ctx: typer.Context) -> None:
-    """
-    Optimize the database file size.
+    """Optimize the database file size.
 
     Runs VACUUM to reclaim unused space and optimize the database.
     """

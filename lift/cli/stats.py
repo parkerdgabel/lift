@@ -53,8 +53,7 @@ def summary(
     year: bool = typer.Option(False, "--year", "-y", help="Show this year's summary"),
     weeks_back: int = typer.Option(4, "--weeks", help="Weeks to analyze for weekly view"),
 ) -> None:
-    """
-    Show training summary and statistics.
+    """Show training summary and statistics.
 
     By default shows last 4 weeks. Use --week, --month, or --year for specific periods.
     """
@@ -156,9 +155,7 @@ def exercise_stats(
     chart: bool = typer.Option(False, "--chart", "-c", help="Show progression chart"),
     limit: int = typer.Option(10, "--limit", "-n", help="Number of recent workouts to show"),
 ) -> None:
-    """
-    Show statistics and progression for a specific exercise.
-    """
+    """Show statistics and progression for a specific exercise."""
     db = get_db(ctx.obj.get("db_path"))
     stats_service = StatsService(db)
     pr_service = PRService(db)
@@ -258,9 +255,7 @@ def volume_stats(
     chart: bool = typer.Option(False, "--chart", "-c", help="Show volume chart"),
     weeks: int = typer.Option(12, "--weeks", "-w", help="Weeks to analyze"),
 ) -> None:
-    """
-    Show volume analysis and trends.
-    """
+    """Show volume analysis and trends."""
     db = get_db(ctx.obj.get("db_path"))
     stats_service = StatsService(db)
 
@@ -323,9 +318,7 @@ def pr_stats(
     recent: bool = typer.Option(False, "--recent", "-r", help="Show recent PRs"),
     days: int = typer.Option(30, "--days", "-d", help="Days for recent PRs"),
 ) -> None:
-    """
-    Show personal records.
-    """
+    """Show personal records."""
     db = get_db(ctx.obj.get("db_path"))
     pr_service = PRService(db)
 
@@ -448,9 +441,7 @@ def muscle_stats(
     weeks: int = typer.Option(4, "--weeks", "-w", help="Weeks to analyze"),
     chart: bool = typer.Option(False, "--chart", "-c", help="Show chart"),
 ) -> None:
-    """
-    Show detailed analysis for a specific muscle group.
-    """
+    """Show detailed analysis for a specific muscle group."""
     db = get_db(ctx.obj.get("db_path"))
     stats_service = StatsService(db)
 
@@ -534,9 +525,7 @@ def muscle_stats(
 
 @stats_app.command(name="streak")
 def streak_stats(ctx: typer.Context) -> None:
-    """
-    Show training consistency streak.
-    """
+    """Show training consistency streak."""
     db = get_db(ctx.obj.get("db_path"))
     stats_service = StatsService(db)
 
@@ -595,9 +584,7 @@ def progress_stats(
     weeks: int = typer.Option(12, "--weeks", "-w", help="Weeks to analyze"),
     chart: bool = typer.Option(True, "--chart/--no-chart", "-c", help="Show chart"),
 ) -> None:
-    """
-    Show detailed progression for an exercise over time.
-    """
+    """Show detailed progression for an exercise over time."""
     db = get_db(ctx.obj.get("db_path"))
     stats_service = StatsService(db)
 

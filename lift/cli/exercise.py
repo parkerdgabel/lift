@@ -59,14 +59,14 @@ def list_exercises(
         help="Show summary statistics",
     ),
 ) -> None:
-    """
-    List all exercises with optional filters.
+    """List all exercises with optional filters.
 
     Examples:
         lift exercises list
         lift exercises list --category Push
         lift exercises list --muscle Chest --equipment Barbell
         lift exercises list --summary
+
     """
     db_path = ctx.obj.get("db_path")
     service = ExerciseService(get_db(db_path))
@@ -119,12 +119,12 @@ def search_exercises(
     ctx: typer.Context,
     query: str = typer.Argument(..., help="Search query (partial name match)"),
 ) -> None:
-    """
-    Search exercises by name.
+    """Search exercises by name.
 
     Examples:
         lift exercises search "bench"
         lift exercises search "curl"
+
     """
     db_path = ctx.obj.get("db_path")
     service = ExerciseService(get_db(db_path))
@@ -166,12 +166,12 @@ def show_exercise_info(
     ctx: typer.Context,
     name: str = typer.Argument(..., help="Exercise name"),
 ) -> None:
-    """
-    Show detailed information about an exercise.
+    """Show detailed information about an exercise.
 
     Examples:
         lift exercises info "Barbell Bench Press"
         lift exercises info "Pull-Ups"
+
     """
     db_path = ctx.obj.get("db_path")
     service = ExerciseService(get_db(db_path))
@@ -206,14 +206,14 @@ def show_exercise_info(
 
 @exercise_app.command("add")
 def add_exercise(ctx: typer.Context) -> None:
-    """
-    Add a custom exercise through interactive prompts.
+    """Add a custom exercise through interactive prompts.
 
     This will guide you through creating a new custom exercise.
     Built-in exercises cannot be modified through this command.
 
     Example:
         lift exercises add
+
     """
     db_path = ctx.obj.get("db_path")
     service = ExerciseService(get_db(db_path))
@@ -355,14 +355,14 @@ def delete_exercise(
         help="Skip confirmation prompt",
     ),
 ) -> None:
-    """
-    Delete a custom exercise.
+    """Delete a custom exercise.
 
     Only custom exercises can be deleted. Built-in exercises are protected.
 
     Examples:
         lift exercises delete "My Custom Exercise"
         lift exercises delete "My Custom Exercise" --force
+
     """
     db_path = ctx.obj.get("db_path")
     service = ExerciseService(get_db(db_path))
@@ -433,13 +433,13 @@ def delete_exercise(
 
 @exercise_app.command("stats")
 def show_statistics(ctx: typer.Context) -> None:
-    """
-    Show exercise library statistics.
+    """Show exercise library statistics.
 
     Displays breakdowns by muscle group and equipment type.
 
     Example:
         lift exercises stats
+
     """
     db_path = ctx.obj.get("db_path")
     service = ExerciseService(get_db(db_path))

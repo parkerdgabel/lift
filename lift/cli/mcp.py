@@ -24,14 +24,14 @@ def start(
         "stdio", "--transport", "-t", help="Transport type (stdio or sse)"
     ),
 ) -> None:
-    """
-    Start the MCP server.
+    """Start the MCP server.
 
     The MCP server allows AI assistants like Claude to interact with LIFT
     for workout tracking, exercise search, and performance analysis.
 
     Example:
         lift mcp start
+
     """
     console.print(
         Panel(
@@ -53,14 +53,14 @@ def start(
 
 @mcp_app.command()
 def config() -> None:
-    """
-    Generate MCP server configuration for Claude Desktop.
+    """Generate MCP server configuration for Claude Desktop.
 
     Outputs configuration JSON that can be added to Claude Desktop's
     config file to enable LIFT integration.
 
     Example:
         lift mcp config >> ~/Library/Application Support/Claude/claude_desktop_config.json
+
     """
     # Get the lift command path
     lift_cmd = str(Path(sys.executable).parent / "lift")
@@ -81,8 +81,7 @@ def config() -> None:
 
 @mcp_app.command()
 def info() -> None:
-    """
-    Show current MCP server configuration.
+    """Show current MCP server configuration.
 
     Displays the configuration file location and current settings.
     """
@@ -112,8 +111,7 @@ def info() -> None:
 
 @mcp_app.command()
 def capabilities() -> None:
-    """
-    List all available MCP capabilities (resources, tools, prompts).
+    """List all available MCP capabilities (resources, tools, prompts).
 
     Shows what resources, tools, and prompts are available to AI assistants
     when they connect to the LIFT MCP server.
@@ -161,8 +159,7 @@ def capabilities() -> None:
 
 @mcp_app.command()
 def setup() -> None:
-    """
-    Interactive setup wizard for MCP server integration with Claude Desktop.
+    """Interactive setup wizard for MCP server integration with Claude Desktop.
 
     Guides you through the process of configuring Claude Desktop to use
     the LIFT MCP server.

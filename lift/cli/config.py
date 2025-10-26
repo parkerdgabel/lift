@@ -20,8 +20,7 @@ def set(
     key: str = typer.Argument(..., help="Configuration key"),
     value: str = typer.Argument(..., help="Configuration value"),
 ) -> None:
-    """
-    Set a configuration value.
+    """Set a configuration value.
 
     Set or update a configuration setting.
     """
@@ -68,8 +67,7 @@ def get(
     ctx: typer.Context,
     key: str = typer.Argument(..., help="Configuration key"),
 ) -> None:
-    """
-    Get a configuration value.
+    """Get a configuration value.
 
     Retrieve the value of a specific configuration setting.
     """
@@ -116,8 +114,7 @@ def get(
 
 @config_app.command()
 def list(ctx: typer.Context) -> None:
-    """
-    List all configuration settings.
+    """List all configuration settings.
 
     Display all configuration settings in a formatted table.
     """
@@ -182,8 +179,7 @@ def reset(
         help="Skip confirmation prompt",
     ),
 ) -> None:
-    """
-    Reset all configuration to default values.
+    """Reset all configuration to default values.
 
     WARNING: This will delete all custom configuration settings!
     """
@@ -251,8 +247,7 @@ def delete(
     ctx: typer.Context,
     key: str = typer.Argument(..., help="Configuration key to delete"),
 ) -> None:
-    """
-    Delete a configuration setting.
+    """Delete a configuration setting.
 
     Remove a custom configuration setting (will fall back to default if available).
     """
