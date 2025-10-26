@@ -163,12 +163,17 @@ lift program show "PPL 6-Day"
 LIFT includes a comprehensive man page with detailed documentation of all commands and options.
 
 ```bash
-# View the man page (after installation)
+# Install the man page (required for PyPI installations)
+lift install-manpage
+
+# View the man page
 man lift
 
 # Or view directly from source
 man man/lift.1
 ```
+
+**Note:** When installing via PyPI (`pip install lift-tracker`), the man page is bundled but not automatically installed to your system. Run `lift install-manpage` after installation to make it available via the `man` command. Homebrew and Debian packages install the man page automatically.
 
 The man page includes:
 - Complete command reference

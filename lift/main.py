@@ -143,6 +143,131 @@ def version() -> None:
     console.print(f"[bold]LIFT[/bold] version [cyan]{__version__}[/cyan]")
 
 
+@app.command()
+def install_manpage(
+    force: bool = typer.Option(False, "--force", "-f", help="Overwrite if exists"),
+) -> None:
+    """
+    Install the LIFT man page to system location.
+
+    This copies the bundled man page to the appropriate system directory.
+    May require sudo/administrator privileges.
+    """
+    import os
+    import platform
+    import shutil
+    from pathlib import Path
+
+    # Find the bundled man page
+    import lift
+
+    lift_dir = Path(lift.__file__).parent
+    source_manpage = lift_dir / "man" / "lift.1"
+
+    if not source_manpage.exists():
+        console.print(
+            Panel(
+                "[red]Man page not found in package installation.[/red]\n"
+                "[dim]The man page may only be available when installed from source.[/dim]",
+                title="❌ Error",
+                border_style="red",
+            )
+        )
+        raise typer.Exit(1)
+
+    # Determine system man page directory
+    system = platform.system()
+    if system == "Darwin":  # macOS
+        man_dirs = [
+            Path("/usr/local/share/man/man1"),
+            Path.home() / ".local/share/man/man1",
+        ]
+    elif system == "Linux":
+        man_dirs = [
+            Path("/usr/local/share/man/man1"),
+            Path("/usr/share/man/man1"),
+            Path.home() / ".local/share/man/man1",
+        ]
+    else:  # Windows or other
+        console.print(
+            Panel(
+                "[yellow]Man pages are not supported on this operating system.[/yellow]",
+                title="⚠️  Warning",
+                border_style="yellow",
+            )
+        )
+        raise typer.Exit(1)
+
+    # Try to find a writable directory
+    target_dir = None
+    for man_dir in man_dirs:
+        if (man_dir.exists() and os.access(man_dir, os.W_OK)) or (
+            not man_dir.exists() and os.access(man_dir.parent, os.W_OK)
+        ):
+            target_dir = man_dir
+            break
+
+    if not target_dir:
+        # Suggest using user's local man directory
+        target_dir = Path.home() / ".local/share/man/man1"
+        console.print(
+            Panel(
+                f"[yellow]No writable system man directory found.[/yellow]\n"
+                f"Will install to user directory: [cyan]{target_dir}[/cyan]\n\n"
+                f"[dim]To install system-wide, run with sudo:[/dim]\n"
+                f"[dim]sudo lift install-manpage[/dim]",
+                title="ℹ️  Info",
+                border_style="blue",
+            )
+        )
+
+    target_dir.mkdir(parents=True, exist_ok=True)
+    target_manpage = target_dir / "lift.1"
+
+    # Check if already exists
+    if target_manpage.exists() and not force:
+        console.print(
+            Panel(
+                f"[yellow]Man page already installed at:[/yellow]\n"
+                f"[cyan]{target_manpage}[/cyan]\n\n"
+                f"Use --force to overwrite.",
+                title="⚠️  Warning",
+                border_style="yellow",
+            )
+        )
+        raise typer.Exit(1)
+
+    # Copy the man page
+    try:
+        shutil.copy2(source_manpage, target_manpage)
+        console.print(
+            Panel(
+                f"[green]Man page installed successfully![/green]\n"
+                f"[dim]Location: {target_manpage}[/dim]\n\n"
+                f"You can now use: [cyan]man lift[/cyan]",
+                title="✅ Success",
+                border_style="green",
+            )
+        )
+
+        # Update man database if possible
+        if shutil.which("mandb"):
+            console.print("\n[dim]Updating man database...[/dim]")
+            os.system("mandb -q 2>/dev/null || true")
+
+    except Exception as e:
+        console.print(
+            Panel(
+                f"[red]Failed to install man page: {e}[/red]\n\n"
+                f"Try running with sudo:\n"
+                f"[cyan]sudo lift install-manpage[/cyan]",
+                title="❌ Error",
+                border_style="red",
+            )
+        )
+        raise typer.Exit(1)
+
+
 # Command groups
 # Import and register command groups
 from lift.cli.body import body_app
