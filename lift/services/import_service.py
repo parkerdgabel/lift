@@ -77,7 +77,7 @@ class ImportService:
                 rows_data = []
                 for row in reader:
                     # Convert empty strings to None
-                    processed_row = {}
+                    processed_row: dict[str, str | None] = {}
                     for key, value in row.items():
                         if value == "" or value is None:
                             processed_row[key] = None
@@ -174,7 +174,7 @@ class ImportService:
 
         with self.db.get_connection() as conn:
             # Get all columns in the data
-            all_columns = set()
+            all_columns: set[str] = set()
             for row in data:
                 all_columns.update(row.keys())
 

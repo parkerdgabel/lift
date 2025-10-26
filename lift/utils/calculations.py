@@ -307,7 +307,7 @@ def suggest_next_weight(
             # Reps increased, justify weight increase
             increase = max(increase, min_increase)
 
-    return last_weight + increase
+    return last_weight + increase  # type: ignore[no-any-return]
 
 
 def suggest_next_reps(
@@ -341,8 +341,8 @@ def suggest_next_reps(
 
     # Otherwise, aim for progression
     if last_rpe < Decimal("8"):
-        return min(last_reps + 2, target_reps_max)
-    return min(last_reps + 1, target_reps_max)
+        return min(last_reps + 2, target_reps_max)  # type: ignore[no-any-return]
+    return min(last_reps + 1, target_reps_max)  # type: ignore[no-any-return]
 
 
 def calculate_fatigue_index(recent_workouts: list[dict]) -> float:

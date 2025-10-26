@@ -59,7 +59,7 @@ def format_program_detail(
     Returns:
         Rich Group with program details
     """
-    components = []
+    components: list[Panel | Text] = []
 
     # Program header
     header_text = f"[bold cyan]{program.name.upper()}[/bold cyan]\n"
@@ -170,7 +170,7 @@ def format_workout_template(workout: ProgramWorkout, exercises: list[dict]) -> P
 
     # Combine description and table
     if description:
-        content = Group(Text(description, style="dim"), Text(""), table)
+        content: Group | Table = Group(Text(description, style="dim"), Text(""), table)
     else:
         content = table
 

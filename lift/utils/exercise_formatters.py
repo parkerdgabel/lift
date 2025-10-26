@@ -121,7 +121,7 @@ def format_exercise_summary(exercises: list[Exercise]) -> str:
         return "No exercises found."
 
     # Count by category
-    category_counts = {}
+    category_counts: dict[str, int] = {}
     for exercise in exercises:
         category = exercise.category.value
         category_counts[category] = category_counts.get(category, 0) + 1
@@ -147,7 +147,7 @@ def format_muscle_group_summary(exercises: list[Exercise]) -> Table:
         Rich Table object
     """
     # Count by primary muscle
-    muscle_counts = {}
+    muscle_counts: dict[str, int] = {}
     for exercise in exercises:
         muscle = exercise.primary_muscle.value
         muscle_counts[muscle] = muscle_counts.get(muscle, 0) + 1
@@ -181,7 +181,7 @@ def format_equipment_summary(exercises: list[Exercise]) -> Table:
         Rich Table object
     """
     # Count by equipment
-    equipment_counts = {}
+    equipment_counts: dict[str, int] = {}
     for exercise in exercises:
         equipment = exercise.equipment.value
         equipment_counts[equipment] = equipment_counts.get(equipment, 0) + 1

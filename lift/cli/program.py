@@ -66,15 +66,13 @@ def create(ctx: typer.Context) -> None:
         choices=["1", "2", "3", "4", "5", "6", "7"],
     )
 
-    description = Prompt.ask("[bold]Description[/bold] (optional)", default="")
-    if not description:
-        description = None
+    description_input = Prompt.ask("[bold]Description[/bold] (optional)", default="")
+    description: str | None = description_input if description_input else None
 
-    duration_weeks = Prompt.ask("[bold]Duration in weeks[/bold] (optional)", default="")
-    if duration_weeks:
-        duration_weeks = int(duration_weeks)
-    else:
-        duration_weeks = None
+    duration_weeks_input = Prompt.ask("[bold]Duration in weeks[/bold] (optional)", default="")
+    duration_weeks: int | None = None
+    if duration_weeks_input:
+        duration_weeks = int(duration_weeks_input)
 
     # Create program
     try:
@@ -104,23 +102,22 @@ def create(ctx: typer.Context) -> None:
 
         workout_name = Prompt.ask("[bold]Workout name[/bold]")
 
-        day_number = Prompt.ask("[bold]Day number[/bold] (1-7, optional)", default="")
-        if day_number:
-            day_number = int(day_number)
-        else:
-            day_number = None
+        day_number_input = Prompt.ask("[bold]Day number[/bold] (1-7, optional)", default="")
+        day_number: int | None = None
+        if day_number_input:
+            day_number = int(day_number_input)
 
-        workout_description = Prompt.ask("[bold]Description[/bold] (optional)", default="")
-        if not workout_description:
-            workout_description = None
+        workout_description_input = Prompt.ask("[bold]Description[/bold] (optional)", default="")
+        workout_description: str | None = (
+            workout_description_input if workout_description_input else None
+        )
 
-        estimated_duration = Prompt.ask(
+        estimated_duration_input = Prompt.ask(
             "[bold]Estimated duration (minutes)[/bold] (optional)", default=""
         )
-        if estimated_duration:
-            estimated_duration = int(estimated_duration)
-        else:
-            estimated_duration = None
+        estimated_duration: int | None = None
+        if estimated_duration_input:
+            estimated_duration = int(estimated_duration_input)
 
         # Create workout
         try:
@@ -209,25 +206,21 @@ def _add_exercises_interactive(ctx: typer.Context, workout_id: int) -> None:
         else:
             target_reps_min = target_reps_max = int(reps_input)
 
-        target_rpe = Prompt.ask("[bold]Target RPE[/bold] (6-10, optional)", default="")
-        if target_rpe:
-            target_rpe = Decimal(target_rpe)
-        else:
-            target_rpe = None
+        target_rpe_input = Prompt.ask("[bold]Target RPE[/bold] (6-10, optional)", default="")
+        target_rpe: Decimal | None = None
+        if target_rpe_input:
+            target_rpe = Decimal(target_rpe_input)
 
-        rest_seconds = Prompt.ask("[bold]Rest (seconds)[/bold] (optional)", default="")
-        if rest_seconds:
-            rest_seconds = int(rest_seconds)
-        else:
-            rest_seconds = None
+        rest_seconds_input = Prompt.ask("[bold]Rest (seconds)[/bold] (optional)", default="")
+        rest_seconds: int | None = None
+        if rest_seconds_input:
+            rest_seconds = int(rest_seconds_input)
 
-        tempo = Prompt.ask("[bold]Tempo[/bold] (e.g., 3-0-1-0, optional)", default="")
-        if not tempo:
-            tempo = None
+        tempo_input = Prompt.ask("[bold]Tempo[/bold] (e.g., 3-0-1-0, optional)", default="")
+        tempo: str | None = tempo_input if tempo_input else None
 
-        notes = Prompt.ask("[bold]Notes[/bold] (optional)", default="")
-        if not notes:
-            notes = None
+        notes_input = Prompt.ask("[bold]Notes[/bold] (optional)", default="")
+        notes: str | None = notes_input if notes_input else None
 
         # Add exercise
         try:
@@ -521,23 +514,22 @@ def edit(
         # Add workout
         workout_name = Prompt.ask("\n[bold]Workout name[/bold]")
 
-        day_number = Prompt.ask("[bold]Day number[/bold] (1-7, optional)", default="")
-        if day_number:
-            day_number = int(day_number)
-        else:
-            day_number = None
+        day_number_input = Prompt.ask("[bold]Day number[/bold] (1-7, optional)", default="")
+        day_number: int | None = None
+        if day_number_input:
+            day_number = int(day_number_input)
 
-        workout_description = Prompt.ask("[bold]Description[/bold] (optional)", default="")
-        if not workout_description:
-            workout_description = None
+        workout_description_input = Prompt.ask("[bold]Description[/bold] (optional)", default="")
+        workout_description: str | None = (
+            workout_description_input if workout_description_input else None
+        )
 
-        estimated_duration = Prompt.ask(
+        estimated_duration_input = Prompt.ask(
             "[bold]Estimated duration (minutes)[/bold] (optional)", default=""
         )
-        if estimated_duration:
-            estimated_duration = int(estimated_duration)
-        else:
-            estimated_duration = None
+        estimated_duration: int | None = None
+        if estimated_duration_input:
+            estimated_duration = int(estimated_duration_input)
 
         try:
             workout = service.add_workout_to_program(
@@ -595,7 +587,7 @@ def edit(
             f"[bold]Days per week[/bold] (current: {program.days_per_week})", default=""
         )
 
-        updates = {}
+        updates: dict[str, str | int] = {}
         if new_name:
             updates["name"] = new_name
         if new_description:

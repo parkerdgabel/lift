@@ -63,6 +63,9 @@ class ProgramService:
                 ),
             ).fetchone()
 
+            if not result:
+                raise RuntimeError("Failed to create program - no result returned")
+
             return Program(
                 id=result[0],
                 name=result[1],
@@ -222,6 +225,9 @@ class ProgramService:
         with self.db.get_connection() as conn:
             result = conn.execute(query, values).fetchone()
 
+            if not result:
+                raise RuntimeError(f"Failed to update program {id} - no result returned")
+
             return Program(
                 id=result[0],
                 name=result[1],
@@ -282,6 +288,9 @@ class ProgramService:
             """,
                 (id,),
             ).fetchone()
+
+            if not result:
+                raise RuntimeError(f"Failed to activate program {id} - no result returned")
 
             return Program(
                 id=result[0],
@@ -366,6 +375,11 @@ class ProgramService:
                 ),
             ).fetchone()
 
+            if not result:
+                raise RuntimeError(
+                    f"Failed to add workout to program {program_id} - no result returned"
+                )
+
             return ProgramWorkout(
                 id=result[0],
                 program_id=result[1],
@@ -434,6 +448,11 @@ class ProgramService:
                     exercise.superset_group,
                 ),
             ).fetchone()
+
+            if not result:
+                raise RuntimeError(
+                    f"Failed to add exercise to workout {workout_id} - no result returned"
+                )
 
             return ProgramExercise(
                 id=result[0],
@@ -574,6 +593,9 @@ class ProgramService:
                 ),
             ).fetchone()
 
+            if not new_program_result:
+                raise RuntimeError(f"Failed to clone program {id} - no result returned")
+
             new_program_id = new_program_result[0]
 
             # Get original workouts
@@ -596,6 +618,9 @@ class ProgramService:
                         workout.estimated_duration_minutes,
                     ),
                 ).fetchone()
+
+                if not new_workout_result:
+                    raise RuntimeError(f"Failed to clone workout {workout.id} - no result returned")
 
                 new_workout_id = new_workout_result[0]
 

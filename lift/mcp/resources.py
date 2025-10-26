@@ -50,7 +50,7 @@ class WorkoutResourceHandler(ResourceHandler):
         """List available workout resources."""
         return [
             Resource(
-                uri="lift://workouts/recent",
+                uri="lift://workouts/recent",  # type: ignore[arg-type]
                 name="Recent Workouts",
                 description="Last 10 completed workouts",
                 mimeType="application/json",
@@ -132,7 +132,7 @@ class ExerciseResourceHandler(ResourceHandler):
         """List available exercise resources."""
         return [
             Resource(
-                uri="lift://exercises/library",
+                uri="lift://exercises/library",  # type: ignore[arg-type]
                 name="Exercise Library",
                 description="Complete library of 137+ exercises",
                 mimeType="application/json",
@@ -190,13 +190,13 @@ class StatsResourceHandler(ResourceHandler):
         """List available stats resources."""
         return [
             Resource(
-                uri="lift://stats/summary?period=week",
+                uri="lift://stats/summary?period=week",  # type: ignore[arg-type]
                 name="Weekly Summary",
                 description="Training summary for the past week",
                 mimeType="application/json",
             ),
             Resource(
-                uri="lift://stats/summary?period=month",
+                uri="lift://stats/summary?period=month",  # type: ignore[arg-type]
                 name="Monthly Summary",
                 description="Training summary for the past month",
                 mimeType="application/json",

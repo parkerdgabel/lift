@@ -2,6 +2,7 @@
 
 from datetime import datetime, timedelta
 from decimal import Decimal
+from typing import TYPE_CHECKING
 
 import typer
 from rich.console import Console
@@ -11,6 +12,10 @@ from rich.table import Table
 from lift.core.database import get_db
 from lift.services.pr_service import PRService
 from lift.services.stats_service import StatsService
+
+
+if TYPE_CHECKING:
+    from lift.core.models import PersonalRecord
 from lift.utils.charts import (
     generate_progression_chart,
     generate_volume_chart,
@@ -392,13 +397,14 @@ def pr_stats(
         table.add_column("Weight x Reps", justify="right")
         table.add_column("Date", justify="right")
 
-        for pr in prs:
-            weight_reps = f"{pr.weight} x {pr.reps}" if pr.weight else "-"
+        pr_record: PersonalRecord
+        for pr_record in prs:
+            weight_reps = f"{pr_record.weight} x {pr_record.reps}" if pr_record.weight else "-"
             table.add_row(
-                pr.record_type.value,
-                f"{pr.value:.1f}",
+                pr_record.record_type.value,
+                f"{pr_record.value:.1f}",
                 weight_reps,
-                format_date_short(pr.date),
+                format_date_short(pr_record.date),
             )
 
         console.print(table)

@@ -172,6 +172,7 @@ class StartWorkoutTool(ToolHandler):
                 program_workout_id=input_data.program_workout_id,
                 bodyweight=Decimal(str(input_data.bodyweight)) if input_data.bodyweight else None,
                 bodyweight_unit=WeightUnit(input_data.bodyweight_unit),
+                rating=None,
             )
 
             workout = self.workout_service.create_workout(workout_create)

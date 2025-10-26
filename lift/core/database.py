@@ -133,7 +133,7 @@ class DatabaseManager:
                 result = conn.execute(
                     "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'exercises'"
                 ).fetchone()
-                return result[0] > 0
+                return result[0] > 0 if result else False
         except Exception:
             return False
 
@@ -200,7 +200,8 @@ class DatabaseManager:
             table_info = {}
             for table in tables:
                 table_name = table[0]
-                count = conn.execute(f"SELECT COUNT(*) FROM {table_name}").fetchone()[0]  # nosec B608  # table_name from schema
+                count_result = conn.execute(f"SELECT COUNT(*) FROM {table_name}").fetchone()  # nosec B608  # table_name from schema
+                count = count_result[0] if count_result else 0
                 table_info[table_name] = count
 
             return {

@@ -297,13 +297,13 @@ def add_exercise(ctx: typer.Context) -> None:
 
         # Instructions (optional)
         console.print("\n[dim]Instructions (or press Enter to skip)[/dim]")
-        instructions = Prompt.ask("[bold]Instructions[/bold]", default="")
-        instructions = instructions if instructions else None
+        instructions_input = Prompt.ask("[bold]Instructions[/bold]", default="")
+        instructions: str | None = instructions_input if instructions_input else None
 
         # Video URL (optional)
         console.print("\n[dim]Video URL (or press Enter to skip)[/dim]")
-        video_url = Prompt.ask("[bold]Video URL[/bold]", default="")
-        video_url = video_url if video_url else None
+        video_url_input = Prompt.ask("[bold]Video URL[/bold]", default="")
+        video_url: str | None = video_url_input if video_url_input else None
 
         # Create the exercise
         exercise_data = ExerciseCreate(

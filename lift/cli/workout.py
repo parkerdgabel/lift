@@ -61,6 +61,7 @@ def start_workout(
         date=datetime.now(),
         bodyweight=Decimal(str(bodyweight)) if bodyweight else None,
         bodyweight_unit=WeightUnit.LBS,
+        rating=None,
     )
 
     try:
@@ -108,7 +109,7 @@ def start_workout(
             # For now, we'll use a placeholder ID
             exercise_id = 1  # Placeholder
 
-        workout_state["exercises"].add(exercise_id)
+        workout_state["exercises"].add(exercise_id)  # type: ignore[attr-defined]
 
         # Show last performance
         last_performance = workout_service.get_last_performance(exercise_id, limit=1)
@@ -160,6 +161,7 @@ def start_workout(
                 reps=reps,
                 rpe=rpe,
                 set_type=SetType.WORKING,
+                rest_seconds=None,
             )
 
             try:
@@ -199,12 +201,15 @@ def start_workout(
 
     # Display completion summary
     console.print()
+    total_volume: Decimal = workout_state["total_volume"]  # type: ignore[assignment]
+    total_sets: int = workout_state["total_sets"]  # type: ignore[assignment]
+    exercises_set: set[int] = workout_state["exercises"]  # type: ignore[assignment]
     console.print(
         format_workout_complete(
             duration_minutes,
-            workout_state["total_volume"],
-            workout_state["total_sets"],
-            len(workout_state["exercises"]),
+            total_volume,
+            total_sets,
+            len(exercises_set),
         )
     )
 
@@ -426,7 +431,7 @@ def _lookup_exercise(db: DatabaseManager, exercise_name: str) -> int | None:
             ).fetchone()
 
             if result:
-                return result[0]
+                return int(result[0])
 
             # Try fuzzy match (contains)
             result = conn.execute(
@@ -436,7 +441,7 @@ def _lookup_exercise(db: DatabaseManager, exercise_name: str) -> int | None:
 
             if result:
                 console.print(f"[dim]Found exercise: {result[1]}[/dim]")
-                return result[0]
+                return int(result[0])
 
     except Exception as e:
         console.print(f"[dim]Could not look up exercise: {e}[/dim]")
@@ -454,7 +459,7 @@ def _get_setting(db: DatabaseManager, key: str, default: str = "") -> str:
             ).fetchone()
 
             if result:
-                return result[0]
+                return str(result[0])
 
     except Exception:
         pass

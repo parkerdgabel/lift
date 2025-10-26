@@ -43,7 +43,7 @@ class ConfigService:
             result = conn.execute("SELECT value FROM settings WHERE key = ?", (key,)).fetchone()
 
             if result:
-                return result[0]
+                return str(result[0])
 
             # Return default if exists
             return self.DEFAULT_SETTINGS.get(key)
@@ -92,6 +92,9 @@ class ConfigService:
                 "SELECT key, value, description, updated_at FROM settings WHERE key = ?",
                 (key,),
             ).fetchone()
+
+            if result is None:
+                raise ValueError(f"Failed to retrieve setting after insert/update: {key}")
 
             return Setting(
                 key=result[0],

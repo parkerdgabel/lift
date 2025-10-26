@@ -53,7 +53,7 @@ def generate_volume_chart(
     plt.plotsize(width, height)
 
     # Build the chart
-    return plt.build()
+    return plt.build()  # type: ignore[no-any-return]
 
 
 def generate_progression_chart(
@@ -104,7 +104,7 @@ def generate_progression_chart(
     plt.ylabel(metric.replace("_", " ").title())
     plt.plotsize(width, height)
 
-    return plt.build()
+    return plt.build()  # type: ignore[no-any-return]
 
 
 def generate_muscle_distribution_chart(
@@ -141,7 +141,7 @@ def generate_muscle_distribution_chart(
     plt.ylabel("Volume (lbs)")
     plt.plotsize(width, height)
 
-    return plt.build()
+    return plt.build()  # type: ignore[no-any-return]
 
 
 def generate_frequency_chart(
@@ -187,7 +187,7 @@ def generate_frequency_chart(
     plt.ylabel("Workouts")
     plt.plotsize(width, height)
 
-    return plt.build()
+    return plt.build()  # type: ignore[no-any-return]
 
 
 def generate_set_distribution_chart(
@@ -221,7 +221,7 @@ def generate_set_distribution_chart(
     plt.ylabel("Sets")
     plt.plotsize(width, height)
 
-    return plt.build()
+    return plt.build()  # type: ignore[no-any-return]
 
 
 def generate_pr_timeline(
@@ -263,7 +263,7 @@ def generate_pr_timeline(
     plt.ylabel("Value")
     plt.plotsize(width, height)
 
-    return plt.build()
+    return plt.build()  # type: ignore[no-any-return]
 
 
 def generate_comparison_chart(
@@ -299,7 +299,7 @@ def generate_comparison_chart(
     plt.ylabel("Value")
     plt.plotsize(width, height)
 
-    return plt.build()
+    return plt.build()  # type: ignore[no-any-return]
 
 
 def generate_weekly_volume_comparison(
@@ -345,7 +345,7 @@ def generate_weekly_volume_comparison(
     plt.ylabel("Total Volume (lbs)")
     plt.plotsize(width, height)
 
-    return plt.build()
+    return plt.build()  # type: ignore[no-any-return]
 
 
 def format_chart_for_display(chart: str, border: bool = True) -> str:
