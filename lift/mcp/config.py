@@ -11,7 +11,7 @@ class ServerConfig(BaseModel):
     """Server configuration settings."""
 
     name: str = "lift-mcp-server"
-    version: str = "0.3.0"
+    version: str = "0.4.0"
     transport: str = "stdio"  # stdio or sse
 
 

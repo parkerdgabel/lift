@@ -36,7 +36,7 @@ class TestServerConfig:
         """Test default configuration values."""
         config = ServerConfig()
         assert config.name == "lift-mcp-server"
-        assert config.version == "0.3.0"
+        assert config.version == "0.4.0"
         assert config.transport == "stdio"
 
     def test_custom_values(self):
