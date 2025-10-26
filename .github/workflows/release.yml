@@ -81,15 +81,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download checksums
-        uses: actions/download-artifact@v4
-        with:
-          name: checksums
+      - name: Calculate GitHub archive sha256
+        run: |
+          VERSION=${{ needs.build-python.outputs.version }}
+          curl -sL "https://github.com/parkerdgabel/lift/archive/refs/tags/v${VERSION}.tar.gz" | shasum -a 256 | awk '{print $1}' > github-archive.sha256
+          cat github-archive.sha256
 
       - name: Create Homebrew formula
         run: |
           VERSION=${{ needs.build-python.outputs.version }}
-          TARBALL_SHA256=$(cat tarball.sha256)
+          GITHUB_SHA256=$(cat github-archive.sha256)
 
           cat > lift.rb <<EOF
           class Lift < Formula
@@ -98,7 +99,7 @@ jobs:
             desc "Bodybuilding workout tracker CLI"
             homepage "https://github.com/parkerdgabel/lift"
             url "https://github.com/parkerdgabel/lift/archive/refs/tags/v${VERSION}.tar.gz"
-            sha256 "${TARBALL_SHA256}"
+            sha256 "${GITHUB_SHA256}"
             license "MIT"
 
             depends_on "python@3.11"
