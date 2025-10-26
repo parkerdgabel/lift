@@ -44,8 +44,7 @@ def start_workout(
         None, "--bodyweight", "-bw", help="Current bodyweight in lbs"
     ),
 ) -> None:
-    """
-    Start an interactive workout session.
+    """Start an interactive workout session.
 
     This command launches an interactive session where you can:
     - Follow an active program automatically (if set)
@@ -486,8 +485,7 @@ def log_workout(
     ctx: typer.Context,
     name: str | None = typer.Option(None, "--name", "-n", help="Workout name"),
 ) -> None:
-    """
-    Quick manual workout logging (simpler than interactive session).
+    """Quick manual workout logging (simpler than interactive session).
 
     This provides a simpler interface for logging workouts after the fact.
     """
@@ -620,8 +618,7 @@ def resume_workout(
     ctx: typer.Context,
     workout_id: int = typer.Argument(..., help="Workout ID to resume"),
 ) -> None:
-    """
-    Resume an incomplete workout.
+    """Resume an incomplete workout.
 
     Continue adding sets to a previously started workout. Works with both
     program-based and freestyle workouts.
@@ -1097,8 +1094,7 @@ def delete_workout(
 def _parse_set_input(
     input_str: str, last_set: dict | None, rpe_enabled: bool
 ) -> tuple[Decimal, int, Decimal | None] | None:
-    """
-    Parse set input with shortcuts.
+    """Parse set input with shortcuts.
 
     Formats:
     - "185 10" -> 185 lbs, 10 reps
@@ -1110,6 +1106,7 @@ def _parse_set_input(
 
     Returns:
         Tuple of (weight, reps, rpe) or None if invalid
+
     """
     input_str = input_str.strip().lower()
 
@@ -1154,11 +1151,11 @@ def _parse_set_input(
 
 
 def _lookup_exercise(db: DatabaseManager, exercise_name: str) -> int | None:
-    """
-    Look up exercise by name (fuzzy matching).
+    """Look up exercise by name (fuzzy matching).
 
     Returns:
         Exercise ID if found, None otherwise
+
     """
     try:
         with db.get_connection() as conn:
@@ -1206,8 +1203,7 @@ def _get_setting(db: DatabaseManager, key: str, default: str = "") -> str:
 
 
 def _show_exercise_menu(current_idx: int, exercises: list, completed: set, skipped: set) -> str:
-    """
-    Show exercise navigation menu and get user choice.
+    """Show exercise navigation menu and get user choice.
 
     Args:
         current_idx: Current exercise index
@@ -1217,6 +1213,7 @@ def _show_exercise_menu(current_idx: int, exercises: list, completed: set, skipp
 
     Returns:
         Action string: "next", "skip", "view", or "finish"
+
     """
     console.print()
 
@@ -1254,14 +1251,14 @@ def _show_exercise_menu(current_idx: int, exercises: list, completed: set, skipp
 def _show_remaining_exercises(
     exercises: list, current_idx: int, completed: set, skipped: set
 ) -> None:
-    """
-    Display table of all exercises with their status.
+    """Display table of all exercises with their status.
 
     Args:
         exercises: List of all exercises
         current_idx: Current exercise index
         completed: Set of completed exercise indices
         skipped: Set of skipped exercise indices
+
     """
     console.print("\n[bold]All Exercises:[/bold]\n")
 
@@ -1295,8 +1292,7 @@ def _prompt_for_skipped_exercises(
     workout_state: dict,
     rpe_enabled: bool,
 ) -> None:
-    """
-    Prompt user to complete skipped exercises at the end of workout.
+    """Prompt user to complete skipped exercises at the end of workout.
 
     Args:
         exercises: List of all exercises
@@ -1306,6 +1302,7 @@ def _prompt_for_skipped_exercises(
         set_service: SetService instance
         workout_state: Workout state dictionary
         rpe_enabled: Whether RPE tracking is enabled
+
     """
     if not skipped:
         return
@@ -1444,8 +1441,7 @@ def _log_sets_for_exercise(
     starting_set_number: int = 1,
     last_performance: list[dict] | None = None,
 ) -> int:
-    """
-    Log sets for a single exercise in an interactive loop.
+    """Log sets for a single exercise in an interactive loop.
 
     Args:
         workout_id: ID of current workout
@@ -1459,6 +1455,7 @@ def _log_sets_for_exercise(
 
     Returns:
         Number of sets logged
+
     """
     console.print(f"\n[bold]Logging sets for {exercise_name}[/bold]")
     console.print(
@@ -1540,14 +1537,14 @@ def _log_sets_for_exercise(
 
 
 def _group_sets_by_exercise(sets: list) -> dict[int, list]:
-    """
-    Group sets by exercise ID.
+    """Group sets by exercise ID.
 
     Args:
         sets: List of Set objects
 
     Returns:
         Dictionary mapping exercise_id -> list of sets
+
     """
     grouped: dict[int, list] = {}
     for set_obj in sets:
@@ -1558,8 +1555,7 @@ def _group_sets_by_exercise(sets: list) -> dict[int, list]:
 
 
 def _reconstruct_workout_state(sets: list, exercises_map: dict[int, str] | None = None) -> dict:
-    """
-    Reconstruct workout state from existing sets.
+    """Reconstruct workout state from existing sets.
 
     Args:
         sets: List of Set objects from the workout
@@ -1567,6 +1563,7 @@ def _reconstruct_workout_state(sets: list, exercises_map: dict[int, str] | None 
 
     Returns:
         workout_state dict with total_volume, total_sets, exercises, etc.
+
     """
     from collections import defaultdict
 

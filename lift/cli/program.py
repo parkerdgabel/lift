@@ -35,8 +35,7 @@ def get_program_service(ctx: typer.Context) -> ProgramService:
 
 @program_app.command()
 def create(ctx: typer.Context) -> None:
-    """
-    Create a new training program interactively.
+    """Create a new training program interactively.
 
     Guides you through creating a program with workouts and exercises.
     """
@@ -155,12 +154,12 @@ def create(ctx: typer.Context) -> None:
 
 
 def _add_exercises_interactive(ctx: typer.Context, workout_id: int) -> None:
-    """
-    Add exercises to a workout interactively.
+    """Add exercises to a workout interactively.
 
     Args:
         ctx: Typer context
         workout_id: Workout ID to add exercises to
+
     """
     service = get_program_service(ctx)
     db = get_db(ctx.obj.get("db_path") if ctx.obj else None)
@@ -276,8 +275,7 @@ def show(
     ctx: typer.Context,
     name: str = typer.Argument(..., help="Program name"),
 ) -> None:
-    """
-    Show detailed information about a program.
+    """Show detailed information about a program.
 
     Displays all workouts and exercises in the program.
     """
@@ -286,12 +284,12 @@ def show(
 
 
 def _display_program(service: ProgramService, name: str) -> None:
-    """
-    Display a program with all details.
+    """Display a program with all details.
 
     Args:
         service: Program service
         name: Program name
+
     """
     program = service.get_program_by_name(name)
 
@@ -323,8 +321,7 @@ def activate(
     ctx: typer.Context,
     name: str = typer.Argument(..., help="Program name"),
 ) -> None:
-    """
-    Activate a program.
+    """Activate a program.
 
     Sets the specified program as active and deactivates all others.
     """
@@ -370,8 +367,7 @@ def delete(
     name: str = typer.Argument(..., help="Program name"),
     force: bool = typer.Option(False, "--force", "-f", help="Skip confirmation"),
 ) -> None:
-    """
-    Delete a program.
+    """Delete a program.
 
     This will also delete all workouts and exercises in the program.
     """
@@ -426,8 +422,7 @@ def clone(
     name: str = typer.Argument(..., help="Program name to clone"),
     new_name: str = typer.Argument(..., help="Name for the cloned program"),
 ) -> None:
-    """
-    Clone an existing program.
+    """Clone an existing program.
 
     Creates a copy of a program with all its workouts and exercises.
     """
@@ -473,8 +468,7 @@ def edit(
     ctx: typer.Context,
     name: str = typer.Argument(..., help="Program name"),
 ) -> None:
-    """
-    Edit a program.
+    """Edit a program.
 
     Allows adding/removing workouts or exercises from an existing program.
     """
@@ -619,8 +613,7 @@ def import_samples(
     ctx: typer.Context,
     file: str | None = typer.Option(None, "--file", "-f", help="Path to programs JSON file"),
 ) -> None:
-    """
-    Import sample training programs from JSON file.
+    """Import sample training programs from JSON file.
 
     Uses the default programs.json if no file is specified.
     """
