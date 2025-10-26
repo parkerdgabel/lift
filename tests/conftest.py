@@ -41,7 +41,7 @@ def reset_global_db() -> Generator[None, None, None]:
 
 @pytest.fixture
 def db() -> Generator[DatabaseManager, None, None]:
-    """Create a temporary in-memory database for testing."""
+    """Create a temporary database for testing (function scope - gets reset each test)."""
     import tempfile
     from pathlib import Path
 
@@ -57,6 +57,32 @@ def db() -> Generator[DatabaseManager, None, None]:
         yield db
     finally:
         # Clean up
+        Path(temp_path).unlink(missing_ok=True)
+        if Path(temp_path + ".wal").exists():
+            Path(temp_path + ".wal").unlink()
+
+
+@pytest.fixture(scope="session")
+def session_db() -> Generator[DatabaseManager, None, None]:
+    """
+    Create a session-scoped database for read-only tests.
+
+    Use this for tests that only read data and don't modify the database.
+    Much faster than creating a new DB for each test.
+    """
+    import tempfile
+    from pathlib import Path
+
+    temp_file = tempfile.NamedTemporaryFile(suffix=".duckdb", delete=False)
+    temp_path = temp_file.name
+    temp_file.close()
+    Path(temp_path).unlink()
+
+    try:
+        db = DatabaseManager(temp_path)
+        db.initialize_database()
+        yield db
+    finally:
         Path(temp_path).unlink(missing_ok=True)
         if Path(temp_path + ".wal").exists():
             Path(temp_path + ".wal").unlink()
@@ -139,6 +165,19 @@ def db_with_seed_exercises(db: DatabaseManager) -> DatabaseManager:
     exercise_service = ExerciseService(db)
     exercise_service.load_seed_exercises()
     return db
+
+
+@pytest.fixture(scope="session")
+def session_db_with_seed_exercises(session_db: DatabaseManager) -> DatabaseManager:
+    """
+    Session-scoped database with all seed exercises pre-loaded.
+
+    Use this for read-only tests that need the full exercise library.
+    Much faster than loading seed exercises for each test.
+    """
+    exercise_service = ExerciseService(session_db)
+    exercise_service.load_seed_exercises()
+    return session_db
 
 
 @pytest.fixture

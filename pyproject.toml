@@ -152,4 +152,34 @@ testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
-addopts = "-v --cov=lift --cov-report=term-missing --cov-report=html"
+addopts = "-v -n auto --cov=lift --cov-report=term-missing --cov-report=html --cov-report=json --cov-fail-under=51"
+markers = [
+    "unit: Fast unit tests that don't require external dependencies",
+    "integration: Integration tests that test multiple components together",
+    "e2e: End-to-end tests that test complete workflows",
+    "slow: Tests that take longer than 0.5 seconds",
+    "cli: Tests for CLI commands",
+    "service: Tests for service layer",
+    "formatter: Tests for formatters and display utilities",
+]
+
+[tool.coverage.run]
+branch = true
+omit = [
+    "*/tests/*",
+    "*/conftest.py",
+    "*/__pycache__/*",
+]
+
+[tool.coverage.report]
+precision = 2
+skip_empty = true
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "@abstractmethod",
+]
