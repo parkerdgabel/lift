@@ -160,7 +160,7 @@ class TestWorkoutStatsIntegration:
 
         # Initial stats should be empty
         initial_summary = stats_service.get_workout_summary()
-        assert initial_summary["total_workouts"] == 0
+        assert initial_summary.total_workouts == 0
 
         # Log a workout
         workout = workout_service.create_workout(WorkoutCreate(name="Test"))
@@ -180,9 +180,9 @@ class TestWorkoutStatsIntegration:
 
         # Stats should update
         summary = stats_service.get_workout_summary()
-        assert summary["total_workouts"] == 1
-        assert summary["total_sets"] == 1
-        assert summary["total_volume"] == Decimal("2000")  # 200 * 10
+        assert summary.total_workouts == 1
+        assert summary.total_sets == 1
+        assert summary.total_volume == Decimal("2000")  # 200 * 10
 
     def test_muscle_volume_breakdown_from_workouts(self, loaded_db: DatabaseManager) -> None:
         """Test that muscle volume breakdown aggregates correctly."""
