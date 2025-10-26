@@ -212,18 +212,28 @@ class ProgramService:
             return program
 
         set_clause = ", ".join(f"{k} = ?" for k in update_fields)
+        # Note: DuckDB has issues with RETURNING clause when foreign keys reference the row
         query = f"""
             UPDATE programs
             SET {set_clause}, updated_at = CURRENT_TIMESTAMP
             WHERE id = ?
-            RETURNING id, name, description, split_type, days_per_week, duration_weeks,
-                      is_active, created_at, updated_at
         """  # nosec B608  # set_clause built from validated update_fields keys
 
         values = list(update_fields.values()) + [id]
 
         with self.db.get_connection() as conn:
-            result = conn.execute(query, values).fetchone()
+            conn.execute(query, values)
+
+            # Fetch the updated program
+            result = conn.execute(
+                """
+                SELECT id, name, description, split_type, days_per_week, duration_weeks,
+                       is_active, created_at, updated_at
+                FROM programs
+                WHERE id = ?
+                """,
+                (id,),
+            ).fetchone()
 
             if not result:
                 raise RuntimeError(f"Failed to update program {id} - no result returned")
@@ -278,14 +288,24 @@ class ProgramService:
             conn.execute("UPDATE programs SET is_active = FALSE")
 
             # Activate the specified program
-            result = conn.execute(
+            # Note: DuckDB has issues with RETURNING clause when foreign keys reference the row
+            conn.execute(
                 """
                 UPDATE programs
                 SET is_active = TRUE, updated_at = CURRENT_TIMESTAMP
                 WHERE id = ?
-                RETURNING id, name, description, split_type, days_per_week, duration_weeks,
-                          is_active, created_at, updated_at
-            """,
+                """,
+                (id,),
+            )
+
+            # Fetch the updated program
+            result = conn.execute(
+                """
+                SELECT id, name, description, split_type, days_per_week, duration_weeks,
+                       is_active, created_at, updated_at
+                FROM programs
+                WHERE id = ?
+                """,
                 (id,),
             ).fetchone()
 
