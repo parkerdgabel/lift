@@ -756,6 +756,9 @@ def resume_workout(
 
     console.print()
 
+    # Check if RPE is enabled
+    rpe_enabled = _get_setting(db, "enable_rpe", "true") == "true"
+
     # Continue with remaining exercises or freestyle
     if program_context:
         # Program workout - continue with remaining exercises
@@ -766,10 +769,135 @@ def resume_workout(
         while current_idx < len(exercises) and current_idx in workout_state["completed_indices"]:  # type: ignore[arg-type, operator]
             current_idx += 1
 
-        # TODO: Complete the interactive session logic here
-        # This would be the full exercise logging loop from start_workout()
-        console.print(
-            "[yellow]Program workout resume coming soon - completing as-is for now[/yellow]"
+        # Resume exercise logging loop
+        while current_idx < len(exercises):  # type: ignore[arg-type]
+            # Skip if already completed
+            if current_idx in workout_state["completed_indices"]:  # type: ignore[operator]
+                current_idx += 1
+                continue
+
+            exercise_data = exercises[current_idx]  # type: ignore[index]
+            prog_exercise = exercise_data["program_exercise"]
+            exercise_id = prog_exercise.exercise_id
+            exercise_name = exercise_data["exercise_name"]
+
+            console.print()
+            console.print(
+                f"\n[bold cyan]Exercise {current_idx + 1} of {len(exercises)}: {exercise_name}[/bold cyan]"  # type: ignore[arg-type]
+            )
+
+            # Display program prescription
+            console.print()
+            prog_exercise_dict = {
+                "target_sets": prog_exercise.target_sets,
+                "target_reps_min": prog_exercise.target_reps_min,
+                "target_reps_max": prog_exercise.target_reps_max,
+                "target_rpe": prog_exercise.target_rpe,
+                "rest_seconds": prog_exercise.rest_seconds,
+                "tempo": prog_exercise.tempo,
+                "notes": prog_exercise.notes,
+            }
+            console.print(format_program_prescription(exercise_name, prog_exercise_dict))
+
+            # Show last performance
+            last_performance = workout_service.get_last_performance(exercise_id, limit=1)
+            if last_performance:
+                last_workout_sets = [
+                    s
+                    for s in last_performance
+                    if s["workout_id"] == last_performance[0]["workout_id"]
+                ]
+                last_date = last_performance[0]["workout_date"]
+                console.print()
+                console.print(
+                    format_exercise_performance(exercise_name, last_workout_sets, last_date)
+                )
+
+            # Track exercise
+            workout_state["exercises"].add(exercise_id)  # type: ignore[attr-defined]
+
+            # Log sets for this exercise (continue from last set number if resuming)
+            starting_set = workout_state["exercise_last_set"].get(exercise_id, 0) + 1  # type: ignore[union-attr]
+            sets_logged = _log_sets_for_exercise(
+                workout.id,
+                exercise_id,
+                exercise_name,
+                set_service,
+                workout_state,
+                rpe_enabled,
+                starting_set_number=starting_set,
+                last_performance=last_performance,
+            )
+
+            # Show completion vs target
+            total_sets = workout_state["exercise_last_set"].get(exercise_id, 0) + sets_logged  # type: ignore[union-attr]
+            console.print(
+                f"\n[dim]Completed {total_sets}/{prog_exercise.target_sets} target sets[/dim]"
+            )
+
+            # Mark as completed
+            workout_state["completed_indices"].add(current_idx)  # type: ignore[attr-defined]
+
+            # Show navigation menu
+            if current_idx < len(exercises) - 1:  # type: ignore[arg-type]
+                action = _show_exercise_menu(
+                    current_idx,
+                    exercises,  # type: ignore[arg-type]
+                    workout_state["completed_indices"],  # type: ignore[arg-type]
+                    workout_state["skipped_indices"],  # type: ignore[arg-type]
+                )
+
+                if action == "next":
+                    current_idx += 1
+                elif action == "skip":
+                    # Prompt for exercise number
+                    while True:
+                        try:
+                            skip_to = Prompt.ask(
+                                f"Enter exercise number (1-{len(exercises)})",  # type: ignore[arg-type]
+                                default=str(current_idx + 2),
+                            )
+                            skip_to_idx = int(skip_to) - 1
+
+                            if 0 <= skip_to_idx < len(exercises):  # type: ignore[arg-type]
+                                current_idx = skip_to_idx
+                                break
+
+                            console.print(
+                                f"[yellow]Invalid exercise number. Use 1-{len(exercises)}[/yellow]"
+                            )  # type: ignore[arg-type]
+                        except ValueError:
+                            console.print("[yellow]Please enter a valid number[/yellow]")
+
+                elif action == "view":
+                    _show_remaining_exercises(
+                        exercises,  # type: ignore[arg-type]
+                        current_idx,
+                        workout_state["completed_indices"],  # type: ignore[arg-type]
+                        workout_state["skipped_indices"],  # type: ignore[arg-type]
+                    )
+                    # Don't increment, will show menu again for same exercise
+                    continue
+
+                elif action == "finish":
+                    # Mark remaining as skipped
+                    for idx in range(current_idx + 1, len(exercises)):  # type: ignore[arg-type]
+                        if idx not in workout_state["completed_indices"]:  # type: ignore[operator]
+                            workout_state["skipped_indices"].add(idx)  # type: ignore[attr-defined]
+                    break
+            else:
+                # Last exercise, move on
+                current_idx += 1
+
+        # Prompt for skipped exercises
+        _prompt_for_skipped_exercises(
+            exercises,  # type: ignore[arg-type]
+            workout_state["skipped_indices"],  # type: ignore[arg-type]
+            workout,
+            workout_service,
+            set_service,
+            workout_state,
+            rpe_enabled,
         )
 
     else:
@@ -777,10 +905,53 @@ def resume_workout(
         console.print("[bold]Continue adding exercises (or type 'done' to finish)[/bold]")
         console.print()
 
-        # TODO: Complete the freestyle session logic here
-        console.print(
-            "[yellow]Freestyle workout resume coming soon - completing as-is for now[/yellow]"
-        )
+        # Resume freestyle workout
+        while True:
+            console.print()
+            exercise_name = Prompt.ask(
+                "[bold cyan]Enter exercise name[/bold cyan] (or 'done' to finish)",
+                default="done",
+            )
+
+            if exercise_name.lower() == "done":
+                break
+
+            exercise_id = _lookup_exercise(db, exercise_name)
+
+            if not exercise_id:
+                console.print(
+                    f"[yellow]Exercise '{exercise_name}' not found. Creating as custom exercise.[/yellow]"
+                )
+                exercise_id = 1  # Placeholder
+
+            workout_state["exercises"].add(exercise_id)  # type: ignore[attr-defined]
+
+            # Show last performance
+            last_performance = workout_service.get_last_performance(exercise_id, limit=1)
+            if last_performance:
+                last_workout_sets = [
+                    s
+                    for s in last_performance
+                    if s["workout_id"] == last_performance[0]["workout_id"]
+                ]
+                last_date = last_performance[0]["workout_date"]
+                console.print()
+                console.print(
+                    format_exercise_performance(exercise_name, last_workout_sets, last_date)
+                )
+
+            # Log sets for this exercise (continue from last set number if resuming this exercise)
+            starting_set = workout_state["exercise_last_set"].get(exercise_id, 0) + 1  # type: ignore[union-attr]
+            _log_sets_for_exercise(
+                workout.id,
+                exercise_id,
+                exercise_name,
+                set_service,
+                workout_state,
+                rpe_enabled,
+                starting_set_number=starting_set,
+                last_performance=last_performance,
+            )
 
     # Finish workout
     end_time = datetime.now()
@@ -1261,6 +1432,111 @@ def _prompt_for_skipped_exercises(
         console.print(
             f"\n[dim]Completed {set_number - 1}/{prog_exercise.target_sets} target sets[/dim]"
         )
+
+
+def _log_sets_for_exercise(
+    workout_id: int,
+    exercise_id: int,
+    exercise_name: str,
+    set_service: SetService,
+    workout_state: dict,
+    rpe_enabled: bool,
+    starting_set_number: int = 1,
+    last_performance: list[dict] | None = None,
+) -> int:
+    """
+    Log sets for a single exercise in an interactive loop.
+
+    Args:
+        workout_id: ID of current workout
+        exercise_id: ID of exercise to log sets for
+        exercise_name: Name of exercise for display
+        set_service: SetService instance
+        workout_state: Current workout state dict
+        rpe_enabled: Whether RPE tracking is enabled
+        starting_set_number: Set number to start from (default 1, higher for resume)
+        last_performance: Optional last performance data for PR detection
+
+    Returns:
+        Number of sets logged
+    """
+    console.print(f"\n[bold]Logging sets for {exercise_name}[/bold]")
+    console.print(
+        "[dim]Format: <weight> <reps> [rpe] or use shortcuts: s (same), +5/-5 (adjust weight)[/dim]"
+    )
+    console.print()
+
+    set_number = starting_set_number
+    last_set_data = None
+    sets_logged = 0
+
+    while True:
+        set_input = Prompt.ask(f"[cyan]Set {set_number}[/cyan]", default="done")
+
+        if set_input.lower() == "done":
+            break
+
+        parsed = _parse_set_input(set_input, last_set_data, rpe_enabled)
+
+        if not parsed:
+            console.print("[red]Invalid input. Use format: weight reps [rpe][/red]")
+            continue
+
+        weight, reps, rpe = parsed
+
+        try:
+            set_create = SetCreate(
+                workout_id=workout_id,
+                exercise_id=exercise_id,
+                set_number=set_number,
+                weight=weight,
+                weight_unit=WeightUnit.LBS,
+                reps=reps,
+                rpe=rpe,
+                set_type=SetType.WORKING,
+                rest_seconds=None,
+            )
+
+            created_set = set_service.add_set(set_create)
+            volume = calculate_volume_load(weight, reps)
+
+            is_pr = False
+            if last_performance:
+                best_weight = max(s["weight"] for s in last_performance)
+                if weight > best_weight:
+                    is_pr = True
+
+            console.print(format_set_completion(weight, reps, rpe, volume, is_pr))
+
+            workout_state["total_volume"] = workout_state["total_volume"] + volume  # type: ignore[operator]
+            workout_state["total_sets"] = workout_state["total_sets"] + 1  # type: ignore[operator]
+            last_set_data = {"weight": weight, "reps": reps, "rpe": rpe}
+            set_number += 1
+            sets_logged += 1
+
+        except ValidationError as e:
+            # Extract validation error details for user-friendly message
+            error_details = []
+            for error in e.errors():
+                field = error["loc"][0] if error["loc"] else "unknown"
+                msg = error["msg"]
+                if field == "rpe" and "greater_than_equal" in error["type"]:
+                    error_details.append(f"RPE must be between 6.0 and 10.0 (got {rpe})")
+                elif field == "weight" and "greater_than_equal" in error["type"]:
+                    error_details.append(f"Weight must be greater than 0 (got {weight})")
+                elif field == "reps" and "greater_than_equal" in error["type"]:
+                    error_details.append(f"Reps must be at least 1 (got {reps})")
+                else:
+                    error_details.append(f"{field}: {msg}")
+
+            console.print(f"[red]Invalid input: {', '.join(error_details)}[/red]")
+            console.print("[dim]Please try again with valid values[/dim]")
+            continue
+        except Exception as e:
+            console.print(f"[red]Error saving set: {e}[/red]")
+            continue
+
+    return sets_logged
 
 
 def _group_sets_by_exercise(sets: list) -> dict[int, list]:
