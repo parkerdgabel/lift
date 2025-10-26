@@ -23,7 +23,7 @@
               "rest_seconds": 180
             },
             {
-              "exercise_name": "Incline Dumbbell Press",
+              "exercise_name": "Incline Dumbbell Bench Press",
               "order_number": 2,
               "target_sets": 3,
               "target_reps_min": 8,
@@ -32,7 +32,7 @@
               "rest_seconds": 120
             },
             {
-              "exercise_name": "Cable Fly",
+              "exercise_name": "Cable Flyes",
               "order_number": 3,
               "target_sets": 3,
               "target_reps_min": 12,
@@ -50,7 +50,7 @@
               "rest_seconds": 120
             },
             {
-              "exercise_name": "Lateral Raise",
+              "exercise_name": "Lateral Raises",
               "order_number": 5,
               "target_sets": 3,
               "target_reps_min": 12,
@@ -59,7 +59,7 @@
               "rest_seconds": 60
             },
             {
-              "exercise_name": "Tricep Pushdown",
+              "exercise_name": "Cable Tricep Pushdowns",
               "order_number": 6,
               "target_sets": 3,
               "target_reps_min": 12,
@@ -85,7 +85,7 @@
               "rest_seconds": 240
             },
             {
-              "exercise_name": "Pull-Up",
+              "exercise_name": "Pull-Ups",
               "order_number": 2,
               "target_sets": 4,
               "target_reps_min": 8,
@@ -94,7 +94,7 @@
               "rest_seconds": 120
             },
             {
-              "exercise_name": "Barbell Row",
+              "exercise_name": "Barbell Rows",
               "order_number": 3,
               "target_sets": 3,
               "target_reps_min": 8,
@@ -103,7 +103,7 @@
               "rest_seconds": 120
             },
             {
-              "exercise_name": "Seated Cable Row",
+              "exercise_name": "Seated Cable Rows",
               "order_number": 4,
               "target_sets": 3,
               "target_reps_min": 10,
@@ -112,7 +112,7 @@
               "rest_seconds": 90
             },
             {
-              "exercise_name": "Face Pull",
+              "exercise_name": "Face Pulls",
               "order_number": 5,
               "target_sets": 3,
               "target_reps_min": 15,
@@ -121,7 +121,7 @@
               "rest_seconds": 60
             },
             {
-              "exercise_name": "Barbell Curl",
+              "exercise_name": "Barbell Curls",
               "order_number": 6,
               "target_sets": 3,
               "target_reps_min": 10,
@@ -130,7 +130,7 @@
               "rest_seconds": 60
             },
             {
-              "exercise_name": "Hammer Curl",
+              "exercise_name": "Hammer Curls",
               "order_number": 7,
               "target_sets": 3,
               "target_reps_min": 12,
@@ -147,7 +147,7 @@
           "estimated_duration_minutes": 80,
           "exercises": [
             {
-              "exercise_name": "Barbell Squat",
+              "exercise_name": "Barbell Squats",
               "order_number": 1,
               "target_sets": 4,
               "target_reps_min": 6,
@@ -156,7 +156,7 @@
               "rest_seconds": 240
             },
             {
-              "exercise_name": "Front Squat",
+              "exercise_name": "Front Squats",
               "order_number": 2,
               "target_sets": 3,
               "target_reps_min": 8,
@@ -174,7 +174,7 @@
               "rest_seconds": 120
             },
             {
-              "exercise_name": "Leg Extension",
+              "exercise_name": "Leg Extensions",
               "order_number": 4,
               "target_sets": 3,
               "target_reps_min": 12,
@@ -183,7 +183,7 @@
               "rest_seconds": 60
             },
             {
-              "exercise_name": "Lying Leg Curl",
+              "exercise_name": "Lying Leg Curls",
               "order_number": 5,
               "target_sets": 3,
               "target_reps_min": 12,
@@ -192,7 +192,7 @@
               "rest_seconds": 60
             },
             {
-              "exercise_name": "Standing Calf Raise",
+              "exercise_name": "Standing Calf Raises",
               "order_number": 6,
               "target_sets": 4,
               "target_reps_min": 15,
@@ -218,7 +218,7 @@
               "rest_seconds": 180
             },
             {
-              "exercise_name": "Incline Barbell Press",
+              "exercise_name": "Incline Barbell Bench Press",
               "order_number": 2,
               "target_sets": 4,
               "target_reps_min": 8,
@@ -227,7 +227,7 @@
               "rest_seconds": 120
             },
             {
-              "exercise_name": "Dumbbell Fly",
+              "exercise_name": "Dumbbell Flyes",
               "order_number": 3,
               "target_sets": 3,
               "target_reps_min": 10,
@@ -236,7 +236,7 @@
               "rest_seconds": 90
             },
             {
-              "exercise_name": "Lateral Raise",
+              "exercise_name": "Lateral Raises",
               "order_number": 4,
               "target_sets": 4,
               "target_reps_min": 12,
@@ -245,7 +245,7 @@
               "rest_seconds": 60
             },
             {
-              "exercise_name": "Face Pull",
+              "exercise_name": "Face Pulls",
               "order_number": 5,
               "target_sets": 3,
               "target_reps_min": 15,
@@ -271,7 +271,7 @@
           "estimated_duration_minutes": 75,
           "exercises": [
             {
-              "exercise_name": "Pull-Up",
+              "exercise_name": "Pull-Ups",
               "order_number": 1,
               "target_sets": 4,
               "target_reps_min": 6,
@@ -280,7 +280,7 @@
               "rest_seconds": 180
             },
             {
-              "exercise_name": "Lat Pulldown",
+              "exercise_name": "Lat Pulldowns",
               "order_number": 2,
               "target_sets": 3,
               "target_reps_min": 10,
@@ -289,7 +289,7 @@
               "rest_seconds": 90
             },
             {
-              "exercise_name": "Dumbbell Row",
+              "exercise_name": "Dumbbell Rows",
               "order_number": 3,
               "target_sets": 4,
               "target_reps_min": 8,
@@ -298,7 +298,7 @@
               "rest_seconds": 90
             },
             {
-              "exercise_name": "Chest Supported Row",
+              "exercise_name": "Chest Supported Rows",
               "order_number": 4,
               "target_sets": 3,
               "target_reps_min": 10,
@@ -307,7 +307,7 @@
               "rest_seconds": 90
             },
             {
-              "exercise_name": "Shrug",
+              "exercise_name": "Barbell Shrugs",
               "order_number": 5,
               "target_sets": 3,
               "target_reps_min": 12,
@@ -316,7 +316,7 @@
               "rest_seconds": 60
             },
             {
-              "exercise_name": "Preacher Curl",
+              "exercise_name": "Preacher Curls",
               "order_number": 6,
               "target_sets": 3,
               "target_reps_min": 10,
@@ -333,7 +333,7 @@
           "estimated_duration_minutes": 80,
           "exercises": [
             {
-              "exercise_name": "Romanian Deadlift",
+              "exercise_name": "Romanian Deadlifts",
               "order_number": 1,
               "target_sets": 4,
               "target_reps_min": 8,
@@ -351,7 +351,7 @@
               "rest_seconds": 120
             },
             {
-              "exercise_name": "Walking Lunge",
+              "exercise_name": "Walking Lunges",
               "order_number": 3,
               "target_sets": 3,
               "target_reps_min": 10,
@@ -360,7 +360,7 @@
               "rest_seconds": 90
             },
             {
-              "exercise_name": "Lying Leg Curl",
+              "exercise_name": "Lying Leg Curls",
               "order_number": 4,
               "target_sets": 4,
               "target_reps_min": 10,
@@ -369,7 +369,7 @@
               "rest_seconds": 60
             },
             {
-              "exercise_name": "Leg Extension",
+              "exercise_name": "Leg Extensions",
               "order_number": 5,
               "target_sets": 3,
               "target_reps_min": 15,
@@ -378,7 +378,7 @@
               "rest_seconds": 60
             },
             {
-              "exercise_name": "Seated Calf Raise",
+              "exercise_name": "Seated Calf Raises",
               "order_number": 6,
               "target_sets": 4,
               "target_reps_min": 15,
@@ -413,7 +413,7 @@
               "rest_seconds": 240
             },
             {
-              "exercise_name": "Barbell Row",
+              "exercise_name": "Barbell Rows",
               "order_number": 2,
               "target_sets": 4,
               "target_reps_min": 5,
@@ -431,7 +431,7 @@
               "rest_seconds": 180
             },
             {
-              "exercise_name": "Pull-Up",
+              "exercise_name": "Pull-Ups",
               "order_number": 4,
               "target_sets": 3,
               "target_reps_min": 6,
@@ -440,7 +440,7 @@
               "rest_seconds": 120
             },
             {
-              "exercise_name": "Barbell Curl",
+              "exercise_name": "Barbell Curls",
               "order_number": 5,
               "target_sets": 3,
               "target_reps_min": 8,
@@ -449,7 +449,7 @@
               "rest_seconds": 60
             },
             {
-              "exercise_name": "Tricep Pushdown",
+              "exercise_name": "Cable Tricep Pushdowns",
               "order_number": 6,
               "target_sets": 3,
               "target_reps_min": 8,
@@ -466,7 +466,7 @@
           "estimated_duration_minutes": 80,
           "exercises": [
             {
-              "exercise_name": "Barbell Squat",
+              "exercise_name": "Barbell Squats",
               "order_number": 1,
               "target_sets": 4,
               "target_reps_min": 5,
@@ -475,7 +475,7 @@
               "rest_seconds": 300
             },
             {
-              "exercise_name": "Romanian Deadlift",
+              "exercise_name": "Romanian Deadlifts",
               "order_number": 2,
               "target_sets": 3,
               "target_reps_min": 8,
@@ -493,7 +493,7 @@
               "rest_seconds": 120
             },
             {
-              "exercise_name": "Lying Leg Curl",
+              "exercise_name": "Lying Leg Curls",
               "order_number": 4,
               "target_sets": 3,
               "target_reps_min": 10,
@@ -502,7 +502,7 @@
               "rest_seconds": 90
             },
             {
-              "exercise_name": "Standing Calf Raise",
+              "exercise_name": "Standing Calf Raises",
               "order_number": 5,
               "target_sets": 4,
               "target_reps_min": 12,
@@ -519,7 +519,7 @@
           "estimated_duration_minutes": 80,
           "exercises": [
             {
-              "exercise_name": "Incline Dumbbell Press",
+              "exercise_name": "Incline Dumbbell Bench Press",
               "order_number": 1,
               "target_sets": 4,
               "target_reps_min": 8,
@@ -528,7 +528,7 @@
               "rest_seconds": 120
             },
             {
-              "exercise_name": "Lat Pulldown",
+              "exercise_name": "Lat Pulldowns",
               "order_number": 2,
               "target_sets": 4,
               "target_reps_min": 10,
@@ -555,7 +555,7 @@
               "rest_seconds": 90
             },
             {
-              "exercise_name": "Lateral Raise",
+              "exercise_name": "Lateral Raises",
               "order_number": 5,
               "target_sets": 3,
               "target_reps_min": 15,
@@ -564,7 +564,7 @@
               "rest_seconds": 60
             },
             {
-              "exercise_name": "Face Pull",
+              "exercise_name": "Face Pulls",
               "order_number": 6,
               "target_sets": 3,
               "target_reps_min": 15,
@@ -599,7 +599,7 @@
           "estimated_duration_minutes": 75,
           "exercises": [
             {
-              "exercise_name": "Front Squat",
+              "exercise_name": "Front Squats",
               "order_number": 1,
               "target_sets": 4,
               "target_reps_min": 8,
@@ -626,7 +626,7 @@
               "rest_seconds": 90
             },
             {
-              "exercise_name": "Leg Extension",
+              "exercise_name": "Leg Extensions",
               "order_number": 4,
               "target_sets": 3,
               "target_reps_min": 12,
@@ -635,7 +635,7 @@
               "rest_seconds": 60
             },
             {
-              "exercise_name": "Lying Leg Curl",
+              "exercise_name": "Lying Leg Curls",
               "order_number": 5,
               "target_sets": 3,
               "target_reps_min": 12,
@@ -644,7 +644,7 @@
               "rest_seconds": 60
             },
             {
-              "exercise_name": "Seated Calf Raise",
+              "exercise_name": "Seated Calf Raises",
               "order_number": 6,
               "target_sets": 4,
               "target_reps_min": 15,
@@ -670,7 +670,7 @@
           "estimated_duration_minutes": 70,
           "exercises": [
             {
-              "exercise_name": "Barbell Squat",
+              "exercise_name": "Barbell Squats",
               "order_number": 1,
               "target_sets": 4,
               "target_reps_min": 6,
@@ -688,7 +688,7 @@
               "rest_seconds": 180
             },
             {
-              "exercise_name": "Barbell Row",
+              "exercise_name": "Barbell Rows",
               "order_number": 3,
               "target_sets": 3,
               "target_reps_min": 8,
@@ -706,7 +706,7 @@
               "rest_seconds": 120
             },
             {
-              "exercise_name": "Lying Leg Curl",
+              "exercise_name": "Lying Leg Curls",
               "order_number": 5,
               "target_sets": 3,
               "target_reps_min": 10,
@@ -715,7 +715,7 @@
               "rest_seconds": 60
             },
             {
-              "exercise_name": "Barbell Curl",
+              "exercise_name": "Barbell Curls",
               "order_number": 6,
               "target_sets": 2,
               "target_reps_min": 10,
@@ -741,7 +741,7 @@
               "rest_seconds": 300
             },
             {
-              "exercise_name": "Pull-Up",
+              "exercise_name": "Pull-Ups",
               "order_number": 2,
               "target_sets": 4,
               "target_reps_min": 6,
@@ -750,7 +750,7 @@
               "rest_seconds": 120
             },
             {
-              "exercise_name": "Incline Dumbbell Press",
+              "exercise_name": "Incline Dumbbell Bench Press",
               "order_number": 3,
               "target_sets": 3,
               "target_reps_min": 8,
@@ -768,7 +768,7 @@
               "rest_seconds": 120
             },
             {
-              "exercise_name": "Lateral Raise",
+              "exercise_name": "Lateral Raises",
               "order_number": 5,
               "target_sets": 3,
               "target_reps_min": 12,
@@ -777,7 +777,7 @@
               "rest_seconds": 60
             },
             {
-              "exercise_name": "Tricep Pushdown",
+              "exercise_name": "Cable Tricep Pushdowns",
               "order_number": 6,
               "target_sets": 2,
               "target_reps_min": 12,
@@ -794,7 +794,7 @@
           "estimated_duration_minutes": 70,
           "exercises": [
             {
-              "exercise_name": "Front Squat",
+              "exercise_name": "Front Squats",
               "order_number": 1,
               "target_sets": 4,
               "target_reps_min": 8,
@@ -812,7 +812,7 @@
               "rest_seconds": 120
             },
             {
-              "exercise_name": "Lat Pulldown",
+              "exercise_name": "Lat Pulldowns",
               "order_number": 3,
               "target_sets": 3,
               "target_reps_min": 10,
@@ -821,7 +821,7 @@
               "rest_seconds": 90
             },
             {
-              "exercise_name": "Romanian Deadlift",
+              "exercise_name": "Romanian Deadlifts",
               "order_number": 4,
               "target_sets": 3,
               "target_reps_min": 8,
@@ -830,7 +830,7 @@
               "rest_seconds": 120
             },
             {
-              "exercise_name": "Face Pull",
+              "exercise_name": "Face Pulls",
               "order_number": 5,
               "target_sets": 3,
               "target_reps_min": 15,
@@ -839,7 +839,7 @@
               "rest_seconds": 60
             },
             {
-              "exercise_name": "Standing Calf Raise",
+              "exercise_name": "Standing Calf Raises",
               "order_number": 6,
               "target_sets": 3,
               "target_reps_min": 15,
