@@ -52,3 +52,6 @@ backups/
 build/
 dist/
 *.egg-info/
+
+# Copied man page (original is in man/)
+lift/man/

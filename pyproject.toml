@@ -64,7 +64,7 @@ packages = ["lift"]
 "lift/data/exercises.json" = "lift/data/exercises.json"
 "lift/data/programs.json" = "lift/data/programs.json"
 "lift/core/schema.sql" = "lift/core/schema.sql"
-"man/lift.1" = "man/lift.1"
+"man/lift.1" = "lift/man/lift.1"
 
 [tool.ruff]
 line-length = 100
