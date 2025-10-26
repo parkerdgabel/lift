@@ -1,6 +1,6 @@
 [project]
 name = "lift-tracker"
-version = "0.2.3"
+version = "0.3.0"
 description = "A robust feature-complete CLI for tracking weightlifting sessions with a focus on bodybuilding"
 authors = [{name = "Parker Gabel", email = "parkerdgabel@gmail.com"}]
 requires-python = ">=3.11"
