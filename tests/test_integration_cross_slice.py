@@ -31,7 +31,7 @@ from lift.services.stats_service import StatsService
 from lift.services.workout_service import WorkoutService
 
 
-@pytest.fixture()
+@pytest.fixture
 def loaded_db(db: DatabaseManager) -> DatabaseManager:
     """Database with exercises and config pre-loaded."""
     exercise_service = ExerciseService(db)

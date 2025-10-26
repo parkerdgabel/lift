@@ -10,7 +10,7 @@ from lift.core.models import BodyMeasurementCreate, MeasurementUnit, WeightUnit
 from lift.services.body_service import BodyService
 
 
-@pytest.fixture()
+@pytest.fixture
 def service(db: DatabaseManager) -> BodyService:
     """Create a BodyService instance with test database."""
     return BodyService(db)

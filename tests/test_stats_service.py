@@ -9,13 +9,13 @@ from lift.core.database import DatabaseManager
 from lift.services.stats_service import StatsService
 
 
-@pytest.fixture()
+@pytest.fixture
 def stats_service(db: DatabaseManager) -> StatsService:
     """Create stats service with test database."""
     return StatsService(db)
 
 
-@pytest.fixture()
+@pytest.fixture
 def sample_data(db: DatabaseManager) -> dict:
     """Create sample workout data for testing."""
     with db.get_connection() as conn:

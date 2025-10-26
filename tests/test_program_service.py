@@ -17,13 +17,13 @@ from lift.core.models import (
 from lift.services.program_service import ProgramService
 
 
-@pytest.fixture()
+@pytest.fixture
 def service(db):
     """Create a program service with test database."""
     return ProgramService(db)
 
 
-@pytest.fixture()
+@pytest.fixture
 def sample_exercises(db):
     """Create sample exercises for testing."""
     exercises = [

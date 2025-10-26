@@ -15,7 +15,7 @@ from lift.main import app
 runner = CliRunner()
 
 
-@pytest.fixture()
+@pytest.fixture
 def temp_db(tmp_path: Path) -> str:
     """Create a temporary database path."""
     db_path = tmp_path / "test.duckdb"

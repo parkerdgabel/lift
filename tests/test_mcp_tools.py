@@ -14,19 +14,19 @@ from lift.services.exercise_service import ExerciseService
 from lift.services.workout_service import WorkoutService
 
 
-@pytest.fixture()
+@pytest.fixture
 def exercise_service(db):
     """Create exercise service instance."""
     return ExerciseService(db)
 
 
-@pytest.fixture()
+@pytest.fixture
 def workout_service(db):
     """Create workout service instance."""
     return WorkoutService(db)
 
 
-@pytest.fixture()
+@pytest.fixture
 def body_service(db):
     """Create body service instance."""
     return BodyService(db)

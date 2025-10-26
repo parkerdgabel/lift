@@ -39,7 +39,7 @@ def reset_global_db() -> Generator[None, None, None]:
     reset_db_instance()
 
 
-@pytest.fixture()
+@pytest.fixture
 def db() -> Generator[DatabaseManager, None, None]:
     """Create a temporary in-memory database for testing."""
     import tempfile
@@ -62,7 +62,7 @@ def db() -> Generator[DatabaseManager, None, None]:
             Path(temp_path + ".wal").unlink()
 
 
-@pytest.fixture()
+@pytest.fixture
 def exercise_data() -> list[dict]:
     """Standard set of exercises for testing."""
     return [
@@ -133,7 +133,7 @@ def exercise_data() -> list[dict]:
     ]
 
 
-@pytest.fixture()
+@pytest.fixture
 def db_with_seed_exercises(db: DatabaseManager) -> DatabaseManager:
     """Database with all seed exercises loaded. Use sparingly as it's slow."""
     exercise_service = ExerciseService(db)
@@ -141,7 +141,7 @@ def db_with_seed_exercises(db: DatabaseManager) -> DatabaseManager:
     return db
 
 
-@pytest.fixture()
+@pytest.fixture
 def loaded_exercises(db: DatabaseManager, exercise_data: list[dict]) -> dict[str, int]:
     """Database with exercises pre-loaded. Returns dict of exercise_name -> exercise_id."""
     exercise_service = ExerciseService(db)
@@ -154,7 +154,7 @@ def loaded_exercises(db: DatabaseManager, exercise_data: list[dict]) -> dict[str
     return exercise_ids
 
 
-@pytest.fixture()
+@pytest.fixture
 def sample_workout(
     db: DatabaseManager, loaded_exercises: dict[str, int]
 ) -> tuple[int, dict[str, int]]:
@@ -205,7 +205,7 @@ def sample_workout(
     return workout.id, loaded_exercises
 
 
-@pytest.fixture()
+@pytest.fixture
 def sample_program(
     db: DatabaseManager, loaded_exercises: dict[str, int]
 ) -> tuple[int, int, dict[str, int]]:
@@ -272,7 +272,7 @@ def sample_program(
     return program.id, push_workout.id, loaded_exercises
 
 
-@pytest.fixture()
+@pytest.fixture
 def multi_week_workout_data(
     db: DatabaseManager, loaded_exercises: dict[str, int]
 ) -> tuple[list[int], dict[str, int]]:
@@ -338,7 +338,7 @@ def multi_week_workout_data(
     return workout_ids, loaded_exercises
 
 
-@pytest.fixture()
+@pytest.fixture
 def realistic_training_cycle(
     db: DatabaseManager, loaded_exercises: dict[str, int]
 ) -> tuple[list[int], dict[str, int]]:

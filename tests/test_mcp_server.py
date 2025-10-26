@@ -6,7 +6,7 @@ from lift.mcp.config import MCPServerConfig
 from lift.mcp.server import MCPServer
 
 
-@pytest.fixture()
+@pytest.fixture
 def temp_db_path(tmp_path, monkeypatch):
     """Create a temporary database path."""
     db_path = tmp_path / "test.duckdb"

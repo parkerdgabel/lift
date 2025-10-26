@@ -10,19 +10,19 @@ from lift.services.set_service import SetService
 from lift.services.workout_service import WorkoutService
 
 
-@pytest.fixture()
+@pytest.fixture
 def workout_service(db):
     """Create workout service instance."""
     return WorkoutService(db)
 
 
-@pytest.fixture()
+@pytest.fixture
 def set_service(db):
     """Create set service instance."""
     return SetService(db)
 
 
-@pytest.fixture()
+@pytest.fixture
 def sample_workout(workout_service):
     """Create a sample workout for testing."""
     workout_create = WorkoutCreate(

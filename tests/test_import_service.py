@@ -11,7 +11,7 @@ from lift.core.database import DatabaseManager, reset_db_instance
 from lift.services.import_service import ImportService
 
 
-@pytest.fixture()
+@pytest.fixture
 def db():
     """Create a temporary test database."""
     with tempfile.TemporaryDirectory() as tmpdir:

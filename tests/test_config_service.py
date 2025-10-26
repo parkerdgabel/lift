@@ -10,7 +10,7 @@ from lift.core.models import MeasurementUnit, WeightUnit
 from lift.services.config_service import ConfigService
 
 
-@pytest.fixture()
+@pytest.fixture
 def db():
     """Create a temporary test database."""
     with tempfile.TemporaryDirectory() as tmpdir:

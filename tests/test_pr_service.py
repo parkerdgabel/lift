@@ -10,13 +10,13 @@ from lift.core.models import PersonalRecordCreate, RecordType, WeightUnit
 from lift.services.pr_service import PRService
 
 
-@pytest.fixture()
+@pytest.fixture
 def pr_service(db: DatabaseManager) -> PRService:
     """Create PR service with test database."""
     return PRService(db)
 
 
-@pytest.fixture()
+@pytest.fixture
 def sample_exercise(db: DatabaseManager) -> int:
     """Create a sample exercise and return its ID."""
     with db.get_connection() as conn:
@@ -30,7 +30,7 @@ def sample_exercise(db: DatabaseManager) -> int:
         return result[0]
 
 
-@pytest.fixture()
+@pytest.fixture
 def sample_workout(db: DatabaseManager, sample_exercise: int) -> dict:
     """Create a sample workout with sets."""
     with db.get_connection() as conn:

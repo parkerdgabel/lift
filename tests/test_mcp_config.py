@@ -16,7 +16,7 @@ from lift.mcp.config import (
 )
 
 
-@pytest.fixture()
+@pytest.fixture
 def temp_config_file(tmp_path, monkeypatch):
     """Create a temporary config file location."""
     config_dir = tmp_path / ".lift"
