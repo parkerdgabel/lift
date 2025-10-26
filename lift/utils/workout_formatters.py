@@ -362,3 +362,123 @@ def format_progress_indicator(current: int, total: int, label: str = "") -> Text
     text.append(f"({percentage:.0f}%)", style="dim")
 
     return text
+
+
+def format_program_workout_header(
+    program_name: str,
+    workout_name: str,
+    workout_position: int,
+    total_workouts: int,
+    num_exercises: int,
+    estimated_duration: int | None,
+) -> Panel:
+    """
+    Format header for program-based workout session.
+
+    Args:
+        program_name: Name of the program
+        workout_name: Name of the workout
+        workout_position: Position in program (1-based)
+        total_workouts: Total workouts in program
+        num_exercises: Number of exercises in workout
+        estimated_duration: Estimated duration in minutes
+
+    Returns:
+        Rich Panel with program workout header
+    """
+    content = Text()
+
+    content.append(f"{workout_name}\n", style="bold cyan")
+
+    # Day position and exercise count
+    info_parts = [
+        f"Day {workout_position} of {total_workouts}",
+        f"{num_exercises} exercises",
+    ]
+
+    if estimated_duration:
+        info_parts.append(f"Est. {estimated_duration} min")
+
+    content.append(" • ".join(info_parts), style="dim")
+
+    return Panel(
+        content,
+        title=f"[bold]{program_name}[/bold]",
+        border_style="cyan",
+        padding=(1, 2),
+    )
+
+
+def format_program_prescription(exercise_name: str, program_exercise: dict) -> Panel:
+    """
+    Format program prescription for an exercise.
+
+    Args:
+        exercise_name: Name of the exercise
+        program_exercise: Dictionary containing ProgramExercise data with keys:
+            - target_sets
+            - target_reps_min
+            - target_reps_max
+            - target_rpe (optional)
+            - rest_seconds (optional)
+            - tempo (optional)
+            - notes (optional)
+
+    Returns:
+        Rich Panel with program prescription
+    """
+    content = Text()
+
+    # Extract program exercise data
+    target_sets = program_exercise.get("target_sets", 0)
+    target_reps_min = program_exercise.get("target_reps_min", 0)
+    target_reps_max = program_exercise.get("target_reps_max", 0)
+    target_rpe = program_exercise.get("target_rpe")
+    rest_seconds = program_exercise.get("rest_seconds")
+    tempo = program_exercise.get("tempo")
+    notes = program_exercise.get("notes")
+
+    # Target sets and reps
+    if target_reps_min == target_reps_max:
+        reps_str = f"{target_reps_min} reps"
+    else:
+        reps_str = f"{target_reps_min}-{target_reps_max} reps"
+
+    content.append("Target: ", style="bold yellow")
+    content.append(f"{target_sets} sets × {reps_str}", style="yellow")
+
+    # RPE
+    if target_rpe:
+        content.append(f" @ RPE {target_rpe}", style="magenta")
+
+    content.append("\n")
+
+    # Rest period
+    if rest_seconds:
+        content.append("Rest: ", style="bold blue")
+        minutes = rest_seconds // 60
+        seconds = rest_seconds % 60
+        if minutes and seconds:
+            rest_str = f"{minutes}m {seconds}s"
+        elif minutes:
+            rest_str = f"{minutes}m"
+        else:
+            rest_str = f"{seconds}s"
+        content.append(f"{rest_str}\n", style="blue")
+
+    # Tempo
+    if tempo:
+        content.append("Tempo: ", style="bold green")
+        content.append(f"{tempo}\n", style="green")
+
+    # Notes
+    if notes:
+        content.append("\n")
+        content.append(notes, style="dim italic")
+
+    return Panel(
+        content,
+        title="[bold]Program Prescription[/bold]",
+        border_style="yellow",
+        padding=(1, 2),
+    )
