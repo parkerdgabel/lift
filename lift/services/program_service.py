@@ -337,6 +337,75 @@ class ProgramService:
                 updated_at=result[8],
             )
 
+    def get_next_workout_in_program(self, program_id: int) -> ProgramWorkout | None:
+        """
+        Get the next workout to perform in a program based on last workout done.
+
+        Args:
+            program_id: Program ID
+
+        Returns:
+            Next workout in rotation, or None if no workouts in program
+
+        Logic:
+            1. Find last workout from this program
+            2. Get next workout by day_number order
+            3. Cycle back to first if at the end
+            4. Return first workout if none completed yet
+        """
+        # Query last workout done from this program
+        query = """
+            SELECT pw.id, pw.day_number
+            FROM workouts w
+            JOIN program_workouts pw ON w.program_workout_id = pw.id
+            WHERE pw.program_id = ?
+            ORDER BY w.date DESC
+            LIMIT 1
+        """
+
+        with self.db.get_connection() as conn:
+            last_result = conn.execute(query, (program_id,)).fetchone()
+
+            # Get all workouts in program ordered by day_number
+            workouts = self.get_program_workouts(program_id)
+
+            if not workouts:
+                return None
+
+            if not last_result:
+                # No previous workout, return first
+                return workouts[0]
+
+            last_workout_id = last_result[0]
+
+            # Find next workout in sequence
+            for i, workout in enumerate(workouts):
+                if workout.id == last_workout_id:
+                    # Return next, or cycle to first
+                    return workouts[(i + 1) % len(workouts)]
+
+            # Fallback to first workout
+            return workouts[0]
+
+    def get_workout_position_in_program(self, workout_id: int, program_id: int) -> tuple[int, int]:
+        """
+        Get position of a workout within its program.
+
+        Args:
+            workout_id: Program workout ID
+            program_id: Program ID
+
+        Returns:
+            Tuple of (position, total) e.g., (3, 6) means "Day 3 of 6"
+        """
+        workouts = self.get_program_workouts(program_id)
+
+        for i, workout in enumerate(workouts, 1):
+            if workout.id == workout_id:
+                return (i, len(workouts))
+
+        return (1, len(workouts))
+
     def add_workout_to_program(
         self, program_id: int, workout: ProgramWorkoutCreate
     ) -> ProgramWorkout:
