@@ -184,19 +184,19 @@ class TestWorkoutService:
 
         summary = workout_service.get_workout_summary(sample_workout.id)
 
-        assert summary["total_exercises"] == 1
-        assert summary["total_sets"] == 3
-        assert summary["total_volume"] == Decimal("5550")  # 185 * 10 * 3
-        assert summary["avg_rpe"] == Decimal("8.5")
+        assert summary.total_exercises == 1
+        assert summary.total_sets == 3
+        assert summary.total_volume == Decimal("5550")  # 185 * 10 * 3
+        assert summary.avg_rpe == Decimal("8.5")
 
     def test_get_workout_summary_empty(self, workout_service, sample_workout):
         """Test getting summary for workout with no sets."""
         summary = workout_service.get_workout_summary(sample_workout.id)
 
-        assert summary["total_exercises"] == 0
-        assert summary["total_sets"] == 0
-        assert summary["total_volume"] == Decimal("0")
-        assert summary["avg_rpe"] is None
+        assert summary.total_exercises == 0
+        assert summary.total_sets == 0
+        assert summary.total_volume == Decimal("0")
+        assert summary.avg_rpe is None
 
     def test_get_last_performance(self, workout_service, set_service, db):
         """Test getting last performance for an exercise."""

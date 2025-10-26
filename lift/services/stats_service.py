@@ -4,6 +4,7 @@ from datetime import datetime
 from decimal import Decimal
 
 from lift.core.database import DatabaseManager, get_db
+from lift.core.models import PeriodWorkoutSummary
 
 
 class StatsService:
@@ -20,7 +21,7 @@ class StatsService:
 
     def get_workout_summary(
         self, start_date: datetime | None = None, end_date: datetime | None = None
-    ) -> dict:
+    ) -> PeriodWorkoutSummary:
         """
         Get overall workout summary statistics.
 
@@ -29,7 +30,7 @@ class StatsService:
             end_date: End date for summary (optional)
 
         Returns:
-            Dictionary with summary statistics:
+            PeriodWorkoutSummary model with summary statistics:
             - total_workouts: Number of workouts
             - total_volume: Total volume load
             - total_sets: Total number of sets
@@ -62,25 +63,16 @@ class StatsService:
             result = conn.execute(query, params).fetchone()
 
         if not result:
-            return {
-                "total_workouts": 0,
-                "total_volume": Decimal(0),
-                "total_sets": 0,
-                "avg_duration": 0,
-                "avg_rpe": Decimal(0),
-                "total_exercises": 0,
-            }
+            return PeriodWorkoutSummary()
 
-        return {
-            "total_workouts": result[0],
-            "total_volume": Decimal(str(result[1])) if result[1] else Decimal(0),
-            "total_sets": result[2],
-            "avg_duration": round(result[3], 1) if result[3] else 0,
-            "avg_rpe": Decimal(str(result[4])).quantize(Decimal("0.1"))
-            if result[4]
-            else Decimal(0),
-            "total_exercises": result[5],
-        }
+        return PeriodWorkoutSummary(
+            total_workouts=result[0],
+            total_volume=Decimal(str(result[1])) if result[1] else Decimal(0),
+            total_sets=result[2],
+            avg_duration=round(result[3], 1) if result[3] else 0,
+            avg_rpe=Decimal(str(result[4])).quantize(Decimal("0.1")) if result[4] else Decimal(0),
+            total_exercises=result[5],
+        )
 
     def get_weekly_summary(self, weeks_back: int = 4) -> list[dict]:
         """
