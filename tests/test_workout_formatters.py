@@ -1,6 +1,6 @@
 """Tests for workout formatting utilities."""
 
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 
 import pytest
@@ -33,7 +33,7 @@ class TestFormatWorkoutSummary:
         workout = Workout(
             id=1,
             name="Push Day",
-            date=datetime(2024, 1, 15, 10, 30),
+            date=datetime(2024, 1, 15, 10, 30, tzinfo=UTC),
             duration_minutes=60,
             bodyweight=Decimal("180.5"),
             bodyweight_unit=WeightUnit.LBS,
@@ -359,7 +359,9 @@ class TestFormatWorkoutHeader:
 
     def test_workout_header_basic(self) -> None:
         """Test basic workout header."""
-        result = format_workout_header("Push Day", datetime(2024, 1, 15, 14, 30), bodyweight=None)
+        result = format_workout_header(
+            "Push Day", datetime(2024, 1, 15, 14, 30, tzinfo=UTC), bodyweight=None
+        )
 
         assert isinstance(result, Panel)
         console = Console()
@@ -474,7 +476,7 @@ class TestFormatWorkoutList:
                 Workout(
                     id=1,
                     name="Push Day",
-                    date=datetime(2024, 1, 15),
+                    date=datetime(2024, 1, 15, tzinfo=UTC),
                     duration_minutes=60,
                 ),
                 WorkoutSummary(
@@ -487,7 +489,7 @@ class TestFormatWorkoutList:
                 Workout(
                     id=2,
                     name="Pull Day",
-                    date=datetime(2024, 1, 17),
+                    date=datetime(2024, 1, 17, tzinfo=UTC),
                     duration_minutes=55,
                 ),
                 WorkoutSummary(

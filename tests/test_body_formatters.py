@@ -1,6 +1,6 @@
 """Tests for body measurement formatting utilities."""
 
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 
 import pytest
@@ -28,7 +28,7 @@ class TestFormatMeasurementTable:
         measurements = [
             BodyMeasurement(
                 id=1,
-                date=datetime(2024, 1, 15),
+                date=datetime(2024, 1, 15, tzinfo=UTC),
                 weight=Decimal("185.5"),
                 weight_unit=WeightUnit.LBS,
                 body_fat_pct=Decimal("15.2"),
@@ -40,7 +40,7 @@ class TestFormatMeasurementTable:
             ),
             BodyMeasurement(
                 id=2,
-                date=datetime(2024, 1, 22),
+                date=datetime(2024, 1, 22, tzinfo=UTC),
                 weight=Decimal("187.0"),
                 weight_unit=WeightUnit.LBS,
                 body_fat_pct=Decimal("15.0"),
@@ -129,7 +129,7 @@ class TestFormatMeasurementDetail:
         """Test measurement detail with all fields."""
         measurement = BodyMeasurement(
             id=1,
-            date=datetime(2024, 1, 15, 10, 30),
+            date=datetime(2024, 1, 15, 10, 30, tzinfo=UTC),
             weight=Decimal("185.5"),
             weight_unit=WeightUnit.LBS,
             body_fat_pct=Decimal("15.2"),
@@ -329,9 +329,9 @@ class TestFormatMeasurementChart:
     def test_measurement_chart_basic(self) -> None:
         """Test basic measurement chart."""
         data = [
-            {"date": datetime(2024, 1, 1), "value": Decimal("180.0"), "unit": "lbs"},
-            {"date": datetime(2024, 1, 8), "value": Decimal("182.0"), "unit": "lbs"},
-            {"date": datetime(2024, 1, 15), "value": Decimal("185.0"), "unit": "lbs"},
+            {"date": datetime(2024, 1, 1, tzinfo=UTC), "value": Decimal("180.0"), "unit": "lbs"},
+            {"date": datetime(2024, 1, 8, tzinfo=UTC), "value": Decimal("182.0"), "unit": "lbs"},
+            {"date": datetime(2024, 1, 15, tzinfo=UTC), "value": Decimal("185.0"), "unit": "lbs"},
         ]
 
         result = format_measurement_chart("Weight", data)
@@ -351,7 +351,7 @@ class TestFormatMeasurementChart:
         """Test measurement chart with many data points."""
         data = [
             {
-                "date": datetime(2024, 1, 1) + timedelta(days=i),
+                "date": datetime(2024, 1, 1, tzinfo=UTC) + timedelta(days=i),
                 "value": Decimal(str(180.0 + i * 0.5)),
                 "unit": "lbs",
             }
@@ -366,9 +366,9 @@ class TestFormatMeasurementChart:
     def test_measurement_chart_downward_trend(self) -> None:
         """Test measurement chart with downward trend."""
         data = [
-            {"date": datetime(2024, 1, 1), "value": Decimal("200.0"), "unit": "lbs"},
-            {"date": datetime(2024, 1, 15), "value": Decimal("195.0"), "unit": "lbs"},
-            {"date": datetime(2024, 1, 30), "value": Decimal("190.0"), "unit": "lbs"},
+            {"date": datetime(2024, 1, 1, tzinfo=UTC), "value": Decimal("200.0"), "unit": "lbs"},
+            {"date": datetime(2024, 1, 15, tzinfo=UTC), "value": Decimal("195.0"), "unit": "lbs"},
+            {"date": datetime(2024, 1, 30, tzinfo=UTC), "value": Decimal("190.0"), "unit": "lbs"},
         ]
 
         result = format_measurement_chart("Weight", data)
