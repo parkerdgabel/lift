@@ -115,6 +115,7 @@ ignore = [
     "RUF012",  # mutable class default (used intentionally)
     "SIM103",  # needless bool (stylistic)
     "SIM108",  # if-else-block instead of ternary (stylistic preference)
+    "SIM115",  # use context manager (not applicable for tempfile with delete=False)
     "SIM118",  # in dict.keys() (stylistic)
     "F841",    # unused variable (some intentional for documentation)
     "ARG001",  # unused function argument (CLI handlers often have unused args)
@@ -128,7 +129,7 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**/*.py" = ["ARG", "PLR2004", "PT004", "PT011"]
+"tests/**/*.py" = ["ARG", "PLR2004", "PT001", "PT004", "PT011"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["lift"]
