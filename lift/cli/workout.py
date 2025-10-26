@@ -1,6 +1,8 @@
 """Workout CLI commands for logging and tracking workouts."""
 
 import re
+import sys
+import time
 from datetime import datetime
 from decimal import Decimal
 
@@ -11,10 +13,11 @@ from rich.table import Table
 
 from lift.core.database import DatabaseManager, get_db
 from lift.core.models import SetCreate, SetType, WeightUnit, WorkoutCreate
+from lift.services.config_service import ConfigService
 from lift.services.program_service import ProgramService
 from lift.services.set_service import SetService
 from lift.services.workout_service import WorkoutService
-from lift.utils.calculations import calculate_volume_load
+from lift.utils.calculations import calculate_volume_load, suggest_next_weight
 from lift.utils.workout_formatters import (
     format_exercise_performance,
     format_program_prescription,
@@ -124,6 +127,10 @@ def start_workout(
     # Check if RPE is enabled
     rpe_enabled = _get_setting(db, "enable_rpe", "true") == "true"
 
+    # Get rest timer default
+    config_service = ConfigService(db)
+    rest_timer_seconds = config_service.get_rest_timer_default()
+
     # Track workout state
     workout_state = {
         "total_volume": Decimal("0"),
@@ -172,6 +179,16 @@ def start_workout(
                     format_exercise_performance(exercise_name, last_workout_sets, last_date)
                 )
 
+                # Show weight suggestion based on last performance
+                try:
+                    suggested_weight = suggest_next_weight(last_workout_sets)
+                    console.print(
+                        f"[dim]💡 Suggested starting weight: [cyan]{suggested_weight} lbs[/cyan][/dim]"
+                    )
+                except (ValueError, KeyError):
+                    # Not enough data for suggestion
+                    pass
+
             # Log sets for this exercise
             console.print(f"\n[bold]Logging sets for {exercise_name}[/bold]")
             console.print(
@@ -182,6 +199,7 @@ def start_workout(
             workout_state["exercises"].add(exercise_id)  # type: ignore[attr-defined]
             set_number = 1
             last_set_data = None
+            exercise_sets: list[dict] = []  # Track sets for this exercise
 
             while True:
                 set_input = Prompt.ask(f"[cyan]Set {set_number}[/cyan]", default="done")
@@ -224,7 +242,22 @@ def start_workout(
                     workout_state["total_volume"] = workout_state["total_volume"] + volume  # type: ignore[operator]
                     workout_state["total_sets"] = workout_state["total_sets"] + 1  # type: ignore[operator]
                     last_set_data = {"weight": weight, "reps": reps, "rpe": rpe}
+
+                    # Track set for summary table
+                    exercise_sets.append(
+                        {
+                            "set_number": set_number,
+                            "weight": weight,
+                            "reps": reps,
+                            "rpe": rpe,
+                            "volume": volume,
+                        }
+                    )
+
                     set_number += 1
+
+                    # Start rest timer (user can skip with ENTER)
+                    _start_rest_timer(rest_timer_seconds)
 
                 except Exception as e:
                     console.print(f"[red]Error saving set: {e}[/red]")
@@ -233,6 +266,17 @@ def start_workout(
             # Show completion vs target
             console.print(
                 f"\n[dim]Completed {set_number - 1}/{prog_exercise.target_sets} target sets[/dim]"
+            )
+
+            # Show set summary table
+            _show_set_summary_table(exercise_name, exercise_sets)
+
+            # Show progress dashboard
+            _show_progress_dashboard(
+                workout_state,
+                start_time,
+                idx,
+                len(program_context["exercises"]),  # type: ignore[arg-type]
             )
 
             # Ask if user wants to continue
@@ -276,6 +320,16 @@ def start_workout(
                     format_exercise_performance(exercise_name, last_workout_sets, last_date)
                 )
 
+                # Show weight suggestion based on last performance
+                try:
+                    suggested_weight = suggest_next_weight(last_workout_sets)
+                    console.print(
+                        f"[dim]💡 Suggested starting weight: [cyan]{suggested_weight} lbs[/cyan][/dim]"
+                    )
+                except (ValueError, KeyError):
+                    # Not enough data for suggestion
+                    pass
+
             # Log sets for this exercise
             console.print(f"\n[bold]Logging sets for {exercise_name}[/bold]")
             console.print(
@@ -328,6 +382,9 @@ def start_workout(
                     workout_state["total_sets"] = workout_state["total_sets"] + 1  # type: ignore[operator]
                     last_set_data = {"weight": weight, "reps": reps, "rpe": rpe}
                     set_number += 1
+
+                    # Start rest timer (user can skip with ENTER)
+                    _start_rest_timer(rest_timer_seconds)
 
                 except Exception as e:
                     console.print(f"[red]Error saving set: {e}[/red]")
@@ -608,3 +665,150 @@ def _get_setting(db: DatabaseManager, key: str, default: str = "") -> str:
         pass
 
     return default
+
+
+def _show_set_summary_table(exercise_name: str, sets_data: list[dict]) -> None:
+    """
+    Display summary table of completed sets for an exercise.
+
+    Args:
+        exercise_name: Name of the exercise
+        sets_data: List of set data dictionaries with weight, reps, rpe, etc.
+
+    Returns:
+        None
+    """
+    if not sets_data:
+        return
+
+    console.print()
+    console.print(f"[bold]{exercise_name} - Set Summary[/bold]")
+
+    table = Table(show_header=True, header_style="bold cyan", box=None, padding=(0, 1))
+    table.add_column("Set", style="dim", width=4)
+    table.add_column("Weight", justify="right", width=8)
+    table.add_column("Reps", justify="right", width=5)
+    table.add_column("RPE", justify="right", width=5)
+    table.add_column("Volume", justify="right", width=9)
+
+    for set_data in sets_data:
+        set_num = str(set_data["set_number"])
+        weight = f"{set_data['weight']} lbs"
+        reps = str(set_data["reps"])
+        rpe = f"{set_data['rpe']}" if set_data.get("rpe") else "-"
+        volume = f"{set_data['volume']:,} lbs"
+
+        table.add_row(set_num, weight, reps, rpe, volume)
+
+    # Add total row
+    total_volume = sum(s["volume"] for s in sets_data)
+    total_sets = len(sets_data)
+    table.add_row(
+        f"[bold]{total_sets}[/bold]",
+        "",
+        "",
+        "",
+        f"[bold]{total_volume:,} lbs[/bold]",
+        style="bold",
+    )
+
+    console.print(table)
+    console.print()
+
+
+def _show_progress_dashboard(
+    workout_state: dict, start_time: datetime, current_exercise_num: int, total_exercises: int
+) -> None:
+    """
+    Display current workout progress dashboard.
+
+    Args:
+        workout_state: Dictionary with total_volume, total_sets, exercises
+        start_time: Workout start time
+        current_exercise_num: Current exercise number (1-indexed)
+        total_exercises: Total number of exercises in workout
+
+    Returns:
+        None
+    """
+    elapsed = datetime.now() - start_time
+    minutes = int(elapsed.total_seconds() / 60)
+
+    # Format duration
+    hours = minutes // 60
+    mins = minutes % 60
+    duration_str = f"{hours}h {mins}m" if hours > 0 else f"{mins}m"
+
+    console.print()
+    console.print("[bold cyan]═══ Workout Progress ═══[/bold cyan]")
+    console.print(
+        f"[dim]Exercise:[/dim] {current_exercise_num}/{total_exercises}  "
+        f"[dim]│[/dim]  [dim]Duration:[/dim] {duration_str}  "
+        f"[dim]│[/dim]  [dim]Sets:[/dim] {workout_state['total_sets']}  "
+        f"[dim]│[/dim]  [dim]Volume:[/dim] {workout_state['total_volume']:,} lbs"
+    )
+    console.print("[cyan]═══════════════════════[/cyan]")
+    console.print()
+
+
+def _start_rest_timer(seconds: int, allow_skip: bool = True) -> None:
+    """
+    Start a countdown rest timer.
+
+    Args:
+        seconds: Rest duration in seconds
+        allow_skip: Whether to allow skipping the timer
+
+    Returns:
+        None
+    """
+    if seconds <= 0:
+        return
+
+    console.print()
+    console.print(f"[dim]⏱️  Rest: {seconds}s[/dim]", end="")
+
+    if allow_skip:
+        console.print(" [dim](Press ENTER to skip)[/dim]")
+    else:
+        console.print()
+
+    remaining = seconds
+
+    try:
+        import select
+
+        # Unix-like systems can use select
+        while remaining > 0:
+            mins = remaining // 60
+            secs = remaining % 60
+            time_str = f"{mins}:{secs:02d}" if mins > 0 else f"{secs}s"
+
+            # Clear line and show countdown
+            console.print(f"\r⏱️  Rest: {time_str} remaining...", end="", style="dim")
+
+            if allow_skip:
+                # Check if input is available (non-blocking)
+                ready, _, _ = select.select([sys.stdin], [], [], 1)
+                if ready:
+                    sys.stdin.readline()  # Consume the input
+                    console.print("\r[dim]Rest timer skipped[/dim]" + " " * 30)
+                    return
+            else:
+                time.sleep(1)
+
+            remaining -= 1
+
+    except (ImportError, AttributeError):
+        # Windows or systems without select - use simple countdown
+        while remaining > 0:
+            mins = remaining // 60
+            secs = remaining % 60
+            time_str = f"{mins}:{secs:02d}" if mins > 0 else f"{secs}s"
+
+            console.print(f"\r⏱️  Rest: {time_str} remaining...", end="", style="dim")
+            time.sleep(1)
+            remaining -= 1
+
+    console.print("\r✓ Rest complete!" + " " * 30)
+    console.print()
