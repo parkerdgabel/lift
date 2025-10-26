@@ -8,18 +8,18 @@ from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
 
-from lift.core.models import Set, Workout
+from lift.core.models import Set, Workout, WorkoutSummary
 
 
 def format_workout_summary(
-    workout: Workout, summary: dict, console: Console | None = None
+    workout: Workout, summary: WorkoutSummary, console: Console | None = None
 ) -> Panel:
     """
     Format workout summary as a Rich Panel.
 
     Args:
         workout: Workout object
-        summary: Summary dictionary from WorkoutService.get_workout_summary()
+        summary: WorkoutSummary model from WorkoutService.get_workout_summary()
         console: Optional Rich console for rendering
 
     Returns:
@@ -49,14 +49,12 @@ def format_workout_summary(
 
     # Summary stats
     content.append("\nWorkout Statistics:\n", style="bold yellow")
-    content.append(f"  Exercises: {summary['exercise_count']}\n")
-    content.append(f"  Total Sets: {summary['total_sets']}\n")
-    content.append(
-        f"  Total Volume: {summary['total_volume']:,.0f} {workout.bodyweight_unit.value}\n"
-    )
+    content.append(f"  Exercises: {summary.total_exercises}\n")
+    content.append(f"  Total Sets: {summary.total_sets}\n")
+    content.append(f"  Total Volume: {summary.total_volume:,.0f} {workout.bodyweight_unit.value}\n")
 
-    if summary["avg_rpe"]:
-        content.append(f"  Average RPE: {summary['avg_rpe']:.1f}\n")
+    if summary.avg_rpe:
+        content.append(f"  Average RPE: {summary.avg_rpe:.1f}\n")
 
     # Rating
     if workout.rating:
@@ -299,12 +297,12 @@ def format_workout_complete(
     )
 
 
-def format_workout_list(workouts: list[tuple[Workout, dict]]) -> Table:
+def format_workout_list(workouts: list[tuple[Workout, WorkoutSummary]]) -> Table:
     """
     Format list of workouts with summaries.
 
     Args:
-        workouts: List of (Workout, summary_dict) tuples
+        workouts: List of (Workout, WorkoutSummary) tuples
 
     Returns:
         Rich Table with workout list
@@ -323,9 +321,9 @@ def format_workout_list(workouts: list[tuple[Workout, dict]]) -> Table:
         date_str = workout.date.strftime("%b %d, %Y")
         name = workout.name or "Workout"
         duration = f"{workout.duration_minutes} min" if workout.duration_minutes else "-"
-        exercises = str(summary.get("exercise_count", 0))
-        sets = str(summary.get("total_sets", 0))
-        volume = f"{summary.get('total_volume', 0):,.0f}"
+        exercises = str(summary.total_exercises)
+        sets = str(summary.total_sets)
+        volume = f"{summary.total_volume:,.0f}"
 
         table.add_row(
             str(workout.id),
