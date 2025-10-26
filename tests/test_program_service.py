@@ -396,7 +396,7 @@ class TestExerciseManagement:
 
     def test_add_exercise_invalid_workout(self, service, sample_exercises):
         """Test adding exercise to non-existent workout fails."""
-        with pytest.raises(ValueError, match="Workout.*not found"):
+        with pytest.raises(ValueError, match=r"Workout.*not found"):
             service.add_exercise_to_workout(
                 9999,
                 ProgramExerciseCreate(
@@ -427,7 +427,7 @@ class TestExerciseManagement:
             ),
         )
 
-        with pytest.raises(ValueError, match="Exercise.*not found"):
+        with pytest.raises(ValueError, match=r"Exercise.*not found"):
             service.add_exercise_to_workout(
                 workout.id,
                 ProgramExerciseCreate(
