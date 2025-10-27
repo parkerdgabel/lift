@@ -326,9 +326,9 @@ class TestCompleteUserJourney:
 
         # Get workout summary
         summary = stats_service.get_workout_summary()
-        assert summary["total_workouts"] == 3
-        assert summary["total_sets"] > 0
-        assert summary["total_volume"] > Decimal("0")
+        assert summary.total_workouts == 3
+        assert summary.total_sets > 0
+        assert summary.total_volume > Decimal("0")
 
         # Get exercise progression
         progression = stats_service.get_exercise_progression(
@@ -488,9 +488,9 @@ class TestCompleteUserJourney:
 
         # Verify workout summary
         summary = workout_service.get_workout_summary(workout.id)
-        assert summary["total_sets"] == 5
-        assert summary["total_exercises"] == 1
-        assert summary["total_volume"] > Decimal("0")
+        assert summary.total_sets == 5
+        assert summary.total_exercises == 1
+        assert summary.total_volume > Decimal("0")
 
         # Verify it's linked to the program
         retrieved_workout = workout_service.get_workout(workout.id)
@@ -540,8 +540,8 @@ class TestCompleteUserJourney:
         # Verify stats service sees the data
         stats_service = StatsService(db)
         summary = stats_service.get_workout_summary()
-        assert summary["total_workouts"] == 1
-        assert summary["total_sets"] == 3
+        assert summary.total_workouts == 1
+        assert summary.total_sets == 3
 
         # Verify PR service can detect PRs
         pr_service = PRService(db)
@@ -580,4 +580,4 @@ class TestCompleteUserJourney:
 
         # Workout count should be 0
         summary = stats_service.get_workout_summary()
-        assert summary["total_workouts"] == 0
+        assert summary.total_workouts == 0

@@ -430,3 +430,29 @@ class Setting(SettingBase):
     updated_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+# ============================================================================
+# SUMMARY MODELS - For type-safe data transfer from services to formatters
+# ============================================================================
+
+
+class WorkoutSummary(BaseModel):
+    """Summary statistics for a single workout."""
+
+    total_exercises: int = 0
+    total_sets: int = 0
+    total_volume: Decimal = Decimal("0")
+    avg_rpe: Decimal | None = None
+    max_set_volume: Decimal = Decimal("0")
+
+
+class PeriodWorkoutSummary(BaseModel):
+    """Summary statistics for workouts over a time period."""
+
+    total_workouts: int = 0
+    total_volume: Decimal = Decimal("0")
+    total_sets: int = 0
+    avg_duration: float = 0.0
+    avg_rpe: Decimal = Decimal("0")
+    total_exercises: int = 0

@@ -4,7 +4,7 @@ from decimal import Decimal
 from typing import Any
 
 from lift.core.database import DatabaseManager, get_db
-from lift.core.models import Workout, WorkoutCreate, WorkoutUpdate
+from lift.core.models import Workout, WorkoutCreate, WorkoutSummary, WorkoutUpdate
 
 
 class WorkoutService:
@@ -53,7 +53,7 @@ class WorkoutService:
                     workout.bodyweight_unit.value if workout.bodyweight_unit else "lbs",
                     workout.notes,
                     workout.rating,
-                    True,  # completed defaults to True
+                    False,  # completed starts as False, set to True when finished
                 ),
             ).fetchone()
 
@@ -111,6 +111,27 @@ class WorkoutService:
         """
         workouts = self.get_recent_workouts(limit=1)
         return workouts[0] if workouts else None
+
+    def get_incomplete_workouts(self, limit: int = 5) -> list[Workout]:
+        """
+        Get incomplete (unfinished) workouts ordered by date.
+
+        Args:
+            limit: Maximum number of workouts to return
+
+        Returns:
+            List of incomplete workouts
+        """
+        query = """
+            SELECT * FROM workouts
+            WHERE completed = FALSE
+            ORDER BY date DESC
+            LIMIT ?
+        """
+
+        with self.db.get_connection() as conn:
+            results = conn.execute(query, (limit,)).fetchall()
+            return [self._row_to_workout(row) for row in results]
 
     def update_workout(self, id: int, update: WorkoutUpdate) -> Workout:
         """
@@ -230,7 +251,7 @@ class WorkoutService:
             ),
         )
 
-    def get_workout_summary(self, id: int) -> dict:
+    def get_workout_summary(self, id: int) -> WorkoutSummary:
         """
         Get comprehensive summary of a workout including volume and set statistics.
 
@@ -238,11 +259,11 @@ class WorkoutService:
             id: Workout ID
 
         Returns:
-            Dictionary with summary statistics
+            WorkoutSummary model with summary statistics
 
         Example:
             >>> summary = service.get_workout_summary(1)
-            >>> print(f"Total volume: {summary['total_volume']} lbs")
+            >>> print(f"Total volume: {summary.total_volume} lbs")
         """
         query = """
             SELECT
@@ -260,21 +281,15 @@ class WorkoutService:
             result = conn.execute(query, (id,)).fetchone()
 
             if not result:
-                return {
-                    "total_exercises": 0,
-                    "total_sets": 0,
-                    "total_volume": Decimal("0"),
-                    "avg_rpe": None,
-                    "max_set_volume": Decimal("0"),
-                }
+                return WorkoutSummary()
 
-            return {
-                "total_exercises": result[0] or 0,
-                "total_sets": result[1] or 0,
-                "total_volume": Decimal(str(result[2])) if result[2] else Decimal("0"),
-                "avg_rpe": Decimal(str(result[3])) if result[3] else None,
-                "max_set_volume": (Decimal(str(result[4])) if result[4] else Decimal("0")),
-            }
+            return WorkoutSummary(
+                total_exercises=result[0] or 0,
+                total_sets=result[1] or 0,
+                total_volume=Decimal(str(result[2])) if result[2] else Decimal("0"),
+                avg_rpe=Decimal(str(result[3])) if result[3] else None,
+                max_set_volume=Decimal(str(result[4])) if result[4] else Decimal("0"),
+            )
 
     def get_last_performance(self, exercise_id: int, limit: int = 1) -> list[dict]:
         """

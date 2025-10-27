@@ -69,11 +69,11 @@ def test_get_workout_summary(stats_service: StatsService, sample_data: dict) -> 
     """Test getting workout summary."""
     summary = stats_service.get_workout_summary()
 
-    assert summary["total_workouts"] == 1
-    assert summary["total_sets"] == 3
-    assert summary["total_volume"] > 0
-    assert summary["avg_duration"] == 60
-    assert summary["total_exercises"] == 1
+    assert summary.total_workouts == 1
+    assert summary.total_sets == 3
+    assert summary.total_volume > 0
+    assert summary.avg_duration == 60
+    assert summary.total_exercises == 1
 
 
 def test_get_workout_summary_with_date_range(
@@ -85,15 +85,15 @@ def test_get_workout_summary_with_date_range(
 
     summary = stats_service.get_workout_summary(start_date=start_date, end_date=end_date)
 
-    assert summary["total_workouts"] == 1
+    assert summary.total_workouts == 1
 
 
 def test_get_workout_summary_empty(stats_service: StatsService) -> None:
     """Test getting workout summary with no data."""
     summary = stats_service.get_workout_summary()
 
-    assert summary["total_workouts"] == 0
-    assert summary["total_volume"] == Decimal(0)
+    assert summary.total_workouts == 0
+    assert summary.total_volume == Decimal(0)
 
 
 def test_get_weekly_summary(stats_service: StatsService, sample_data: dict) -> None:
@@ -232,8 +232,8 @@ def test_multiple_workouts_summary(db: DatabaseManager, stats_service: StatsServ
 
     summary = stats_service.get_workout_summary()
 
-    assert summary["total_workouts"] == 3
-    assert summary["avg_duration"] == 70
+    assert summary.total_workouts == 3
+    assert summary.avg_duration == 70
 
 
 def test_volume_calculation_accuracy(db: DatabaseManager, stats_service: StatsService) -> None:
@@ -273,7 +273,7 @@ def test_volume_calculation_accuracy(db: DatabaseManager, stats_service: StatsSe
     summary = stats_service.get_workout_summary()
     expected_volume = Decimal("1215")
 
-    assert summary["total_volume"] == expected_volume
+    assert summary.total_volume == expected_volume
 
 
 def test_rpe_averaging(db: DatabaseManager, stats_service: StatsService) -> None:
@@ -313,4 +313,4 @@ def test_rpe_averaging(db: DatabaseManager, stats_service: StatsService) -> None
 
     summary = stats_service.get_workout_summary()
 
-    assert summary["avg_rpe"] == Decimal("8.0")
+    assert summary.avg_rpe == Decimal("8.0")
